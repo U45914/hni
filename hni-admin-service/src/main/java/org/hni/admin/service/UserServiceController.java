@@ -1,12 +1,18 @@
 package org.hni.admin.service;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -26,13 +32,11 @@ import org.hni.organization.om.Organization;
 import org.hni.organization.om.UserOrganizationRole;
 import org.hni.organization.service.OrganizationUserService;
 import org.hni.security.dao.RoleDAO;
+import org.hni.user.dao.DefaultUserDAO;
 import org.hni.user.om.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 
 @Api(value = "/users", description = "Operations on Users and to manage Users relationships to organiations")
 @Component
@@ -42,6 +46,7 @@ public class UserServiceController extends AbstractBaseController {
 	
 	@Inject private OrganizationUserService orgUserService;
 	@Inject private RoleDAO roleDao;	
+	@Inject private DefaultUserDAO defaultUserDao;
     @Context private HttpServletRequest servletRequest;
     
 	@GET
@@ -174,5 +179,20 @@ public class UserServiceController extends AbstractBaseController {
 		}
 		throw new HNIException("You must have elevated permissions to do this.");
 	}
+
+	@POST
+	@Path("/userServices")
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.TEXT_PLAIN})
+	@ApiOperation(value = "Returns the various user services/functionalities"
+	, notes = ""
+	, response = UserOrganizationRole.class
+	, responseContainer = "")
+	public Collection<UserOrganizationRole> getUserunctionalities(String emailAddress) {
+		User user = defaultUserDao.byEmailAddress(emailAddress);
+		return orgUserService.getUserOrganizationRoles(user);
+	}
+	
+		
 
 }
