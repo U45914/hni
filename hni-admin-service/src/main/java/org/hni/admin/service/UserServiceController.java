@@ -180,7 +180,7 @@ public class UserServiceController extends AbstractBaseController {
 		throw new HNIException("You must have elevated permissions to do this.");
 	}
 
-	@POST
+	/*@POST
 	@Path("/userServices")
 	@Produces({MediaType.APPLICATION_JSON})
 	@Consumes({MediaType.TEXT_PLAIN})
@@ -191,6 +191,18 @@ public class UserServiceController extends AbstractBaseController {
 	public Collection<UserOrganizationRole> getUserunctionalities(String emailAddress) {
 		User user = defaultUserDao.byEmailAddress(emailAddress);
 		return orgUserService.getUserOrganizationRoles(user);
+	}*/
+	@POST
+	@Path("/services")
+	@Produces({MediaType.TEXT_PLAIN})
+	@ApiOperation(value = "Returns the various user services/functionalities"
+	, notes = ""
+	, response = String.class
+	, responseContainer = "")
+	public String getUserunctionalities() {
+		String response = "[{'serviceName': 'NGO Onboarding','servicePath': 'ngoOnboard','enabled': 'true'},"+
+"{'serviceName': 'Customer Onboarding','servicePath': 'custOnboard','enabled': 'true'}]";
+		return response;
 	}
 	
 		
