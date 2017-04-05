@@ -1,5 +1,7 @@
 package org.hni.admin.service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -41,7 +43,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -78,13 +79,25 @@ public class UserSecurityController extends AbstractBaseController {
 			logger.info("user is authenticated");
 			Set<OrganizationUserRolePermission> permissions = userTokenService.getUserOrganizationRolePermissions(user, organizationId);
 			String permissionObject = mapPermissionsToString(permissions);
-			return JWTTokenFactory.encode(tokenKey, tokenIssuer, "", TTL_MILLIS, user.getId(), permissionObject);
+			Map<String, String> authData = new HashMap<>(1);
+			authData.put("token", JWTTokenFactory.encode(tokenKey, tokenIssuer, "", TTL_MILLIS, user.getId(), permissionObject));
+			return getJsonString(authData);
 		} catch (IncorrectCredentialsException ice) {
 			logger.error("couldn't auth user:", ice.getMessage());
 			return null;
 		}
 	}
 
+	private String getJsonString(Object source) {
+		String response = "";
+		try {
+			response = mapper.writeValueAsString(source);
+		}  catch (JsonProcessingException e) {
+			logger.warn("Couldn't map permissions: ", e.getOriginalMessage());
+		}
+		
+		return response;
+	}
 	private String mapPermissionsToString(Set<OrganizationUserRolePermission> permissions) {
 		String response = "";
 		try {

@@ -194,7 +194,7 @@ public class UserServiceController extends AbstractBaseController {
 	}*/
 	@POST
 	@Path("/services")
-	@Produces({MediaType.TEXT_PLAIN})
+	@Produces({MediaType.APPLICATION_JSON})
 	@ApiOperation(value = "Returns the various user services/functionalities"
 	, notes = ""
 	, response = String.class
