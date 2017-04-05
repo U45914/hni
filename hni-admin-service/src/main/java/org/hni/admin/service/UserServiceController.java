@@ -3,16 +3,13 @@ package org.hni.admin.service;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -25,9 +22,12 @@ import javax.ws.rs.core.Response;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.util.ThreadContext;
+import org.hni.admin.service.converter.HNIConverter;
+import org.hni.admin.service.dto.HniServicesDto;
 import org.hni.common.Constants;
 import org.hni.common.exception.HNIException;
 import org.hni.common.om.Role;
+import org.hni.organization.om.HniServices;
 import org.hni.organization.om.Organization;
 import org.hni.organization.om.UserOrganizationRole;
 import org.hni.organization.service.OrganizationUserService;
@@ -180,31 +180,25 @@ public class UserServiceController extends AbstractBaseController {
 		throw new HNIException("You must have elevated permissions to do this.");
 	}
 
-	/*@POST
-	@Path("/userServices")
-	@Produces({MediaType.APPLICATION_JSON})
-	@Consumes({MediaType.TEXT_PLAIN})
-	@ApiOperation(value = "Returns the various user services/functionalities"
-	, notes = ""
-	, response = UserOrganizationRole.class
-	, responseContainer = "")
-	public Collection<UserOrganizationRole> getUserunctionalities(String emailAddress) {
-		User user = defaultUserDao.byEmailAddress(emailAddress);
-		return orgUserService.getUserOrganizationRoles(user);
-	}*/
-	@POST
+	@GET
 	@Path("/services")
 	@Produces({MediaType.APPLICATION_JSON})
 	@ApiOperation(value = "Returns the various user services/functionalities"
 	, notes = ""
-	, response = String.class
+	, response = HniServicesDto.class
 	, responseContainer = "")
-	public String getUserunctionalities() {
-		String response = "[{'serviceName': 'NGO Onboarding','servicePath': 'ngoOnboard','enabled': 'true'},"+
-"{'serviceName': 'Customer Onboarding','servicePath': 'custOnboard','enabled': 'true'}]";
-		return response;
+	public Collection<HniServicesDto> getUserunctionalities() {
+		logger.info("Invoked method to retrieve hni services...");
+		if(isPermitted(Constants.USERID, Constants.PERMISSIONS, 0L)) {
+			User user = getLoggedInUser();
+			if(null!=user){
+				logger.info("User details fetch successfull");
+				Collection<UserOrganizationRole> userOrganisationRoles = orgUserService.getUserOrganizationRoles(user);
+				Collection<HniServices> hniServices = orgUserService.getHniServices(userOrganisationRoles);
+				return HNIConverter.convertToServiceDtos(hniServices);
+			}
+		}
+		logger.info("Not enough permissions...");
+		throw new HNIException("You must have elevated permissions to do this.");
 	}
-	
-		
-
 }

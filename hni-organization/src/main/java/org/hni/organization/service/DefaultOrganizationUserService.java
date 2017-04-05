@@ -7,12 +7,12 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.hni.common.Constants;
 import org.hni.common.om.Role;
 import org.hni.organization.dao.UserOrganizationRoleDAO;
 import org.hni.organization.om.Organization;
 import org.hni.organization.om.UserOrganizationRole;
 import org.hni.organization.om.UserOrganizationRolePK;
+import org.hni.organization.om.HniServices;
 import org.hni.user.dao.UserDAO;
 import org.hni.user.om.User;
 import org.hni.user.service.DefaultUserService;
@@ -25,6 +25,7 @@ public class DefaultOrganizationUserService extends DefaultUserService implement
 
 	private OrganizationService orgService;
 	private UserOrganizationRoleDAO uorDao;
+	private OrganizationUserService orgUserService;
 
 	@Inject
 	public DefaultOrganizationUserService(UserDAO userDao, OrganizationService orgService, UserOrganizationRoleDAO uorDao) {
@@ -112,5 +113,15 @@ public class DefaultOrganizationUserService extends DefaultUserService implement
 		
 		return users;
 	}
-
+	
+	@Override
+	public Collection<HniServices> getHniServices(Collection<UserOrganizationRole> userOrganizationRoles) {
+		Collection<HniServices> hniServicesList = new ArrayList<>();
+		for(UserOrganizationRole userRole: userOrganizationRoles){
+			Collection<HniServices> hniServices = uorDao.getHniServicesByRole(userRole.getId().getOrgId(), userRole.getId().getRoleId());
+			hniServicesList.addAll(hniServices);
+		}
+		
+		return hniServicesList;
+	}
 }
