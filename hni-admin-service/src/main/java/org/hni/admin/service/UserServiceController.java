@@ -180,18 +180,17 @@ public class UserServiceController extends AbstractBaseController {
 		throw new HNIException("You must have elevated permissions to do this.");
 	}
 
-	@POST
+	@GET
 	@Path("/services")
 	@Produces({MediaType.APPLICATION_JSON})
-	@Consumes({MediaType.TEXT_PLAIN})
 	@ApiOperation(value = "Returns the various user services/functionalities"
 	, notes = ""
 	, response = HniServicesDto.class
 	, responseContainer = "")
-	public Collection<HniServicesDto> getUserunctionalities(String emailAddress) {
+	public Collection<HniServicesDto> getUserunctionalities() {
 		logger.info("Invoked method to retrieve hni services...");
 		if(isPermitted(Constants.USERID, Constants.PERMISSIONS, 0L)) {
-			User user = defaultUserDao.byEmailAddress(emailAddress);
+			User user = getLoggedInUser();
 			if(null!=user){
 				logger.info("User details fetch successfull");
 				Collection<UserOrganizationRole> userOrganisationRoles = orgUserService.getUserOrganizationRoles(user);
@@ -199,6 +198,7 @@ public class UserServiceController extends AbstractBaseController {
 				return HNIConverter.convertToServiceDtos(hniServices);
 			}
 		}
+		logger.info("Not enough permissions...");
 		throw new HNIException("You must have elevated permissions to do this.");
 	}
 }
