@@ -32,7 +32,7 @@ import org.hni.organization.om.Organization;
 import org.hni.organization.om.UserOrganizationRole;
 import org.hni.organization.service.OrganizationUserService;
 import org.hni.security.dao.RoleDAO;
-import org.hni.user.dao.DefaultUserDAO;
+import org.hni.user.om.Ngo;
 import org.hni.user.om.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +46,6 @@ public class UserServiceController extends AbstractBaseController {
 	
 	@Inject private OrganizationUserService orgUserService;
 	@Inject private RoleDAO roleDao;	
-	@Inject private DefaultUserDAO defaultUserDao;
     @Context private HttpServletRequest servletRequest;
     
 	@GET
@@ -200,5 +199,19 @@ public class UserServiceController extends AbstractBaseController {
 		}
 		logger.info("Not enough permissions...");
 		throw new HNIException("You must have elevated permissions to do this.");
+	}
+	
+	@POST
+	@Path("/ngoOnboarding")
+	@Produces({MediaType.TEXT_PLAIN})
+	@Consumes({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = "Accepts NGO Onboarding as parameter"
+	, notes = ""
+	, response = String.class
+	, responseContainer = "")
+	
+	public String onBoardNGO(Ngo ngo){
+		System.out.println("Status OK");
+		return "Status OK";
 	}
 }
