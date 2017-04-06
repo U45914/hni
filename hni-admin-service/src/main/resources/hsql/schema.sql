@@ -334,4 +334,198 @@ CREATE TABLE IF NOT EXISTS `partial_orders_order_items` (
   `id` INT NOT NULL,
   `order_item_id` INT NOT NULL)
 ENGINE = InnoDB;
+-- -----------------------------------------------------
+-- Table `ngo`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `ngo` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL,
+  `address_id`	INT NOT NULL,
+  `phone`	VARCHAR (45) NOT NULL,
+  `website`	VARCHAR (255) NOT NULL,
+  `contact_first_name`	VARCHAR (255) NOT NULL,
+  `contact_last_name`	VARCHAR (255) NOT NULL,
+  `fte`	INT NOT NULL,
+  `overview`	VARCHAR (2048) NOT NULL,
+  `mission`	VARCHAR (2048) NOT NULL,
+  `endorsement_id`	INT NULL,
+  `monthly_budget`	INT NOT NULL,
+  `operating_cost`	INT NULL,
+  `personal_cost`	INT NULL,
+  `kitchen_volunteers`	INT NULL,
+  `food_stamp_assist`	BOOLEAN NOT NULL,
+  `food_bank`	BOOLEAN NOT NULL,
+  `resources_to_clients` INT NOT NULL,
+  `ind_serv_daily`	INT NOT NULL,
+  `ind_serv_monthly`	INT NOT NULL,
+  `ind_serv_annual`	INT NOT NULL,
+  `client_info`	BOOLEAN NOT NULL,
+  `store_client_info`	VARCHAR(255) NULL,
+  `clients_unsheltered`	INT NOT NULL,
+  `clients_employed`	INT NOT NULL,
+  `created` DATETIME NOT NULL,
+  `created_by` INT NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
 
+
+-- -----------------------------------------------------
+-- Table `board_members`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `board_members` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `ngo_id`	INT NOT NULL,
+  `first_name`	VARCHAR (255) NOT NULL,
+  `last_name`	VARCHAR (255) NOT NULL,
+  `company`	VARCHAR(255) NOT NULL,
+  `created` DATETIME NOT NULL,
+  `created_by` INT NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `brand_partners`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `brand_partners` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `ngo_id`	INT NOT NULL,
+  `phone`	VARCHAR (45) NOT NULL,
+  `company`	VARCHAR(255) NOT NULL,
+  `created` DATETIME NOT NULL,
+  `created_by` INT NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `local_partners`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `local_partners` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `ngo_id`	INT NOT NULL,
+  `phone`	VARCHAR (45) NOT NULL,
+  `company`	VARCHAR(255) NOT NULL,
+  `created` DATETIME NOT NULL,
+  `created_by` INT NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+-- -----------------------------------------------------
+-- Table `ngo_funding_sources`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `ngo_funding_sources` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `ngo_id`	INT NOT NULL,
+  `amount`	DOUBLE NOT NULL,
+  `source`	VARCHAR(255) NOT NULL,
+  `created` DATETIME NOT NULL,
+  `created_by` INT NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+-- -----------------------------------------------------
+-- Table `meal_funding_sources`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `meal_funding_sources` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `ngo_id`	INT NOT NULL,
+  `amount`	DOUBLE NOT NULL,
+  `source`	VARCHAR(255) NOT NULL,
+  `created` DATETIME NOT NULL,
+  `created_by` INT NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+-- -----------------------------------------------------
+-- Table `food_services`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `food_services` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `ngo_id`	INT NOT NULL,
+  `service_type`	INT NOT NULL,
+  `total_count`	INT NOT NULL,
+  `other`	VARCHAR(255) NOT NULL,
+  `created` DATETIME NOT NULL,
+  `created_by` INT NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+-- -----------------------------------------------------
+-- Table `food_services_availability`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `food_services_availability` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `food_services_id`	INT NOT NULL,
+  `week_day`	VARCHAR(255) NOT NULL,
+  `created` DATETIME NOT NULL,
+  `created_by` INT NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `food_bank`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `food_bank` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `ngo_id`	INT NOT NULL,
+  `food_bank_name`	VARCHAR(255) NOT NULL,
+  `created` DATETIME NOT NULL,
+  `created_by` INT NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `meal_donation_sources`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `meal_donation_sources` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `ngo_id`	INT NOT NULL,
+  `source`	VARCHAR(255) NOT NULL,
+  `frequency`	VARCHAR(255) NOT NULL,
+  `created` DATETIME NOT NULL,
+  `created_by` INT NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+-- -----------------------------------------------------
+-- Table `services`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `hni_services` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `org_id` INT NOT NULL,
+  `role_id` INT NOT NULL,
+  `service_name` VARCHAR(75) NOT NULL,
+  `service_path` VARCHAR(100) NOT NULL,
+  `service_img` VARCHAR(500) NULL,
+  `active` VARCHAR(1) NOT NULL,
+  `created` DATETIME NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB;
+
+-- -----------------------------------------------------
+-- Table `user_profile_tmp`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `user_profile_tmp` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `type` VARCHAR(45) NOT NULL,
+  `user_id` INT NULL,
+  `data` VARCHAR(2500) NOT NULL,
+  `created` DATETIME NOT NULL,
+  `last_updated` DATETIME NOT NULL,
+  `status` VARCHAR(1) NULL,
+  PRIMARY KEY (`id`))
+  ENGINE = InnoDB;;
+-- -----------------------------------------------------
+-- Table `invitation`
+-- -----------------------------------------------------
+CREATE TABLE `invitation` (
+`id` INT(11) NOT NULL AUTO_INCREMENT,
+`org_id` VARCHAR(50) NOT NULL,
+`invite_code` VARCHAR(50) NOT NULL,
+`token_expire_date` DATE NOT NULL,
+`created_date` DATE NOT NULL,
+PRIMARY KEY (`id`))
+ENGINE=InnoDB;

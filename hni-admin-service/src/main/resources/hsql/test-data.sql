@@ -153,3 +153,8 @@ insert into payment_instruments values(10, 1, 'gift', '10', '1100-0000-0000-0001
 insert into provider_location_hours values(1,1,'Mon',8,20,);
 insert into provider_location_hours values(2,2,'Mon',8,20,);
 insert into provider_location_hours values(3,3,'Mon',8,20,);
+
+insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,1,'NGO Invitation','ngoInvitation','','Y',now());
+insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,1,'Customer Onboarding','custOnboard','','Y',now());
+insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,1,'Clients','clients','','Y',now());
+insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,1,'User Profile','user-profile','','Y',now());
