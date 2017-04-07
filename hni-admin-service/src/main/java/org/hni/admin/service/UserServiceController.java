@@ -226,19 +226,6 @@ public class UserServiceController extends AbstractBaseController {
 
 	
 	
-	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces({MediaType.APPLICATION_JSON})
-	@Path("/customerSignup")
-	@ApiOperation(value = "register a customer"
-	, notes = "An update occurs if the ID field is specified"
-	, response = User.class
-	, responseContainer = "")
-	public User registerCustomer(User user) {
-		return userService.customerSignup(setPassword(user)); 
-	}
-
-	
 	
 
 }
