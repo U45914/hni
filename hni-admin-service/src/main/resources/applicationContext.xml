@@ -59,9 +59,9 @@
 				<property name="locations" value="classpath:config/integration/application.properties" />	
 			</bean>	
 			<util:properties id="hniProperties" location="classpath:config/integration/application.properties" />
-			<bean id="redisLockingService" class=" org.hni.order.service.RedisLockingService">
+			<!-- <bean id="redisLockingService" class=" org.hni.order.service.RedisLockingService">
 				<property name="configLocation" value="/config/integration/redis-cache.json" />
-			</bean>
+			</bean> -->
 			
 	        <!-- In Memory Database Configuration -->
 	        <jdbc:embedded-database id="dataSource" type="H2">
