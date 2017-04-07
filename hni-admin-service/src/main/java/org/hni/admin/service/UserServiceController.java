@@ -212,6 +212,6 @@ public class UserServiceController extends AbstractBaseController {
 	
 	public String onBoardNGO(Ngo ngo){
 		System.out.println("Status OK");
-		return "Status OK";
+		return "Status OK"; 
 	}
 }
