@@ -31,10 +31,9 @@ public class AuthorizationRequestFilter implements ContainerRequestFilter {
         	System.out.println("token="+requestContext.getHeaders().get(TOKEN_HEADER));
         	return;
         }
-     /*   requestContext.abortWith(Response
+        requestContext.abortWith(Response
                 .status(Response.Status.UNAUTHORIZED)
                 .entity("User cannot access the resource.")
-                .build());*/
-        	return;
+                .build());
 	}
 }
