@@ -15,7 +15,7 @@ public class ResponseCorsFilter implements ContainerResponseFilter {
 	    headers.add("Access-Control-Allow-Origin", "*");
 	    headers.add("Access-Control-Max-Age", "180"); // cache preflight request for 180 seconds
 	    headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS");
-	    headers.add("Access-Control-Allow-Headers", "X-Requested-With, Content-Type, X-Codingpedia, origin, content-type, accept");
+	    headers.add("Access-Control-Allow-Headers", "X-Requested-With, Content-Type, X-Codingpedia, X-hni-token, origin, content-type, accept");
     }
     
 }
