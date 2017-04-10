@@ -45,7 +45,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.hni</groupId>
-			<artifactId>hni-datamodels</artifactId>
+			<artifactId>hni-data-model</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
