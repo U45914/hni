@@ -2,6 +2,8 @@ package org.hni.user.om;
 
 import org.hni.common.om.Persistable;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,6 +22,7 @@ import java.io.Serializable;
  */
 @Entity
 @Table(name="addresses")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Address implements Persistable, Serializable {
 
 	private static final long serialVersionUID = 435871577597384034L;
