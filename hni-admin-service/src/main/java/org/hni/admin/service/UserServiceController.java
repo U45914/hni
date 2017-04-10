@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiOperation;
 import java.util.Collection;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -34,9 +35,13 @@ import org.hni.organization.service.OrganizationUserService;
 import org.hni.security.dao.RoleDAO;
 import org.hni.user.dao.DefaultUserDAO;
 import org.hni.user.om.User;
+import org.hni.user.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 @Api(value = "/users", description = "Operations on Users and to manage Users relationships to organiations")
 @Component
@@ -47,6 +52,10 @@ public class UserServiceController extends AbstractBaseController {
 	@Inject private OrganizationUserService orgUserService;
 	@Inject private RoleDAO roleDao;	
 	@Inject private DefaultUserDAO defaultUserDao;
+	
+	@Inject
+	@Named("defaultUserService")
+	private UserService userService;
     @Context private HttpServletRequest servletRequest;
     
 	@GET
@@ -201,4 +210,22 @@ public class UserServiceController extends AbstractBaseController {
 		logger.info("Not enough permissions...");
 		throw new HNIException("You must have elevated permissions to do this.");
 	}
+
+	
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces({MediaType.APPLICATION_JSON})
+	@Path("/customerSignup")
+	@ApiOperation(value = "register a customer"
+	, notes = "An update occurs if the ID field is specified"
+	, response = User.class
+	, responseContainer = "")
+	public User registerCustomer(User user) {
+		return userService.customerSignup(setPassword(user)); 
+	}
+
+	
+	
+	
+
 }
