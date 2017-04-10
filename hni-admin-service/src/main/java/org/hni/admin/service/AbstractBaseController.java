@@ -1,5 +1,7 @@
 package org.hni.admin.service;
 
+import java.io.UnsupportedEncodingException;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
@@ -60,7 +62,7 @@ public class AbstractBaseController {
 	protected User setPassword(User user) {
 		if (user != null) {
 			user.setSalt(HNISecurityUtils.getSalt());
-			user.setHashedSecret(HNISecurityUtils.getHash(user.getPassword(), user.getSalt().getBytes()));
+			user.setHashedSecret(HNISecurityUtils.getHash(user.getPassword(), user.getSalt()));
 		}
 		return user;
 	}
