@@ -1,5 +1,9 @@
 package org.hni.events.service;
 
+import java.util.List;
+
+import javax.inject.Inject;
+
 import org.hni.common.Constants;
 import org.hni.common.om.Role;
 import org.hni.common.service.AbstractService;
@@ -7,6 +11,7 @@ import org.hni.organization.om.Organization;
 import org.hni.organization.service.OrganizationUserService;
 import org.hni.security.om.ActivationCode;
 import org.hni.security.service.ActivationCodeService;
+import org.hni.security.utils.HNISecurityUtils;
 import org.hni.user.dao.UserDAO;
 import org.hni.user.om.User;
 import org.hni.user.service.UserService;
@@ -15,9 +20,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.inject.Inject;
-import java.util.List;
 
 /**
  *
@@ -93,6 +95,5 @@ public class CustomerService extends AbstractService<User> implements UserServic
     public User byEmailAddress(String emailAddress) {
         return userDao.byEmailAddress(emailAddress);
     }
-
 
 }

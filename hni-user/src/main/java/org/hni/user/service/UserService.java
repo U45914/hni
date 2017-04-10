@@ -1,11 +1,11 @@
 package org.hni.user.service;
 
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.hni.common.service.BaseService;
-import org.hni.user.om.User;
-
-import java.util.List;
+import org.hni.user.om.User;	
 
 public interface UserService extends BaseService<User> {
 
@@ -38,4 +38,10 @@ public interface UserService extends BaseService<User> {
     List<User> byLastName(String lastName);
 
     User byEmailAddress(String emailAddress);
+    
+    default User customerSignup(User user){
+		return user;
+		}
+
+	
 }

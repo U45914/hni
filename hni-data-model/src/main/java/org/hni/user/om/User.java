@@ -52,7 +52,8 @@ public class User implements Persistable, Serializable {
 	private String hashedSecret;
 	@Column(name = "salt")
 	private String salt;
-
+	
+	private transient String password;
 	private transient String token;
 	private transient Long organizationId;
 
@@ -167,6 +168,14 @@ public class User implements Persistable, Serializable {
 
 	public void setToken(String token) {
 		this.token = token;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	public Long getOrganizationId() {

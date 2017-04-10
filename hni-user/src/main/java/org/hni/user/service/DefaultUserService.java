@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-@Component
+@Component("defaultUserService")
 @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 public class DefaultUserService extends AbstractService<User> implements UserService {
 	private static final Logger logger = LoggerFactory.getLogger(UserService.class);
@@ -40,4 +40,10 @@ public class DefaultUserService extends AbstractService<User> implements UserSer
 		return userDao.byEmailAddress(emailAddress);
 	}
 
+
+    @Override
+	public User customerSignup(User user) {
+    	
+    	return userDao.save(user);
+	}
 }
