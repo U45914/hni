@@ -5,4 +5,6 @@ import org.hni.organization.om.Organization;
 
 public interface OrganizationDAO extends BaseDAO<Organization> {
 
+	boolean isAlreadyExists(Organization org);
+
 }
