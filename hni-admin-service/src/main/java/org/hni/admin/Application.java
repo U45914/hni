@@ -5,6 +5,7 @@ import javax.ws.rs.ApplicationPath;
 import org.apache.commons.lang.StringUtils;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.hni.admin.configuration.HniJacksonFeature;
 import org.hni.admin.filter.ResponseCorsFilter;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
@@ -23,7 +24,8 @@ public class Application extends ResourceConfig {
 	
     public Application() {
         packages("org.hni");
-        register(JacksonFeature.class);
+        //register(JacksonFeature.class);
+        register(HniJacksonFeature.class);
         register(ResponseCorsFilter.class);
         
         register(io.swagger.jaxrs.listing.ApiListingResource.class);
