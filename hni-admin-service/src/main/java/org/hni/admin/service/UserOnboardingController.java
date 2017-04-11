@@ -14,22 +14,28 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.hni.common.Constants;
 import org.hni.common.email.service.EmailComponent;
 import org.hni.organization.om.Organization;
 import org.hni.organization.service.OrganizationService;
 import org.hni.user.om.Invitation;
+import org.hni.user.om.UserPartialData;
 import org.hni.user.service.UserOnboardingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.hni.user.service.UserPartialCreateService;
 import org.springframework.stereotype.Component;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import net.minidev.json.JSONObject;
 
 @Api(value = "/onboard", description = "Operations on NGO")
 @Component
 @Path("/onboard")
 public class UserOnboardingController extends AbstractBaseController {
+	
+	private static final Logger logger = LoggerFactory.getLogger(UserOnboardingController.class);
+	
 	private static final String ERROR_MSG = "errorMsg";
 
 	private static final String SUCCESS = "success";
@@ -46,8 +52,10 @@ public class UserOnboardingController extends AbstractBaseController {
 
 	@Inject
 	private EmailComponent emailComponent;
-	private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
 
+	@Inject
+	private UserPartialCreateService userPartialCreateService;
+	
 	@POST
 	@Path("/ngo/invite")
 	@Produces({ MediaType.APPLICATION_JSON })
@@ -90,4 +98,35 @@ public class UserOnboardingController extends AbstractBaseController {
 		return map;
 	}
 
+	@POST
+	@Path("/{userType}/save")
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = "", notes = "", response = Map.class, responseContainer = "")
+	public Map<String,String> savePartialData(JSONObject json , @PathParam("userType") String userType){
+		Map<String,String> response = new HashMap<>();
+		response.put(RESPONSE, ERROR);
+		if(userType!=null && json != null){
+			UserPartialData userPartialDataUpdate = userPartialCreateService.getUserPartialDataByUserId(getLoggedInUser().getId().intValue());
+			if(userPartialDataUpdate==null){
+				UserPartialData userPartialData = new UserPartialData();
+				userPartialData.setType(Constants.USER_TYPES.get(userType).intValue());
+				userPartialData.setUserId(getLoggedInUser().getId().intValue());
+				userPartialData.setData(json.toString());
+				userPartialData.setCreated(new Date());
+				userPartialData.setLastUpdated(new Date());
+				userPartialData.setStatus(Constants.N);
+				userPartialCreateService.save(userPartialData);
+				response.put(RESPONSE, SUCCESS);
+			}
+			else{
+				userPartialDataUpdate.setData(json.toString());
+				userPartialDataUpdate.setLastUpdated(new Date());
+				userPartialCreateService.save(userPartialDataUpdate);
+				response.put(RESPONSE, SUCCESS);
+			}
+		}
+		return response;
+	}
+	
 }
