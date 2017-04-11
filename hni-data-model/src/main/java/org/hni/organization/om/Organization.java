@@ -20,6 +20,8 @@ import javax.persistence.Table;
 import org.hni.common.om.Persistable;
 import org.hni.user.om.Address;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 /**
  * An organization is an entity that provides customer support
  * e.g. NI Personnel, NGO's, Schools, etc
@@ -31,6 +33,7 @@ import org.hni.user.om.Address;
  */
 @Entity
 @Table(name = "organizations")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Organization implements Persistable, Serializable {
 	private static final long serialVersionUID = 2775752378663345293L;
 

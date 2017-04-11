@@ -1,6 +1,7 @@
 package org.hni.admin.service;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,6 +55,8 @@ public class UserOnboardingController extends AbstractBaseController {
 		Map<String, String> map = new HashMap<>();
 		map.put(RESPONSE, ERROR);
 		try {
+			org.setCreatedById(getLoggedInUser().getId());
+			org.setCreated(new Date());
 			Organization organization = organizationService.save(org);
 			String UUID = userOnBoardingService.buildInvitationAndSave(organization.getId());
 			emailComponent.sendEmail(organization.getEmail(), UUID);
