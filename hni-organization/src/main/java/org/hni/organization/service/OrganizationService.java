@@ -5,4 +5,7 @@ import org.hni.organization.om.Organization;
 
 public interface OrganizationService extends BaseService<Organization> {
 
+	boolean isAlreadyExists(Organization org);
+
+	
 }
