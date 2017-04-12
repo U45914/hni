@@ -206,12 +206,55 @@ public class HNIConverter {
 				foodAvailability.setCreated(new Date());
 				foodAvailability.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
 				foodAvailability.setId(foodAvail.get("id").asLong());
-				foodAvailability.setWeekDay(foodAvail.get("weekDay").asLong());
+				foodAvailability.setFoodServicesId(foodAvail.get("foodServiceId").asLong());
+				foodAvailability.setWeekDay(getFoodServiceWeekDay(objectNode, foodAvail));
+				foodAvail.get(0);
 				
 				foodServiceAvailability.add(foodAvailability);
 			}
 		}
 		return foodServiceAvailability;
+	}
+	
+	private String getFoodServiceWeekDay(ObjectNode objectNode, JsonNode foodAvail){
+		final Long BREAKFAST_ID = 1L;
+		final Long LUNCH_ID = 2L;
+		final Long DINNER_ID = 3L;
+		StringBuilder weekDays = new StringBuilder();
+		JsonNode jsonNode = objectNode.get("foodServices");
+		if (jsonNode.isArray()) {
+			while (jsonNode.iterator().hasNext()) {
+				JsonNode foodServiz = jsonNode.iterator().next();
+				Long serviceType = foodServiz.get("serviceType").asLong();
+				if(serviceType.equals(BREAKFAST_ID)){
+					for(int index = 0 ; index < 7; index++){
+						JsonNode weekDay = foodAvail.get(index);
+						if(weekDay.has("Breakast")){
+							weekDays.append(weekDay+",");
+						}
+					}
+				}
+				if(serviceType.equals(LUNCH_ID)){
+					for(int index = 0 ; index < 7; index++){
+						JsonNode weekDay = foodAvail.get(index);
+						if(weekDay.has("Lunch")){
+							weekDays.append(weekDay+",");
+						}
+					}
+				}
+				if(serviceType.equals(DINNER_ID)){
+					for(int index = 0 ; index < 7; index++){
+						JsonNode weekDay = foodAvail.get(index);
+						if(weekDay.has("Dinner")){
+							weekDays.append(weekDay+",");
+						}
+					}
+				}
+				
+				
+			}
+		}		
+		return weekDays.toString();
 	}
 	
 	public List<FoodBank> getFoodBankFromJson(ObjectNode objectNode) {
