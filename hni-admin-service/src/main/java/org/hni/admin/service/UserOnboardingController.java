@@ -84,7 +84,7 @@ public class UserOnboardingController extends AbstractBaseController {
 	}
 
 	@GET
-	@Path("/ngo/activate/{invitationCode}")
+	@Path("/activate/ngo/{invitationCode}")
 	@Produces({ MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "", notes = "", response = Map.class, responseContainer = "")
 	public Map<String, String> activateNGO(@PathParam("invitationCode") String invitationCode) {
