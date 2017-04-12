@@ -521,8 +521,8 @@ CREATE TABLE IF NOT EXISTS `user_profile_tmp` (
 -- -----------------------------------------------------
 -- Table `invitation`
 -- -----------------------------------------------------
-CREATE TABLE `invitation` (
-`id` INT(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS  `invitation` (
+`id` INT NOT NULL AUTO_INCREMENT,
 `org_id` VARCHAR(50) NOT NULL,
 `invite_code` VARCHAR(50) NOT NULL,
 `token_expire_date` DATE NOT NULL,
