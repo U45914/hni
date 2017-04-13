@@ -63,7 +63,7 @@ public class HNIConverter {
 		}
 		return brandPartners;
 	}
-
+ 
 	public Ngo getNGOFromJson(ObjectNode objectNode) {
 		JsonNode jsonNode = objectNode.get("overview");
 		JsonNode serviceNode = objectNode.get("service");
