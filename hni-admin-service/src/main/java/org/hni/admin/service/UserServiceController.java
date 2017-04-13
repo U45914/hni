@@ -35,7 +35,9 @@ import org.hni.organization.service.OrganizationUserService;
 import org.hni.security.dao.RoleDAO;
 import org.hni.user.om.Ngo;
 import org.hni.user.om.User;
+import org.hni.user.om.Volunteer;
 import org.hni.user.service.UserService;
+import org.hni.user.service.VolunteerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -52,6 +54,11 @@ public class UserServiceController extends AbstractBaseController {
 	@Inject
 	@Named("defaultUserService")
 	private UserService userService;
+	
+	@Inject
+	@Named("defaultVolunteerService")
+	private VolunteerService volunteerService;
+	
     @Context private HttpServletRequest servletRequest;
     
 	@GET
@@ -234,7 +241,17 @@ public class UserServiceController extends AbstractBaseController {
 	}
 
 	
-	
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces({MediaType.APPLICATION_JSON})
+	@Path("/volounteerSignup")
+	@ApiOperation(value = "register a volunteer"
+	, notes = "An update occurs if the ID field is specified"
+	, response = Volunteer.class
+	, responseContainer = "")
+	public Volunteer registerVolunteer(Volunteer volunteer) {
+		return volunteerService.registerVolunteer(volunteer); 
+	}
 	
 
 }
