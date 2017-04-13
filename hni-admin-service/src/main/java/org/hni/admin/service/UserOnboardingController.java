@@ -1,5 +1,6 @@
 package org.hni.admin.service;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -21,10 +22,17 @@ import org.hni.organization.service.OrganizationService;
 import org.hni.user.om.Invitation;
 import org.hni.user.om.UserPartialData;
 import org.hni.user.service.UserOnboardingService;
+import org.hni.user.service.UserPartialCreateService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.hni.user.service.UserPartialCreateService;
 import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import net.minidev.json.JSONObject;
@@ -98,6 +106,7 @@ public class UserOnboardingController extends AbstractBaseController {
 		return map;
 	}
 
+
 	@POST
 	@Path("/{userType}/save")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -129,4 +138,37 @@ public class UserOnboardingController extends AbstractBaseController {
 		return response;
 	}
 	
+
+	
+	@POST
+	@Path("/ngo/ngoSave")
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = ""
+	, notes = ""
+	, response = Map.class
+	, responseContainer = "")
+	public Map<String, String> ngoSave(String onboardDataJson) throws JsonParseException, JsonMappingException, IOException{
+		ObjectMapper mapper = new ObjectMapper();
+		
+		JsonNode objectNode = mapper.readTree(onboardDataJson);
+		Map<String, String> map = new HashMap<>();
+		map.put(RESPONSE, ERROR);
+		try {
+			 
+			Map<String, String> errors = userOnBoardingService.ngoSave((ObjectNode) objectNode);
+			 if(errors!=null && errors.isEmpty()){
+			map.put(RESPONSE, SUCCESS);
+			 }
+			 else{
+				 if(map!=null)
+					 map.putAll(errors);
+			 }
+			return map;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return map;
+	}
+
 }

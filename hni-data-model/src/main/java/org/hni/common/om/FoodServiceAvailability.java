@@ -1,5 +1,6 @@
 package org.hni.common.om;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -11,7 +12,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "food_services_availability")
-public class FoodServiceAvailability {
+public class FoodServiceAvailability implements Persistable, Serializable {
 	private static final long serialVersionUID = 7553475738921092329L;
 
 	@Id
