@@ -13,9 +13,9 @@ import org.hni.user.om.BoardMember;
 import org.hni.user.om.BrandPartner;
 import org.hni.user.om.LocalPartner;
 
-public class HNIValidater {
+public class HNIValidator {
 
-	public Map validateBoardMembers(List<BoardMember> boardMembers, Map errors) {
+	public static Map validateBoardMembers(List<BoardMember> boardMembers, Map errors) {
 		boardMembers.forEach(b -> {
 			if (b.getId() == null) {
 				errors.put("boardMember -> id", "cannot be null");
@@ -35,7 +35,7 @@ public class HNIValidater {
 
 	}
 
-	public Map validateBrandPartners(List<BrandPartner> brandPartners,
+	public static Map validateBrandPartners(List<BrandPartner> brandPartners,
 			Map errors) {
 
 		brandPartners.forEach(b -> {
@@ -53,7 +53,7 @@ public class HNIValidater {
 		return errors;
 	}
 
-	public Map validateLocalPartners(List<LocalPartner> localPartners,
+	public static Map validateLocalPartners(List<LocalPartner> localPartners,
 			Map errors) {
 
 		localPartners.forEach(b -> {
@@ -71,7 +71,7 @@ public class HNIValidater {
 		return errors;
 	}
 
-	public Map validateNgoFoundingSources(
+	public static Map validateNgoFoundingSources(
 			List<NgoFundingSource> NgoFundingSources, Map errors) {
 
 		NgoFundingSources.forEach(b -> {
@@ -89,7 +89,7 @@ public class HNIValidater {
 		return errors;
 	}
 
-	public Map validateMealFoundingSources(
+	public static Map validateMealFundingSources(
 			List<MealFundingSource> MealFundingSources, Map errors) {
 
 		MealFundingSources.forEach(b -> {
@@ -107,7 +107,7 @@ public class HNIValidater {
 		return errors;
 	}
 
-	public Map validateFoodServices(List<FoodService> FoodServices, Map errors) {
+	public static Map validateFoodServices(List<FoodService> FoodServices, Map errors) {
 
 		FoodServices.forEach(b -> {
 			if (b.getId() == null) {
@@ -127,7 +127,7 @@ public class HNIValidater {
 		return errors;
 	}
 
-	public Map validateFoodServicesAvailability(
+	public static Map validateFoodServicesAvailability(
 			List<FoodServiceAvailability> FoodServiceAvailability, Map errors) {
 
 		FoodServiceAvailability.forEach(b -> {
@@ -145,7 +145,7 @@ public class HNIValidater {
 		return errors;
 	}
 
-	public Map validateFoodBank(List<FoodBank> FoodBank, Map errors) {
+	public static Map validateFoodBank(List<FoodBank> FoodBank, Map errors) {
 
 		FoodBank.forEach(b -> {
 			if (b.getId() == null) {
@@ -159,7 +159,7 @@ public class HNIValidater {
 		return errors;
 	}
 
-	public Map validateMealDonationSources(
+	public static Map validateMealDonationSources(
 			List<MealDonationSource> MealDonationSources, Map errors) {
 
 		MealDonationSources.forEach(b -> {
