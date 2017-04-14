@@ -1,9 +1,9 @@
 package org.hni.admin.service;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -14,12 +14,15 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.hni.common.Constants;
 import org.hni.common.email.service.EmailComponent;
 import org.hni.organization.om.Organization;
 import org.hni.organization.service.OrganizationService;
+import org.hni.user.dao.UserDAO;
 import org.hni.user.om.Invitation;
+import org.hni.user.om.User;
 import org.hni.user.om.UserPartialData;
 import org.hni.user.service.UserOnboardingService;
 import org.hni.user.service.UserPartialCreateService;
@@ -41,16 +44,11 @@ import net.minidev.json.JSONObject;
 @Component
 @Path("/onboard")
 public class UserOnboardingController extends AbstractBaseController {
-	
-	private static final Logger logger = LoggerFactory.getLogger(UserOnboardingController.class);
-	
-	private static final String ERROR_MSG = "errorMsg";
 
-	private static final String SUCCESS = "success";
 
-	private static final String ERROR = "error";
+	private static final String ORG_ID = "orgId";
 
-	private static final String RESPONSE = "response";
+	private static final Logger _LOGGER = LoggerFactory.getLogger(UserOnboardingController.class);
 
 	@Inject
 	private UserOnboardingService userOnBoardingService;
@@ -59,6 +57,9 @@ public class UserOnboardingController extends AbstractBaseController {
 	private OrganizationService organizationService;
 
 	@Inject
+	private UserDAO userDao;
+	
+	@Inject
 	private EmailComponent emailComponent;
 
 	@Inject
@@ -66,7 +67,7 @@ public class UserOnboardingController extends AbstractBaseController {
 	
 	@POST
 	@Path("/ngo/invite")
-	@Produces({ MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_JSON }) 
 	@Consumes({ MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "", notes = "", response = Map.class, responseContainer = "")
 	public Map<String, String> sendNGOActivationLink(Organization org) {
@@ -75,7 +76,7 @@ public class UserOnboardingController extends AbstractBaseController {
 		try {
 			org.setCreatedById(getLoggedInUser().getId());
 			org.setCreated(new Date());
-			boolean ors = false;//organizationService.isAlreadyExists(org);
+			boolean ors = organizationService.isAlreadyExists(org);
 			if (!ors) {
 				Organization organization = organizationService.save(org);
 				String UUID = userOnBoardingService.buildInvitationAndSave(organization.getId());
@@ -86,7 +87,7 @@ public class UserOnboardingController extends AbstractBaseController {
 				map.put(ERROR_MSG, "An organization with same email address already exist");
 			}
 		} catch (Exception e) {
-			logger.error("Serializing User object:"+e.getMessage(), e);
+			_LOGGER.error("Serializing User object:"+e.getMessage(), e);
 		}
 		return map;
 	}
@@ -98,9 +99,10 @@ public class UserOnboardingController extends AbstractBaseController {
 	public Map<String, String> activateNGO(@PathParam("invitationCode") String invitationCode) {
 		Map<String, String> map = new HashMap<>();
 		map.put(RESPONSE, ERROR);
-		Collection<Invitation> invitations = userOnBoardingService.validateInvitationCode(invitationCode);
+		List<Invitation> invitations = (List<Invitation>) userOnBoardingService.validateInvitationCode(invitationCode);
 		if (!invitations.isEmpty()) {
 			map.put(RESPONSE, SUCCESS);
+			map.put(ORG_ID, invitations.get(0).getOrganizationId());
 			return map;
 		}
 		return map;
@@ -119,12 +121,12 @@ public class UserOnboardingController extends AbstractBaseController {
 			UserPartialData userPartialDataUpdate = userPartialCreateService.getUserPartialDataByUserId(getLoggedInUser().getId().intValue());
 			if(userPartialDataUpdate==null){
 				UserPartialData userPartialData = new UserPartialData();
-				//userPartialData.setType(Constants.USER_TYPES.get(userType).intValue());
+				userPartialData.setType(Constants.USER_TYPES.get(userType).intValue());
 				userPartialData.setUserId(getLoggedInUser().getId().intValue());
 				userPartialData.setData(json.toString());
 				userPartialData.setCreated(new Date());
 				userPartialData.setLastUpdated(new Date());
-				//userPartialData.setStatus(Constants.N);
+				userPartialData.setStatus(Constants.N);
 				userPartialCreateService.save(userPartialData);
 				response.put(RESPONSE, SUCCESS);
 			}
@@ -169,6 +171,29 @@ public class UserOnboardingController extends AbstractBaseController {
 			e.printStackTrace();
 		}
 		return map;
+	}
+	
+	@POST
+	@Path("/validate/username")
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = ""
+	, notes = ""
+	, response = Map.class
+	, responseContainer = "")
+	public Response isUserNameAvailable(Map<String, String> userNameInfo) {
+		Map<String, String> response = new HashMap<>();
+		response.put("available", "false");
+		try {
+			User userInfo = userDao.byEmailAddress(userNameInfo.get("username"));
+			if (userInfo == null) {
+				response.put("available", "true");
+			}
+		} catch (Exception e) {
+			_LOGGER.error("Exception while processing request @ isUserNameValid", e);
+			response.put(ERROR, SOMETHING_WENT_WRONG_PLEASE_TRY_AGAIN);
+		}
+		return Response.ok(response).build();
 	}
 
 }
