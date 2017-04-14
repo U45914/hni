@@ -67,7 +67,7 @@ public class UserOnboardingController extends AbstractBaseController {
 	
 	@POST
 	@Path("/ngo/invite")
-	@Produces({ MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_JSON }) 
 	@Consumes({ MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "", notes = "", response = Map.class, responseContainer = "")
 	public Map<String, String> sendNGOActivationLink(Organization org) {

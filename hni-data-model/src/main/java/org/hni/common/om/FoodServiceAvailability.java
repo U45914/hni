@@ -24,7 +24,7 @@ public class FoodServiceAvailability implements Persistable, Serializable {
 	private Long foodServicesId;
 	
 	@Column(name = "week_day")
-	private Long weekDay;
+	private String weekDay;
 	
 	@Column(name = "created")
 	private Date created;
@@ -48,11 +48,11 @@ public class FoodServiceAvailability implements Persistable, Serializable {
 		this.foodServicesId = foodServicesId;
 	}
 
-	public Long getWeekDay() {
+	public String getWeekDay() {
 		return weekDay;
 	}
 
-	public void setWeekDay(Long weekDay) {
+	public void setWeekDay(String weekDay) {
 		this.weekDay = weekDay;
 	}
 

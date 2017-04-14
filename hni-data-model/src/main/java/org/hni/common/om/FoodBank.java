@@ -25,7 +25,7 @@ public class FoodBank  implements Persistable, Serializable{
 	private Long ngoId;
 	
 	@Column(name = "food_bank_name")
-	private Long foodBankName;
+	private String foodBankName;
 	
 	@Column(name = "created")
 	private Date created;
@@ -49,11 +49,11 @@ public class FoodBank  implements Persistable, Serializable{
 		this.ngoId = ngoId;
 	}
 
-	public Long getFoodBankName() {
+	public String getFoodBankName() {
 		return foodBankName;
 	}
 
-	public void setFoodBankName(Long foodBankName) {
+	public void setFoodBankName(String foodBankName) {
 		this.foodBankName = foodBankName;
 	}
 
