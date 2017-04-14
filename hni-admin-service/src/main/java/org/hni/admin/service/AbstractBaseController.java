@@ -21,6 +21,12 @@ import com.monitorjbl.json.JsonViewSerializer;
 
 public class AbstractBaseController {
 
+	protected static final String SOMETHING_WENT_WRONG_PLEASE_TRY_AGAIN = "Something went wrong, please try again";
+	protected static final String ERROR_MSG = "errorMsg";
+	protected static final String SUCCESS = "success";
+	protected static final String ERROR = "error";
+	protected static final String RESPONSE = "response";
+	
 	@Inject
 	protected OrganizationUserService organizationUserService;
 

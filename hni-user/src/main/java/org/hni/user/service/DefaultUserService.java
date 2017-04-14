@@ -40,10 +40,4 @@ public class DefaultUserService extends AbstractService<User> implements UserSer
 		return userDao.byEmailAddress(emailAddress);
 	}
 
-
-    @Override
-	public User customerSignup(User user) {
-    	
-    	return userDao.save(user);
-	}
 }

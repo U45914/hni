@@ -124,4 +124,10 @@ public class DefaultOrganizationUserService extends DefaultUserService implement
 		
 		return hniServicesList;
 	}
+	
+	@Override
+	public User register(User user) {
+		
+		return super.register(user);
+	}
 }
