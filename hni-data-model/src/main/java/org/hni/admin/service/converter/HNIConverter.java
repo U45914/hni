@@ -113,14 +113,14 @@ public class HNIConverter {
 				boardMember.setCreated(new Date());
 				boardMember.setCreatedBy((Long) ThreadContext.get(USERID));
 				boardMember.setId(board.get("id").asLong());
-				
+				boardMember.setNgo_id(Ngoid);
 				boardMembers.add(boardMember);
 			}
 		}
 		return boardMembers;
 	}
 	
-	public static List<LocalPartner> getLocalPartnersFromJson(ObjectNode objectNode, Long long1) {
+	public static List<LocalPartner> getLocalPartnersFromJson(ObjectNode objectNode, Long ngoId) {
 		List<LocalPartner> localPartners = new ArrayList<>();
 		JsonNode jsonNode = objectNode.get("localPartners");
 		if (jsonNode != null && jsonNode.isArray()) {
@@ -132,14 +132,14 @@ public class HNIConverter {
 				localPartner.setCreatedBy((Long) ThreadContext.get(USERID));
 				localPartner.setId(local.get("id").asLong());
 				localPartner.setPhone(local.get("phone").textValue());
-				
+				localPartner.setNgo_id(ngoId);
 				localPartners.add(localPartner);
 			}
 		}
 		return localPartners;
 	}
 	
-	public static List<NgoFundingSource> getNgoFundingSourcesFromJson(ObjectNode objectNode, Long long1) {
+	public static List<NgoFundingSource> getNgoFundingSourcesFromJson(ObjectNode objectNode, Long ngoId) {
 		List<NgoFundingSource> ngoFundingSources = new ArrayList<>();
 		JsonNode jsonNode = objectNode.get("ngoFundingSources");
 		if (jsonNode!=null && jsonNode.isArray()) {
@@ -151,14 +151,14 @@ public class HNIConverter {
 				ngoFundingSource.setId(fundSource.get("id").asLong());
 				ngoFundingSource.setAmount(fundSource.get("amount").asDouble());
 				ngoFundingSource.setSource(fundSource.get("source").textValue());
-				
+				ngoFundingSource.setNgoId(ngoId);
 				ngoFundingSources.add(ngoFundingSource);
 			}
 		}
 		return ngoFundingSources;
 	}
 	
-	public static List<MealFundingSource> getMealFundingSourcesFromJson(ObjectNode objectNode, Long long1) {
+	public static List<MealFundingSource> getMealFundingSourcesFromJson(ObjectNode objectNode, Long ngoId) {
 		List<MealFundingSource> mealFundingSources = new ArrayList<>();
 		JsonNode jsonNode = objectNode.get("mealFundingSources");
 		if (jsonNode!=null && jsonNode.isArray()) {
@@ -170,14 +170,14 @@ public class HNIConverter {
 				mealFundingSource.setId(mealSource.get("id").asLong());
 				mealFundingSource.setAmount(mealSource.get("amount").asDouble());
 				mealFundingSource.setSource(mealSource.get("source").textValue());
-				
+				mealFundingSource.setNgoId(ngoId);
 				mealFundingSources.add(mealFundingSource);
 			}
 		}
 		return mealFundingSources;
 	}
 	
-	public static List<FoodService> getFoodServicesFromJson(ObjectNode objectNode, Long long1) {
+	public static List<FoodService> getFoodServicesFromJson(ObjectNode objectNode, Long ngoId) {
 		List<FoodService> foodServices = new ArrayList<>();
 		JsonNode jsonNode = objectNode.get("foodServices");
 		if (jsonNode!=null && jsonNode.isArray()) {
@@ -190,7 +190,7 @@ public class HNIConverter {
 				foodService.setOther(foodServiz.get("other").textValue());
 				foodService.setTotalCount(foodServiz.get("totalCount").asLong());
 				foodService.setServiceType(foodServiz.get("serviceType").asLong());
-				
+				foodService.setNgoId(ngoId);
 				foodServices.add(foodService);
 			}
 		}
@@ -208,14 +208,14 @@ public class HNIConverter {
 				foodAvailability.setCreatedBy((Long) ThreadContext.get(USERID));
 				foodAvailability.setId(foodAvail.get("id").asLong());
 				foodAvailability.setWeekDay(foodAvail.get("weekDay").asLong());
-				
+			
 				foodServiceAvailability.add(foodAvailability);
 			}
 		}
 		return foodServiceAvailability;
 	}
 	
-	public static List<FoodBank> getFoodBankFromJson(ObjectNode objectNode, Long long1) {
+	public static List<FoodBank> getFoodBankFromJson(ObjectNode objectNode, Long ngoId) {
 		List<FoodBank> foodBanks = new ArrayList<>();
 		JsonNode jsonNode = objectNode.get("foodBanks");
 		if (jsonNode!=null && jsonNode.isArray()) {
@@ -226,14 +226,14 @@ public class HNIConverter {
 				foodBank.setCreatedBy((Long) ThreadContext.get(USERID));
 				foodBank.setId(foodbanq.get("id").asLong());
 				foodBank.setFoodBankName(foodbanq.get("foodBankName").asLong());
-				
+				foodBank.setNgoId(ngoId);
 				foodBanks.add(foodBank);
 			}
 		}
 		return foodBanks;
 	}
 	
-	public static List<MealDonationSource> getMealDonationSourceFromJson(ObjectNode objectNode, Long long1) {
+	public static List<MealDonationSource> getMealDonationSourceFromJson(ObjectNode objectNode, Long ngoId) {
 		List<MealDonationSource> MealDonationSources = new ArrayList<>();
 		JsonNode jsonNode = objectNode.get("mealDonationSources");
 		if (jsonNode!=null && jsonNode.isArray()) {
@@ -245,7 +245,7 @@ public class HNIConverter {
 				mealDonationSource.setId(mealSource.get("id").asLong());
 				mealDonationSource.setSource(mealSource.get("source").textValue());
 				mealDonationSource.setFrequency(mealSource.get("frequency").textValue());
-				
+				mealDonationSource.setNgoId(ngoId);
 				MealDonationSources.add(mealDonationSource);
 			}
 		}
