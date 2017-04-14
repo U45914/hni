@@ -30,7 +30,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class HNIConverter {
 	private static final Logger logger = LoggerFactory.getLogger(HNIConverter.class);
-	public static final String USERID = "userId";
+	public static final String USERID = "userId"; 
 	public static Collection<HniServicesDto> convertToServiceDtos(
 			Collection<HniServices> hniServices) {
 
