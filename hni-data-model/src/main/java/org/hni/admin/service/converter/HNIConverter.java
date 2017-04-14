@@ -3,8 +3,6 @@ package org.hni.admin.service.converter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -31,9 +29,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class HNIConverter {
-	private static final Logger logger = LoggerFactory
-			.getLogger(HNIConverter.class);
-
+	private static final Logger logger = LoggerFactory.getLogger(HNIConverter.class);
+	public static final String USERID = "userId";
 	public static Collection<HniServicesDto> convertToServiceDtos(
 			Collection<HniServices> hniServices) {
 
