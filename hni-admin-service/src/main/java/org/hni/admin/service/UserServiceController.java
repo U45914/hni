@@ -4,6 +4,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -11,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -236,8 +239,18 @@ public class UserServiceController extends AbstractBaseController {
 	, notes = "An update occurs if the ID field is specified"
 	, response = User.class
 	, responseContainer = "")
-	public User registerUser(User user) {
-		return orgUserService.register(setPassword(user)); 
+	//TODO: need a identifier to determine role
+	public Response registerUser(User user, @HeaderParam("user-type") Integer type) {
+		Map<String, String> userResponse = new HashMap<>();
+		
+		User u = orgUserService.register(setPassword(user), type);
+		if (u != null) {
+			userResponse.put(SUCCESS, "Account has been created successfully");
+		} else {
+			userResponse.put(SUCCESS, SOMETHING_WENT_WRONG_PLEASE_TRY_AGAIN);
+		}
+		
+		return Response.ok(userResponse).build();
 	}
 
 	

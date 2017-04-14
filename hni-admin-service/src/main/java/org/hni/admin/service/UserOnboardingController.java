@@ -140,8 +140,6 @@ public class UserOnboardingController extends AbstractBaseController {
 		return response;
 	}
 	
-
-	
 	@POST
 	@Path("/ngo/ngoSave")
 	@Produces({MediaType.APPLICATION_JSON})

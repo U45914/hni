@@ -60,8 +60,9 @@ public class DefaultUserOrganizationRoleDAO extends AbstractDAO<UserOrganization
 	
 	public Collection<HniServices> getHniServicesByRole(Long orgId, Long roleId) {
 		try {
-			Query q = em.createQuery("SELECT x FROM HniServices x WHERE x.orgId = :orgId AND x.roleId = :roleId")
-				.setParameter("orgId", orgId)
+			//"SELECT x FROM HniServices x WHERE x.orgId = :orgId AND x.roleId = :roleId"
+			Query q = em.createQuery("SELECT x FROM HniServices x WHERE x.roleId = :roleId")
+				//.setParameter("orgId", orgId)
 				.setParameter("roleId", roleId);
 			return q.getResultList();
 		} catch(NoResultException e) {

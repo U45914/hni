@@ -1,14 +1,9 @@
 package org.hni.user.service;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
-import org.hni.common.dao.BaseDAO;
 import org.hni.common.service.AbstractService;
-import org.hni.user.dao.UserDAO;
 import org.hni.user.dao.VolunteerDao;
-import org.hni.user.om.User;
 import org.hni.user.om.Volunteer;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;

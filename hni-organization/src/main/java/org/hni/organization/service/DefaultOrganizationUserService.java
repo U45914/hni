@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 
 import org.hni.common.om.Role;
 import org.hni.organization.dao.UserOrganizationRoleDAO;
@@ -126,8 +127,15 @@ public class DefaultOrganizationUserService extends DefaultUserService implement
 	}
 	
 	@Override
-	public User register(User user) {
-		
-		return super.register(user);
+	@Transactional(rollbackOn = Exception.class)
+	public User register(User user, Integer userType) {
+		Organization organization = orgService.get(user.getOrganizationId());
+		if (organization != null) {
+			save(user);
+			save(user, organization, Role.get(userType.longValue()));
+			return user;
+		} else {
+			return null;
+		}
 	}
 }
