@@ -240,10 +240,10 @@ public class UserServiceController extends AbstractBaseController {
 	, response = User.class
 	, responseContainer = "")
 	//TODO: need a identifier to determine role
-	public Response registerUser(User user, @HeaderParam("user-type") Integer type) {
+	public Response registerUser(User user, @HeaderParam("user-type") String type) {
 		Map<String, String> userResponse = new HashMap<>();
 		
-		User u = orgUserService.register(setPassword(user), type);
+		User u = orgUserService.register(setPassword(user), convertUserTypeToRole(type));
 		if (u != null) {
 			userResponse.put(SUCCESS, "Account has been created successfully");
 		} else {
@@ -253,7 +253,7 @@ public class UserServiceController extends AbstractBaseController {
 		return Response.ok(userResponse).build();
 	}
 
-	
+
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces({MediaType.APPLICATION_JSON})

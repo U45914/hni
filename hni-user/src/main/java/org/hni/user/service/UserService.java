@@ -39,7 +39,7 @@ public interface UserService extends BaseService<User> {
 
 	User byEmailAddress(String emailAddress);
 
-	default User register(User user, Integer userType) {
+	default User register(User user, Long userType) {
 		return user;
 	}
 

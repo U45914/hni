@@ -91,6 +91,25 @@ public class UserOnboardingController extends AbstractBaseController {
 		}
 		return map;
 	}
+	
+	@POST
+	@Path("/ngo/user/invite")
+	@Produces({ MediaType.APPLICATION_JSON }) 
+	@Consumes({ MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "", notes = "", response = Map.class, responseContainer = "")
+	public Map<String, String> sendNGOActivationLinkToUsser(Map<String, String> userInfo) {
+		Map<String, String> map = new HashMap<>();
+		map.put(RESPONSE, ERROR);
+		try {
+			String UUID = userOnBoardingService.buildInvitationAndSave(Long.valueOf(userInfo.get("orgId")));
+			emailComponent.sendEmail(userInfo.get("email"), UUID);
+			map.put(RESPONSE, SUCCESS);
+			return map;	
+		} catch (Exception e) {
+			_LOGGER.error("Serializing User object:"+e.getMessage(), e);
+		}
+		return map;
+	}
 
 	@GET
 	@Path("/activate/ngo/{invitationCode}")

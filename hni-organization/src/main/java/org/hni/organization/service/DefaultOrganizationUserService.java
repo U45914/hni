@@ -10,10 +10,11 @@ import javax.transaction.Transactional;
 
 import org.hni.common.om.Role;
 import org.hni.organization.dao.UserOrganizationRoleDAO;
+import org.hni.organization.om.HniServices;
 import org.hni.organization.om.Organization;
 import org.hni.organization.om.UserOrganizationRole;
 import org.hni.organization.om.UserOrganizationRolePK;
-import org.hni.organization.om.HniServices;
+import org.hni.type.HNIRoles;
 import org.hni.user.dao.UserDAO;
 import org.hni.user.om.User;
 import org.hni.user.service.DefaultUserService;
@@ -26,7 +27,6 @@ public class DefaultOrganizationUserService extends DefaultUserService implement
 
 	private OrganizationService orgService;
 	private UserOrganizationRoleDAO uorDao;
-	private OrganizationUserService orgUserService;
 
 	@Inject
 	public DefaultOrganizationUserService(UserDAO userDao, OrganizationService orgService, UserOrganizationRoleDAO uorDao) {
@@ -128,14 +128,26 @@ public class DefaultOrganizationUserService extends DefaultUserService implement
 	
 	@Override
 	@Transactional(rollbackOn = Exception.class)
-	public User register(User user, Integer userType) {
+	public User register(User user, Long userType) {
 		Organization organization = orgService.get(user.getOrganizationId());
 		if (organization != null) {
 			save(user);
-			save(user, organization, Role.get(userType.longValue()));
+			save(user, organization, createUserRole(organization, userType));
 			return user;
 		} else {
 			return null;
 		}
+	}
+	
+	private Role createUserRole(Organization org, Long userType) {
+		if (userType.equals(HNIRoles.NGO.getRole())) {
+			Collection<UserOrganizationRole> ngoList = uorDao.getByRole(org, Role.get(HNIRoles.NGO_ADMIN.getRole()));
+			if (ngoList.isEmpty()) {
+				return Role.get(HNIRoles.NGO_ADMIN.getRole());
+			} else {
+				return Role.get(HNIRoles.NGO.getRole());
+			}
+		}
+		return Role.get(HNIRoles.USER.getRole());
 	}
 }

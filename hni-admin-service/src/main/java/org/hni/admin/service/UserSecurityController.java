@@ -81,6 +81,12 @@ public class UserSecurityController extends AbstractBaseController {
 			String permissionObject = mapPermissionsToString(permissions);
 			Map<String, String> authData = new HashMap<>(1);
 			authData.put("token", JWTTokenFactory.encode(tokenKey, tokenIssuer, "", TTL_MILLIS, user.getId(), permissionObject));
+			if (!permissions.isEmpty()) {
+				OrganizationUserRolePermission orgUserRole = permissions.iterator().next();
+				if (!orgUserRole.getRoleId().equals(1L)) {
+					authData.put("orgId", String.valueOf(permissions.iterator().next().getOrganizationId()));
+				}
+			}
 			return getJsonString(authData);
 		} catch (IncorrectCredentialsException ice) {
 			logger.error("couldn't auth user:", ice.getMessage());

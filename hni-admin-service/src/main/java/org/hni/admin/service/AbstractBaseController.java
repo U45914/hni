@@ -10,6 +10,7 @@ import org.apache.shiro.util.ThreadContext;
 import org.hni.common.Constants;
 import org.hni.organization.service.OrganizationUserService;
 import org.hni.security.utils.HNISecurityUtils;
+import org.hni.type.HNIRoles;
 import org.hni.user.om.User;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -69,6 +70,13 @@ public class AbstractBaseController {
 			user.setHashedSecret(HNISecurityUtils.getHash(user.getPassword(), user.getSalt()));
 		}
 		return user;
+	}
+	
+	protected Long convertUserTypeToRole(String type) {
+		if (type.equalsIgnoreCase("ngo")) {
+			return HNIRoles.NGO.getRole();
+		}
+		return HNIRoles.USER.getRole();
 	}
 
 }

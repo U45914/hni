@@ -9,16 +9,21 @@ package org.hni.type;
  */
 public enum HNIRoles {
 
-	SUPER_ADMIN(1),
-	NGO_ADMIN(2),
-	NGO(3),
-	CUSTOMER(4),
-	VOLUNTEERS(5),
-	ORGANIZATION(6);
+	SUPER_ADMIN(1L),
+	ADMINISTRATOR(2L),
+	VOLUNTEERS(3L),
+	CLIENT(4L),
+	USER(5L),
+	NGO_ADMIN(6L),
+	NGO(7L),
+	ORGANIZATION(8L);
 	
-	int role;
+	Long role;
 	
-	HNIRoles(int role) {
+	HNIRoles(Long role) {
 		this.role = role;
+	}
+	public Long getRole() {
+		return role;
 	}
 }
