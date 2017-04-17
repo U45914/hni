@@ -36,4 +36,9 @@ public class Constants {
 		USER_TYPES.put("volunteer", 3);
 		USER_TYPES.put("restaurant", 4);
 	}
+	
+	//hni converter
+	public static final Long BREAKFAST_ID = 1L;
+	public static final Long LUNCH_ID = 2L;
+	public static final Long DINNER_ID = 3L;
 }
