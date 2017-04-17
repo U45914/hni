@@ -3,10 +3,8 @@ package org.hni.admin.service.converter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.shiro.util.ThreadContext;
 import org.hni.admin.service.dto.HniServicesDto;
@@ -26,11 +24,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class HNIConverter {
 	private static final Logger logger = LoggerFactory.getLogger(HNIConverter.class);
-	public static final String USERID = "userId"; 
+
 	public static Collection<HniServicesDto> convertToServiceDtos(
 			Collection<HniServices> hniServices) {
 
@@ -47,13 +46,15 @@ public class HNIConverter {
 		return hniServicesDtoList;
 	}
 
-	public static List<BrandPartner> getBrandPartnersFromJson(ObjectNode objectNode, Long long1) {
+	public static List<BrandPartner> getBrandPartnersFromJson(ObjectNode objectNode, Long ngo_id) {
 		List<BrandPartner> brandPartners = new ArrayList<>();
 		JsonNode jsonNode = objectNode.get("stakeHolder").get("brandPartners");
 		if (jsonNode.isArray()) {
-			while (jsonNode.iterator().hasNext()) {
+			Iterator<JsonNode> iterateJson = jsonNode.iterator();
+			while (iterateJson.hasNext()) {
 				JsonNode brand = jsonNode.iterator().next();
 				BrandPartner brandPartner = new BrandPartner();
+				brandPartner.setNgo_id(ngo_id);
 				brandPartner.setCompany(brand.get("company").textValue());
 				brandPartner.setCreated(new Date());
 				brandPartner.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
@@ -61,6 +62,7 @@ public class HNIConverter {
 				brandPartner.setPhone(brand.get("phoneNumber").textValue());
 
 				brandPartners.add(brandPartner);
+				iterateJson.next();
 			}
 		}
 		return brandPartners;
@@ -95,7 +97,7 @@ public class HNIConverter {
 		ngo.setClientsUnsheltered(clientNode.get("unshelteredClientPercentage").asLong());
 		ngo.setClientsEmployed(clientNode.get("employeedClientPercentage").asLong());
 
-		// Data type mismatch with database
+		// Cannot retrieve data from json
 		/*
 		 * ngo.setEndorsementId(jsonNode.get("endorsementId").asLong());
 		 * ngo.setFoodStampAssist(jsonNode.get("foodStampAssist").asBoolean());
@@ -111,9 +113,11 @@ public class HNIConverter {
 		List<BoardMember> boardMembers = new ArrayList<>();
 		JsonNode jsonNode = objectNode.get("stakeHolder").get("boardMembers");
 		if (jsonNode.isArray()) {
-			while (jsonNode.iterator().hasNext()) {
-				JsonNode board = jsonNode.iterator().next();
+			Iterator<JsonNode> iterateJson = jsonNode.iterator();
+			while (iterateJson.hasNext()) {
+				JsonNode board = iterateJson.next();
 				BoardMember boardMember = new BoardMember();
+				boardMember.setNgo_id(ngoId);
 				boardMember.setFirstName(board.get("name").textValue());
 				boardMember.setCompany(board.get("company").textValue());
 				boardMember.setCreated(new Date());
@@ -129,9 +133,11 @@ public class HNIConverter {
 		List<LocalPartner> localPartners = new ArrayList<>();
 		JsonNode jsonNode = objectNode.get("stakeHolder").get("localPartners");
 		if (jsonNode.isArray()) {
-			while (jsonNode.iterator().hasNext()) {
-				JsonNode local = jsonNode.iterator().next();
+			Iterator<JsonNode> iterateJson = jsonNode.iterator();
+			while (iterateJson.hasNext()) {
+				JsonNode local = iterateJson.next();
 				LocalPartner localPartner = new LocalPartner();
+				localPartner.setNgo_id(ngoId);
 				localPartner.setCompany(local.get("company").textValue());
 				localPartner.setCreated(new Date());
 				localPartner.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
@@ -148,9 +154,11 @@ public class HNIConverter {
 		List<NgoFundingSource> ngoFundingSources = new ArrayList<>();
 		JsonNode jsonNode = objectNode.get("funding").get("fundingSource");
 		if (jsonNode.isArray()) {
-			while (jsonNode.iterator().hasNext()) {
-				JsonNode fundSource = jsonNode.iterator().next();
+			Iterator<JsonNode> iterateJson = jsonNode.iterator();
+			while (iterateJson.hasNext()) {
+				JsonNode fundSource = iterateJson.next();
 				NgoFundingSource ngoFundingSource = new NgoFundingSource();
+				ngoFundingSource.setNgoId(ngoId);
 				ngoFundingSource.setCreated(new Date());
 				ngoFundingSource.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
 				ngoFundingSource.setAmount(fundSource.get("amount").asDouble());
@@ -167,9 +175,11 @@ public class HNIConverter {
 		List<MealFundingSource> mealFundingSources = new ArrayList<>();
 		JsonNode jsonNode = objectNode.get("funding").get("mealFunding");
 		if (jsonNode.isArray()) {
-			while (jsonNode.iterator().hasNext()) {
-				JsonNode mealSource = jsonNode.iterator().next();
+			Iterator<JsonNode> iterateJson = jsonNode.iterator();
+			while (iterateJson.hasNext()) {
+				JsonNode mealSource = iterateJson.next();
 				MealFundingSource mealFundingSource = new MealFundingSource();
+				mealFundingSource.setNgoId(ngoId);
 				mealFundingSource.setCreated(new Date());
 				mealFundingSource.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
 				mealFundingSource.setAmount(mealSource.get("amount").asDouble());
@@ -186,9 +196,11 @@ public class HNIConverter {
 		List<MealDonationSource> MealDonationSources = new ArrayList<>();
 		JsonNode jsonNode = objectNode.get("funding").get("mealDonation");
 		if (jsonNode.isArray()) {
-			while (jsonNode.iterator().hasNext()) {
-				JsonNode mealSource = jsonNode.iterator().next();
+			Iterator<JsonNode> iterateJson = jsonNode.iterator();
+			while (iterateJson.hasNext()) {
+				JsonNode mealSource = iterateJson.next();
 				MealDonationSource mealDonationSource = new MealDonationSource();
+				mealDonationSource.setNgoId(ngoId);
 				mealDonationSource.setCreated(new Date());
 				mealDonationSource.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
 				mealDonationSource.setSource(mealSource.get("source").textValue());
@@ -207,120 +219,102 @@ public class HNIConverter {
 		
 		if(jsonNode.get("brkfstChk").asBoolean()){
 			FoodService foodService = new FoodService();
+			foodService.setNgoId(ngoId);
 			foodService.setCreated(new Date());
 			foodService.setCreatedBy((Long)ThreadContext.get(Constants.USERID));
 			foodService.setTotalCount(jsonNode.get("brkfstQty").asLong());
-		//	foodService.setServiceType(Constants.BREAKFAST);
+			foodService.setServiceType(Constants.BREAKFAST_ID);
 			foodService.setNgoId(ngoId);
 			foodServices.add(foodService);
 		}
 		if(jsonNode.get("lunchChk").asBoolean()){
 			FoodService foodService = new FoodService();
+			foodService.setNgoId(ngoId);
 			foodService.setCreated(new Date());
 			foodService.setCreatedBy((Long)ThreadContext.get(Constants.USERID));
 			foodService.setTotalCount(jsonNode.get("lunchQty").asLong());
-//			foodService.setServiceType(Constants.LUNCH);
+			foodService.setServiceType(Constants.LUNCH_ID);
 			foodService.setNgoId(ngoId);
 			foodServices.add(foodService);
 		}
 		if(jsonNode.get("dinnerChk").asBoolean()){
 			FoodService foodService = new FoodService();
+			foodService.setNgoId(ngoId);
 			foodService.setCreated(new Date());
 			foodService.setCreatedBy((Long)ThreadContext.get(Constants.USERID));
 			foodService.setTotalCount(jsonNode.get("dinnerQty").asLong());
-		//	foodService.setServiceType(Constants.DINNER);
+			foodService.setServiceType(Constants.DINNER_ID);
 			foodService.setNgoId(ngoId);
 			foodServices.add(foodService);
 		}
-		if(jsonNode.get("baggedChk").asBoolean()){
-			FoodService foodService = new FoodService();
-			foodService.setCreated(new Date());
-			foodService.setCreatedBy((Long)ThreadContext.get(Constants.USERID));
-			foodService.setTotalCount(jsonNode.get("baggedQty").asLong());
-		//	foodService.setServiceType(Constants.BAGGED);
-			foodService.setNgoId(ngoId);
-			foodServices.add(foodService);
-		}
+		
 		return foodServices;
 	}
 
-	public static List<FoodServiceAvailability> getFoodServiceAvailabilityFromJson(
+	/*public static List<FoodServiceAvailability> getFoodServiceAvailabilityFromJson(
 			ObjectNode objectNode, Long ngoId) {
 		List<FoodServiceAvailability> foodServiceAvailability = new ArrayList<>();
-		Map<String,List<String>> listOfDays = new HashMap<>();
 		JsonNode jsonNode = objectNode.get("service").get("serviceCalender");
-		convertJSON(jsonNode, listOfDays);
-		for(Map.Entry<String, List<String>> processDays: listOfDays.entrySet()){
-			Iterator<String> listIterator = (Iterator<String>) processDays.getValue();
+		
+		if(jsonNode.has("Breakfast")){
+			int arrayLength = jsonNode.get("Breakfast").size();
+			for(int index = 0; index< arrayLength ; index++){
+				FoodServiceAvailability foodAvailability = new FoodServiceAvailability();
+				foodAvailability.setCreated(new Date());
+				foodAvailability.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
+				foodAvailability.setFoodServicesId(1L);
+				foodAvailability.setWeekDay(jsonNode.get("Breakfast").get(index).toString().replace('"', ' ').trim());
+				foodServiceAvailability.add(foodAvailability);
+			}
+			
+		}
+		if(jsonNode.has("Lunch")){
+			int arrayLength = jsonNode.get("Lunch").size();
+			for(int index = 0; index< arrayLength ; index++){
+				FoodServiceAvailability foodAvailability = new FoodServiceAvailability();
+				foodAvailability.setCreated(new Date());
+				foodAvailability.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
+				foodAvailability.setFoodServicesId(2L);
+				foodAvailability.setWeekDay(jsonNode.get("Lunch").get(index).toString().replace('"', ' ').trim());
+				foodServiceAvailability.add(foodAvailability);
+			}
+			
+		}
+		if(jsonNode.has("Dinner")){
+			int arrayLength = jsonNode.get("Dinner").size();
+			for(int index = 0; index< arrayLength ; index++){
+				FoodServiceAvailability foodAvailability = new FoodServiceAvailability();
+				foodAvailability.setCreated(new Date());
+				foodAvailability.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
+				foodAvailability.setFoodServicesId(3L);
+				foodAvailability.setWeekDay(jsonNode.get("Dinner").get(index).toString().replace('"', ' ').trim());
+				foodServiceAvailability.add(foodAvailability);
+			}
+			
 		}
 		return foodServiceAvailability;
 	}
 
-
-	private static void convertJSON(JsonNode jsonNode,Map<String,List<String>> listOfDays ){
-		String[] daysOfWeek = new String[]{"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
-		
-		List<String> breakFast = new ArrayList<>();
-		List<String> lunch = new ArrayList<>();
-		List<String> dinner = new ArrayList<>();
-		
-		for(int i = 0; i<jsonNode.size(); i++){
-			for(int j = 0; j<jsonNode.size(); j++){
-				if(jsonNode.get(j).has("Breakast")){
-					breakFast.add(daysOfWeek[i]);
-				}
-				if(jsonNode.get(j).has("Lunch")){
-					lunch.add(daysOfWeek[i]);
-				}
-				if(jsonNode.get(j).has("Dinner")){
-					dinner.add(daysOfWeek[i]);
-				}
-			}
-		}
-		listOfDays.put("Breakfast", breakFast);
-		listOfDays.put("Lunch", breakFast);
-		listOfDays.put("Dinner", breakFast);
-	}
-
-	public static FoodBank getFoodBankFromJson(ObjectNode objectNode, Long ngoId) {
+*/
+	public static List<FoodBank> getFoodBankFromJson(ObjectNode objectNode, Long ngoId) {
+		List<FoodBank> foodBanks = new ArrayList<>();
 		JsonNode serviceNode = objectNode.get("service");
-		FoodBank foodBank = new FoodBank();
-		StringBuffer foodBanks = new StringBuffer();
-		
-		foodBank.setCreated(new Date());
-		foodBank.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
 		
 		if(serviceNode.get("foodBankSelect").asBoolean()){
 			JsonNode jsonNode = serviceNode.get("foodBankValue");
 			if (jsonNode.isArray()) {
-				while (jsonNode.iterator().hasNext()) {
-					JsonNode foodBankName = jsonNode.iterator().next();
-					foodBanks.append(foodBankName.textValue()).append(",");
-				}
-				if(foodBanks.length() != 0 ){
-					foodBanks.deleteCharAt(foodBanks.length()-1);
+				Iterator<JsonNode> iterateJson = jsonNode.iterator();
+				while (iterateJson.hasNext()) {
+					FoodBank foodBank = new FoodBank();
+					foodBank.setCreated(new Date());
+					foodBank.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
+					foodBank.setNgoId(ngoId);
+					foodBank.setFoodBankName(iterateJson.next().textValue());
+					foodBanks.add(foodBank);
 				}
 			}
-			foodBank.setFoodBankName(foodBanks.toString());
 		}
-		return foodBank;
-		
-		
-		/*List<FoodBank> foodBanks = new ArrayList<>();
-		JsonNode jsonNode = objectNode.get("foodBanks");
-		if (jsonNode!=null && jsonNode.isArray()) {
-			while (jsonNode.iterator().hasNext()) {
-				JsonNode foodbanq = jsonNode.iterator().next();
-				FoodBank foodBank = new FoodBank();
-				foodBank.setCreated(new Date());
-				foodBank.setCreatedBy((Long) ThreadContext.get(USERID));
-				foodBank.setId(foodbanq.get("id").asLong());
-				foodBank.setFoodBankName(foodbanq.get("foodBankName").asLong());
-				foodBank.setNgoId(ngoId);
-				foodBanks.add(foodBank);
-			}
-		}*/
-		
+		return foodBanks;
 	}
 
 }

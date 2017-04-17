@@ -5,8 +5,4 @@ import org.hni.user.om.Volunteer;
 
 public interface VolunteerService extends BaseService<Volunteer> {
 
-	default Volunteer registerVolunteer(Volunteer volunteer) {
-		return volunteer;
-	}
-
 }
