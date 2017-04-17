@@ -4,17 +4,18 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 
 import org.hni.admin.service.converter.HNIConverter;
 import org.hni.admin.service.converter.HNIValidator;
+import org.hni.admin.service.dto.NgoBasicDto;
 import org.hni.common.HNIUtils;
 import org.hni.common.dao.BaseDAO;
 import org.hni.common.om.FoodBank;
 import org.hni.common.om.FoodService;
-import org.hni.common.om.FoodServiceAvailability;
 import org.hni.common.om.MealDonationSource;
 import org.hni.common.om.MealFundingSource;
 import org.hni.common.om.NgoFundingSource;
@@ -43,9 +44,9 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 	private UserOnboardingDAO invitationDAO;
 
 	
-/*	@Inject
+	@Inject
 	private NGOGenericDAO ngoGenericDAO;
-*/
+
 	public DefaultUserOnboardingService(BaseDAO<Invitation> dao) {
 		super(dao);
 	}
@@ -83,33 +84,39 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 		}
 		return messages;
 	}
-
+	
 	private void validateNGO(ObjectNode onboardData, Map<String, String> errors) {
 		
 		HNIValidator.validateBoardMembers(HNIConverter.getBoardMembersFromJson(onboardData,null),errors);
 		HNIValidator.validateBrandPartners(HNIConverter.getBrandPartnersFromJson(onboardData,null),errors);
-		//HNIValidator.validateFoodBank(HNIConverter.getFoodBankFromJson(onboardData,null),errors);
-		HNIValidator.validateFoodServicesAvailability(HNIConverter.getFoodServiceAvailabilityFromJson(onboardData,null),errors);
+		HNIValidator.validateFoodBank(HNIConverter.getFoodBankFromJson(onboardData,null),errors);
+		HNIValidator.validateFoodServices(HNIConverter.getFoodServicesFromJson(onboardData,null),errors);
+		//HNIValidator.validateFoodServicesAvailability(HNIConverter.getFoodServiceAvailabilityFromJson(onboardData,null),errors);
 		HNIValidator.validateLocalPartners(HNIConverter.getLocalPartnersFromJson(onboardData,null),errors);
 		HNIValidator.validateMealFundingSources(HNIConverter.getMealFundingSourcesFromJson(onboardData,null),errors);
 		HNIValidator.validateMealDonationSources( HNIConverter.getMealDonationSourceFromJson(onboardData,null),errors);
 		HNIValidator.validateNgoFoundingSources(HNIConverter.getNgoFundingSourcesFromJson(onboardData,null),errors);
-		//HNIValidator.validateFoodBank(HNIConverter.getFoodBankFromJson(onboardData,null),errors);
 	}
 	
 	private String saveNGOData(ObjectNode onboardData){
-		/*Ngo ngo = ngoGenericDAO.save(Ngo.class ,HNIConverter.getNGOFromJson(onboardData));
+		Ngo ngo = ngoGenericDAO.save(Ngo.class ,HNIConverter.getNGOFromJson(onboardData));
 		ngoGenericDAO.saveBatch(BoardMember.class ,(HNIConverter.getBoardMembersFromJson(onboardData,ngo.getId())));
 		ngoGenericDAO.saveBatch(BrandPartner.class ,HNIConverter.getBrandPartnersFromJson(onboardData,ngo.getId()));
 		ngoGenericDAO.saveBatch(FoodBank.class ,HNIConverter.getFoodBankFromJson(onboardData,ngo.getId()));
-		ngoGenericDAO.saveBatch(FoodServiceAvailability.class ,HNIConverter.getFoodServiceAvailabilityFromJson(onboardData,ngo.getId()));
+		//ngoGenericDAO.saveBatch(FoodServiceAvailability.class ,HNIConverter.getFoodServiceAvailabilityFromJson(onboardData,ngo.getId()));
 		ngoGenericDAO.saveBatch(FoodService.class ,HNIConverter.getFoodServicesFromJson(onboardData,ngo.getId()));
 		ngoGenericDAO.saveBatch(LocalPartner.class ,HNIConverter.getLocalPartnersFromJson(onboardData,ngo.getId()));
 		ngoGenericDAO.saveBatch(MealDonationSource.class ,HNIConverter.getMealDonationSourceFromJson(onboardData,ngo.getId()));
 		ngoGenericDAO.saveBatch(MealFundingSource.class ,HNIConverter.getMealFundingSourcesFromJson(onboardData,ngo.getId()));
-		ngoGenericDAO.saveBatch(NgoFundingSource.class ,HNIConverter.getNgoFundingSourcesFromJson(onboardData,ngo.getId()));*/
+		ngoGenericDAO.saveBatch(NgoFundingSource.class ,HNIConverter.getNgoFundingSourcesFromJson(onboardData,ngo.getId()));
 		return SUCCESS;
 		
+	}
+
+	@Override
+	public List<NgoBasicDto> getAllNgo() {
+		
+		return ngoGenericDAO.getAllNgo();
 	}
 	 
 }
