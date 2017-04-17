@@ -257,13 +257,13 @@ public class UserServiceController extends AbstractBaseController {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces({MediaType.APPLICATION_JSON})
-	@Path("/volounteerSignup")
-	@ApiOperation(value = "register a volunteer"
+	@Path("/volunteerSignup")
+	@ApiOperation(value = "Register a volunteer"
 	, notes = "An update occurs if the ID field is specified"
 	, response = Volunteer.class
 	, responseContainer = "")
 	public Volunteer registerVolunteer(Volunteer volunteer) {
-		return volunteerService.registerVolunteer(volunteer); 
+		return volunteerService.save(volunteer); 
 	}
 	
 

@@ -20,6 +20,11 @@ public class DefaultVolunteerService extends AbstractService<Volunteer> implemen
 		super(volunteerDao);
 		this.volunteerDao = volunteerDao;
 	}
+	
+	@Override
+	public Volunteer save(Volunteer volunteer) {
+		return volunteerDao.save(volunteer);
+	}
 
 /*	
 	@Override
@@ -39,12 +44,7 @@ public class DefaultVolunteerService extends AbstractService<Volunteer> implemen
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	@Override
-	public Volunteer save(Volunteer obj) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 
 	@Override
 	public Volunteer delete(Volunteer obj) {
@@ -58,9 +58,9 @@ public class DefaultVolunteerService extends AbstractService<Volunteer> implemen
 		return null;
 	}*/
 
-	@Override
+	/*@Override
 	public Volunteer registerVolunteer(Volunteer volunteer) {
 		return volunteerDao.save(volunteer);
-	}
+	}*/
 
 }
