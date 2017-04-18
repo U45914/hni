@@ -2,17 +2,20 @@ package org.hni.admin.service.dto;
 
 public class NgoBasicDto {
 	
-	Long user_id;
+	Long userId;
 	String name;
 	String phone;
 	String website;
 	Long createdUsers;
-	public Long getUser_id() {
-		return user_id;
+	
+	public Long getUserId() {
+		return userId;
 	}
-	public void setUser_id(Long userId) {
-		this.user_id = userId;
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
+
 	public String getPhone() {
 		return phone;
 	}
