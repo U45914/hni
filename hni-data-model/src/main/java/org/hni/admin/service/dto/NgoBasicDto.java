@@ -3,8 +3,8 @@ package org.hni.admin.service.dto;
 public class NgoBasicDto {
 	
 	Long user_id;
-	String Name;
-	String Phone;
+	String name;
+	String phone;
 	String website;
 	Long createdUsers;
 	public Long getUser_id() {
@@ -14,17 +14,17 @@ public class NgoBasicDto {
 		this.user_id = userId;
 	}
 	public String getPhone() {
-		return Phone;
+		return phone;
 	}
 	
 	public String getName() {
-		return Name;
+		return name;
 	}
 	public void setName(String name) {
-		Name = name;
+		name = name;
 	}
 	public void setPhone(String phone) {
-		Phone = phone;
+		phone = phone;
 	}
 	public String getWebsite() {
 		return website;

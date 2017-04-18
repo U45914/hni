@@ -217,11 +217,17 @@ public class UserOnboardingController extends AbstractBaseController {
 	@GET
 	@Path("/getAllNgo")
 	@Produces({ MediaType.APPLICATION_JSON })
-	@ApiOperation(value = "", notes = "", response = List.class, responseContainer = "")
+	@ApiOperation(value = "Service for getting basic detail of NGO", notes = "", response = List.class, responseContainer = "")
 	public List<NgoBasicDto> getAllNgo() {
-		
+		try
+		{
 		List<NgoBasicDto> ngo =  userOnBoardingService.getAllNgo();
 		return ngo;
+		}
+		catch(Exception e){
+			_LOGGER.error("Error in get Ngo Service:"+e.getMessage(), e);
+		}
+		return null;
 	 
 	}
 
