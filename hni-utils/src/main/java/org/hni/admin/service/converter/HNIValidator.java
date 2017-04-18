@@ -12,9 +12,76 @@ import org.hni.common.om.NgoFundingSource;
 import org.hni.user.om.BoardMember;
 import org.hni.user.om.BrandPartner;
 import org.hni.user.om.LocalPartner;
+import org.hni.user.om.Ngo;
 
 public class HNIValidator {
 
+	public static Map validateNgo(List<Ngo> ngo, Map errors) {
+		ngo.forEach(b -> {
+			
+			if (b.getName() == null) {
+				errors.put("Ngo -> name", "cannot be null");
+			}
+			if (b.getAddressId() == null) {
+				errors.put("Ngo -> addressId", "cannot be null");
+			}
+			if (b.getPhone() == null) {
+				errors.put("Ngo -> phone", "cannot be null");
+			}
+			if (b.getWebsite() == null) {
+				errors.put("Ngo -> website", "cannot be null");
+			}
+			if (b.getContactFirstName()== null) {
+				errors.put("Ngo -> contactFirstName", "cannot be null");
+			}
+			if (b.getContactLastName()== null) {
+				errors.put("Ngo -> contactLastName", "cannot be null");
+			}
+			/*if (b.getFte()== null) {
+				errors.put("Ngo -> fte", "cannot be null");
+			}*/
+			if (b.getOverview()== null) {
+				errors.put("Ngo -> overview", "cannot be null");
+			}
+			if (b.getMission()== null) {
+				errors.put("Ngo -> mission", "cannot be null");
+			}
+			if (b.getMonthlyBudget()== null) {
+				errors.put("Ngo -> monthlyBudget", "cannot be null");
+			}
+			if (b.getFoodStampAssist()== null) {
+				errors.put("Ngo -> foodStampAssist", "cannot be null");
+			}
+			if (b.getFoodBank()== null) {
+				errors.put("Ngo -> foodBank", "cannot be null");
+			}
+			if (b.getResourcesToClients()== null) {
+				errors.put("Ngo -> resourceToClient", "cannot be null");
+			}
+			if (b.getIndServDaily()== null) {
+				errors.put("Ngo -> indServDaily", "cannot be null");
+			}
+			if (b.getIndServMonthly()== null) {
+				errors.put("Ngo -> indServMonthly", "cannot be null");
+			}
+			if (b.getIndServAnnual()== null) {
+				errors.put("Ngo -> indServAnnual", "cannot be null");
+			}
+			if (b.getClientInfo()== null) {
+				errors.put("Ngo -> clientInfo", "cannot be null");
+			}
+			if (b.getClientsUnsheltered()== null) {
+				errors.put("Ngo -> clientsUnsheltered", "cannot be null");
+			}
+			if (b.getClientsEmployed()== null) {
+				errors.put("Ngo -> clientsEmployed", "cannot be null");
+			}
+			
+		});
+
+		return errors;
+
+	}
 	public static Map validateBoardMembers(List<BoardMember> boardMembers, Map errors) {
 		boardMembers.forEach(b -> {
 			
