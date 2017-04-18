@@ -17,14 +17,9 @@ public class HNIValidator {
 
 	public static Map validateBoardMembers(List<BoardMember> boardMembers, Map errors) {
 		boardMembers.forEach(b -> {
-			if (b.getId() == null) {
-				errors.put("boardMember -> id", "cannot be null");
-			}
+			
 			if (b.getFirstName() == null) {
 				errors.put("boardMember -> firstName", "cannot be null");
-			}
-			if (b.getLastName() == null) {
-				errors.put("boardMember -> lastName", "cannot be null");
 			}
 			if (b.getCompany() == null) {
 				errors.put("boardMember -> company", "cannot be null");
@@ -39,9 +34,7 @@ public class HNIValidator {
 			Map errors) {
 
 		brandPartners.forEach(b -> {
-			if (b.getId() == null) {
-				errors.put("brandPartner -> id", "Cannot be null");
-			}
+			
 			if (b.getPhone() == null) {
 				errors.put("brandPartner -> phone", "Cannot be null");
 			}
@@ -57,9 +50,6 @@ public class HNIValidator {
 			Map errors) {
 
 		localPartners.forEach(b -> {
-			if (b.getId() == null) {
-				errors.put("localPartner -> id", "Cannot be null");
-			}
 			if (b.getPhone() == null) {
 				errors.put("localPartner -> phone", "Cannot be null");
 			}
@@ -75,9 +65,6 @@ public class HNIValidator {
 			List<NgoFundingSource> NgoFundingSources, Map errors) {
 
 		NgoFundingSources.forEach(b -> {
-			if (b.getId() == null) {
-				errors.put("ngoFundingSource -> id", "Cannot be null");
-			}
 			if (b.getAmount() == null) {
 				errors.put("ngoFundingSource -> amount", "Cannot be null");
 			}
@@ -93,9 +80,6 @@ public class HNIValidator {
 			List<MealFundingSource> MealFundingSources, Map errors) {
 
 		MealFundingSources.forEach(b -> {
-			if (b.getId() == null) {
-				errors.put("mealFundingSource -> id", "Cannot be null");
-			}
 			if (b.getAmount() == null) {
 				errors.put("mealFundingSource -> amount", "Cannot be null");
 			}
@@ -110,30 +94,21 @@ public class HNIValidator {
 	public static Map validateFoodServices(List<FoodService> FoodServices, Map errors) {
 
 		FoodServices.forEach(b -> {
-			if (b.getId() == null) {
-				errors.put("foodService -> id", "Cannot be null");
-			}
 			if (b.getServiceType() == null) {
 				errors.put("foodService -> serviceType", "Cannot be null");
 			}
 			if (b.getTotalCount() == null) {
 				errors.put("foodService -> totalCount", "Cannot be null");
 			}
-			if (b.getOther() == null) {
-				errors.put("foodService -> other", "Cannot be null");
-			}
 
 		});
 		return errors;
 	}
 
-	public static Map validateFoodServicesAvailability(
+	/*public static Map validateFoodServicesAvailability(
 			List<FoodServiceAvailability> FoodServiceAvailability, Map errors) {
 
 		FoodServiceAvailability.forEach(b -> {
-			if (b.getId() == null) {
-				errors.put("foodServiceAvailability -> id", "Cannot be null");
-			}
 			if (b.getFoodServicesId() == null) {
 				errors.put("foodServiceAvailability -> foodServicesId", "Cannot be null");
 			}
@@ -144,13 +119,10 @@ public class HNIValidator {
 		});
 		return errors;
 	}
-
+*/
 	public static Map validateFoodBank(List<FoodBank> FoodBank, Map errors) {
 
 		FoodBank.forEach(b -> {
-			if (b.getId() == null) {
-				errors.put("foodBank -> id", "Cannot be null");
-			}
 			if (b.getFoodBankName() == null) {
 				errors.put("foodBank -> foodBankName", "Cannot be null");
 			}
@@ -163,9 +135,6 @@ public class HNIValidator {
 			List<MealDonationSource> MealDonationSources, Map errors) {
 
 		MealDonationSources.forEach(b -> {
-			if (b.getId() == null) {
-				errors.put("mealDonationSource -> id", "Cannot be null");
-			}
 			if (b.getSource() == null) {
 				errors.put("mealDonationSource -> source", "Cannot be null");
 			}
