@@ -43,7 +43,7 @@ public List<NgoBasicDto> getAllNgo()
 		 Ngo ngoDetail=get(Ngo.class, userId);
 		 NgoBasicDto ngoBasicDto = new NgoBasicDto();
 		 User ngo = get(User.class, userId);
-		 ngoBasicDto.setUser_id(userId);
+		 ngoBasicDto.setUserId(userId);
 		 ngoBasicDto.setName(ngo.getFirstName()+" "+ngo.getLastName());
 		 ngoBasicDto.setPhone(ngo.getMobilePhone());
 		 ngoBasicDto.setWebsite(ngoDetail!=null?ngoDetail.getWebsite():"");
