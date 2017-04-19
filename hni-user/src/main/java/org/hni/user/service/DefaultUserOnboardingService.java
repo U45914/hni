@@ -16,6 +16,7 @@ import org.hni.common.HNIUtils;
 import org.hni.common.dao.BaseDAO;
 import org.hni.common.om.FoodBank;
 import org.hni.common.om.FoodService;
+import org.hni.common.om.FoodServiceAvailability;
 import org.hni.common.om.MealDonationSource;
 import org.hni.common.om.MealFundingSource;
 import org.hni.common.om.NgoFundingSource;
@@ -86,12 +87,12 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 	}
 	
 	private void validateNGO(ObjectNode onboardData, Map<String, String> errors) {
-		
+		HNIValidator.validateNgo(HNIConverter.getNGOFromJson(onboardData),errors);
 		HNIValidator.validateBoardMembers(HNIConverter.getBoardMembersFromJson(onboardData,null),errors);
 		HNIValidator.validateBrandPartners(HNIConverter.getBrandPartnersFromJson(onboardData,null),errors);
 		HNIValidator.validateFoodBank(HNIConverter.getFoodBankFromJson(onboardData,null),errors);
 		HNIValidator.validateFoodServices(HNIConverter.getFoodServicesFromJson(onboardData,null),errors);
-		//HNIValidator.validateFoodServicesAvailability(HNIConverter.getFoodServiceAvailabilityFromJson(onboardData,null),errors);
+		HNIValidator.validateFoodServicesAvailability(HNIConverter.getFoodServiceAvailabilityFromJson(onboardData,null),errors);
 		HNIValidator.validateLocalPartners(HNIConverter.getLocalPartnersFromJson(onboardData,null),errors);
 		HNIValidator.validateMealFundingSources(HNIConverter.getMealFundingSourcesFromJson(onboardData,null),errors);
 		HNIValidator.validateMealDonationSources( HNIConverter.getMealDonationSourceFromJson(onboardData,null),errors);
@@ -103,7 +104,7 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 		ngoGenericDAO.saveBatch(BoardMember.class ,(HNIConverter.getBoardMembersFromJson(onboardData,ngo.getId())));
 		ngoGenericDAO.saveBatch(BrandPartner.class ,HNIConverter.getBrandPartnersFromJson(onboardData,ngo.getId()));
 		ngoGenericDAO.saveBatch(FoodBank.class ,HNIConverter.getFoodBankFromJson(onboardData,ngo.getId()));
-		//ngoGenericDAO.saveBatch(FoodServiceAvailability.class ,HNIConverter.getFoodServiceAvailabilityFromJson(onboardData,ngo.getId()));
+		ngoGenericDAO.saveBatch(FoodServiceAvailability.class ,HNIConverter.getFoodServiceAvailabilityFromJson(onboardData,ngo.getId()));
 		ngoGenericDAO.saveBatch(FoodService.class ,HNIConverter.getFoodServicesFromJson(onboardData,ngo.getId()));
 		ngoGenericDAO.saveBatch(LocalPartner.class ,HNIConverter.getLocalPartnersFromJson(onboardData,ngo.getId()));
 		ngoGenericDAO.saveBatch(MealDonationSource.class ,HNIConverter.getMealDonationSourceFromJson(onboardData,ngo.getId()));
@@ -113,10 +114,6 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 		
 	}
 
-	@Override
-	public List<NgoBasicDto> getAllNgo() {
-		
-		return ngoGenericDAO.getAllNgo();
-	}
+	
 	 
 }

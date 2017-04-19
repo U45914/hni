@@ -16,7 +16,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.hni.admin.service.dto.NgoBasicDto;
 import org.hni.common.Constants;
 import org.hni.common.email.service.EmailComponent;
 import org.hni.organization.om.Organization;
@@ -168,7 +167,7 @@ public class UserOnboardingController extends AbstractBaseController {
 	, notes = ""
 	, response = Map.class
 	, responseContainer = "")
-	public Map<String, String> ngoSave(String onboardDataJson) throws JsonParseException, JsonMappingException, IOException{
+	public Response ngoSave(String onboardDataJson) throws JsonParseException, JsonMappingException, IOException{
 		ObjectMapper mapper = new ObjectMapper();
 		
 		JsonNode objectNode = mapper.readTree(onboardDataJson);
@@ -184,11 +183,11 @@ public class UserOnboardingController extends AbstractBaseController {
 				 if(map!=null)
 					 map.putAll(errors);
 			 }
-			return map;
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return map;
+		return Response.ok(map).build();
 	}
 	
 	@POST
@@ -214,22 +213,6 @@ public class UserOnboardingController extends AbstractBaseController {
 		return Response.ok(response).build();
 	}
 	
-	@GET
-	@Path("/getAllNgo")
-	@Produces({ MediaType.APPLICATION_JSON })
-	@ApiOperation(value = "Service for getting basic detail of NGO", notes = "", response = List.class, responseContainer = "")
-	public List<NgoBasicDto> getAllNgo() {
-		try
-		{
-		List<NgoBasicDto> ngo =  userOnBoardingService.getAllNgo();
-		return ngo;
-		}
-		catch(Exception e){
-			_LOGGER.error("Error in get Ngo Service:"+e.getMessage(), e);
-		}
-		return null;
-	 
-	}
-
+	
 
 }
