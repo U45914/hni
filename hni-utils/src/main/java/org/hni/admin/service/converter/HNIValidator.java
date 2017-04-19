@@ -19,23 +19,11 @@ public class HNIValidator {
 	public static Map validateNgo(Ngo ngo, Map errors) {
 		
 			
-			if (ngo.getName() == null) {
-				errors.put("Ngo -> name", "cannot be null");
-			}
 			if (ngo.getAddressId() == null) {
 				errors.put("Ngo -> addressId", "cannot be null");
 			}
-			if (ngo.getPhone() == null) {
-				errors.put("Ngo -> phone", "cannot be null");
-			}
 			if (ngo.getWebsite() == null) {
 				errors.put("Ngo -> website", "cannot be null");
-			}
-			if (ngo.getContactFirstName()== null) {
-				errors.put("Ngo -> contactFirstName", "cannot be null");
-			}
-			if (ngo.getContactLastName()== null) {
-				errors.put("Ngo -> contactLastName", "cannot be null");
 			}
 			/*if (b.getFte()== null) {
 				errors.put("Ngo -> fte", "cannot be null");
@@ -58,19 +46,19 @@ public class HNIValidator {
 			if (ngo.getResourcesToClients()== null) {
 				errors.put("Ngo -> resourceToClient", "cannot be null");
 			}
-			if (ngo.getIndServDaily()== null) {
+			if (ngo.getIndidualsServedDaily()== null) {
 				errors.put("Ngo -> indServDaily", "cannot be null");
 			}
-			if (ngo.getIndServMonthly()== null) {
+			if (ngo.getIndividualsServedMonthly()== null) {
 				errors.put("Ngo -> indServMonthly", "cannot be null");
 			}
-			if (ngo.getIndServAnnual()== null) {
+			if (ngo.getIndividualsServedAnnual()== null) {
 				errors.put("Ngo -> indServAnnual", "cannot be null");
 			}
 			if (ngo.getClientInfo()== null) {
 				errors.put("Ngo -> clientInfo", "cannot be null");
 			}
-			if (ngo.getClientsUnsheltered()== null) {
+			if (ngo.getClientsUnSheltered()== null) {
 				errors.put("Ngo -> clientsUnsheltered", "cannot be null");
 			}
 			if (ngo.getClientsEmployed()== null) {

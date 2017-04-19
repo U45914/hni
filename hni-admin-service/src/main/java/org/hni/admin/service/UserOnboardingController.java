@@ -214,5 +214,13 @@ public class UserOnboardingController extends AbstractBaseController {
 	}
 	
 	
+	
+	@GET
+	@Path("/ngo/get/{ngoId}")
+	@Produces({ MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "", notes = "", response = Map.class, responseContainer = "")
+	public ObjectNode getNGO(@PathParam("ngoId") Long ngoId) {
+		return userOnBoardingService.getNGODetail(ngoId);
+	}
 
 }

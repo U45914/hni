@@ -14,4 +14,6 @@ public interface UserOnboardingService extends BaseService<Invitation>{
 	String buildInvitationAndSave(Long orgId);
 	Collection<Invitation> validateInvitationCode(String invitationCode);
 	Map<String,String> ngoSave(ObjectNode onboardData);
+	ObjectNode getNGODetail(Long ngoId);
+	List<NgoBasicDto> getAllNgo();
 }
