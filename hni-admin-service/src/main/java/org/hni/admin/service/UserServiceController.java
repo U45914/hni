@@ -35,6 +35,7 @@ import org.hni.organization.om.HniServices;
 import org.hni.organization.om.Organization;
 import org.hni.organization.om.UserOrganizationRole;
 import org.hni.organization.service.OrganizationUserService;
+import org.hni.passwordvalidater.CheckPassword;
 import org.hni.security.dao.RoleDAO;
 import org.hni.user.om.Ngo;
 import org.hni.user.om.User;
@@ -50,39 +51,36 @@ import org.springframework.stereotype.Component;
 @Path("/users")
 public class UserServiceController extends AbstractBaseController {
 	private static final Logger logger = LoggerFactory.getLogger(UserServiceController.class);
-	
-	@Inject private OrganizationUserService orgUserService;
-	@Inject private RoleDAO roleDao;	
-	
+
+	@Inject
+	private OrganizationUserService orgUserService;
+	@Inject
+	private RoleDAO roleDao;
+
 	@Inject
 	@Named("defaultUserService")
 	private UserService userService;
-	
+
 	@Inject
 	@Named("defaultVolunteerService")
 	private VolunteerService volunteerService;
-	
-    @Context private HttpServletRequest servletRequest;
-    
+
+	@Context
+	private HttpServletRequest servletRequest;
+
 	@GET
 	@Path("/{id}")
-	@Produces({MediaType.APPLICATION_JSON})
-	@ApiOperation(value = "Returns the user with the given id"
-	, notes = ""
-	, response = User.class
-	, responseContainer = "")
+	@Produces({ MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Returns the user with the given id", notes = "", response = User.class, responseContainer = "")
 	public Response getUser(@PathParam("id") Long id) {
-		//return orgUserService.get(id);
+		// return orgUserService.get(id);
 		return Response.ok(orgUserService.get(id), MediaType.APPLICATION_JSON).build();
 	}
-	
+
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces({MediaType.APPLICATION_JSON})
-	@ApiOperation(value = "Creates a new user or updates an existing one and returns it"
-	, notes = "An update occurs if the ID field is specified"
-	, response = User.class
-	, responseContainer = "")
+	@Produces({ MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Creates a new user or updates an existing one and returns it", notes = "An update occurs if the ID field is specified", response = User.class, responseContainer = "")
 	public User addOrSaveUser(User user) {
 		if (isPermitted(Constants.ORGANIZATION, Constants.CREATE, 0L)) {
 			return orgUserService.save(user);
@@ -92,12 +90,10 @@ public class UserServiceController extends AbstractBaseController {
 
 	@DELETE
 	@Path("/{id}/organizations/{orgId}/roles/{roleId}")
-	@Produces({MediaType.APPLICATION_JSON})
-	@ApiOperation(value = "Removes a user's role from the given organization"
-	, notes = ""
-	, response = User.class
-	, responseContainer = "")
-	public String deleteUser(@PathParam("id") Long id, @PathParam("orgId") Long orgId, @PathParam("roleId") Long roleId) {
+	@Produces({ MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Removes a user's role from the given organization", notes = "", response = User.class, responseContainer = "")
+	public String deleteUser(@PathParam("id") Long id, @PathParam("orgId") Long orgId,
+			@PathParam("roleId") Long roleId) {
 		if (isPermitted(Constants.ORGANIZATION, Constants.DELETE, id)) {
 			User user = new User(id);
 			Organization org = new Organization(orgId);
@@ -110,31 +106,26 @@ public class UserServiceController extends AbstractBaseController {
 
 	@PUT
 	@Path("/{id}/organizations/{orgId}/roles/{roleId}")
-	@Produces({MediaType.APPLICATION_JSON})
-	@ApiOperation(value = "Adds the user to an organization with a specific role"
-	, notes = ""
-	, response = UserOrganizationRole.class
-	, responseContainer = "")
-	public UserOrganizationRole addUserToOrg(@PathParam("id") Long id, @PathParam("orgId") Long orgId, @PathParam("roleId") Long roleId) {
+	@Produces({ MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Adds the user to an organization with a specific role", notes = "", response = UserOrganizationRole.class, responseContainer = "")
+	public UserOrganizationRole addUserToOrg(@PathParam("id") Long id, @PathParam("orgId") Long orgId,
+			@PathParam("roleId") Long roleId) {
 		if (isPermitted(Constants.ORGANIZATION, Constants.UPDATE, id)) {
 			User user = new User(id);
 			Organization org = new Organization(orgId);
 			Role role = Role.get(roleId);
-			if ( null != user && null != org && null != role) {
+			if (null != user && null != org && null != role) {
 				return orgUserService.associate(user, org, Role.get(roleId));
 			}
 			throw new HNIException("One of the ID's you sent was invalid...");
 		}
 		throw new HNIException("You must have elevated permissions to do this.");
 	}
-	
+
 	@GET
 	@Path("/organizations/{orgId}/roles/{roleId}")
-	@Produces({MediaType.APPLICATION_JSON})
-	@ApiOperation(value = "Returns a collection of users for the given organization with the given roleId."
-	, notes = ""
-	, response = User.class
-	, responseContainer = "")
+	@Produces({ MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Returns a collection of users for the given organization with the given roleId.", notes = "", response = User.class, responseContainer = "")
 	public Collection<User> getOrgUsers(@PathParam("orgId") Long orgId, @QueryParam("roleId") Long roleId) {
 		Organization org = new Organization(orgId);
 		return orgUserService.getByRole(org, Role.get(roleId));
@@ -142,23 +133,17 @@ public class UserServiceController extends AbstractBaseController {
 
 	@GET
 	@Path("/roles")
-	@Produces({MediaType.APPLICATION_JSON})
-	@ApiOperation(value = "Returns a collection of all potential roles for users in the system."
-	, notes = ""
-	, response = User.class
-	, responseContainer = "")
+	@Produces({ MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Returns a collection of all potential roles for users in the system.", notes = "", response = User.class, responseContainer = "")
 	public Collection<Role> getUserRoles() {
-		
+
 		return roleDao.getAll();
 	}
 
 	@DELETE
 	@Path("/{id}/organizations/{orgId}")
-	@Produces({MediaType.APPLICATION_JSON})
-	@ApiOperation(value = "Removes a user from the given organization"
-	, notes = ""
-	, response = User.class
-	, responseContainer = "")
+	@Produces({ MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Removes a user from the given organization", notes = "", response = User.class, responseContainer = "")
 	public String deleteUserFromOrg(@PathParam("id") Long id, @PathParam("orgId") Long orgId) {
 		if (isPermitted(Constants.ORGANIZATION, Constants.DELETE, id)) {
 			User user = new User(id);
@@ -171,25 +156,24 @@ public class UserServiceController extends AbstractBaseController {
 
 	@GET
 	@Path("/userinfo")
-	@Produces({MediaType.APPLICATION_JSON})
-	@ApiOperation(value = "Returns info about the user in the current thread context"
-	, notes = ""
-	, response = User.class
-	, responseContainer = "")
+	@Produces({ MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Returns info about the user in the current thread context", notes = "", response = User.class, responseContainer = "")
 	public User getUser() {
-		Long userId = (Long)ThreadContext.get(Constants.USERID); // this was placed onto the context by the JWTTokenAuthenticatingFilter
+		Long userId = (Long) ThreadContext.get(Constants.USERID); // this was
+																	// placed
+																	// onto the
+																	// context
+																	// by the
+																	// JWTTokenAuthenticatingFilter
 		return orgUserService.get(userId);
 	}
 
 	@GET
 	@Path("/organizations")
-	@Produces({MediaType.APPLICATION_JSON})
-	@ApiOperation(value = "All users for all organizations..yikes!"
-	, notes = ""
-	, response = User.class
-	, responseContainer = "")
+	@Produces({ MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "All users for all organizations..yikes!", notes = "", response = User.class, responseContainer = "")
 	public Collection<User> getUsersByRole(@QueryParam("roleId") Long roleId) {
-		if (SecurityUtils.getSubject().hasRole(Constants.SUPER_USER.toString())) {		
+		if (SecurityUtils.getSubject().hasRole(Constants.SUPER_USER.toString())) {
 			return orgUserService.byRole(Role.get(roleId));
 		}
 		throw new HNIException("You must have elevated permissions to do this.");
@@ -197,16 +181,13 @@ public class UserServiceController extends AbstractBaseController {
 
 	@GET
 	@Path("/services")
-	@Produces({MediaType.APPLICATION_JSON})
-	@ApiOperation(value = "Returns the various user services/functionalities"
-	, notes = ""
-	, response = HniServicesDto.class
-	, responseContainer = "")
+	@Produces({ MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Returns the various user services/functionalities", notes = "", response = HniServicesDto.class, responseContainer = "")
 	public Collection<HniServicesDto> getUserunctionalities() {
 		logger.info("Invoked method to retrieve hni services...");
-		if(isPermitted(Constants.USERID, Constants.PERMISSIONS, 0L)) {
+		if (isPermitted(Constants.USERID, Constants.PERMISSIONS, 0L)) {
 			User user = getLoggedInUser();
-			if(null!=user){
+			if (null != user) {
 				logger.info("User details fetch successfull");
 				Collection<UserOrganizationRole> userOrganisationRoles = orgUserService.getUserOrganizationRoles(user);
 				Collection<HniServices> hniServices = orgUserService.getHniServices(userOrganisationRoles);
@@ -216,55 +197,49 @@ public class UserServiceController extends AbstractBaseController {
 		logger.info("Not enough permissions...");
 		throw new HNIException("You must have elevated permissions to do this.");
 	}
-	
+
 	@POST
 	@Path("/ngoOnboarding")
-	@Produces({MediaType.TEXT_PLAIN})
-	@Consumes({MediaType.APPLICATION_JSON})
-	@ApiOperation(value = "Accepts NGO Onboarding as parameter"
-	, notes = ""
-	, response = String.class
-	, responseContainer = "")
-	public String onBoardNGO(Ngo ngo){
+	@Produces({ MediaType.TEXT_PLAIN })
+	@Consumes({ MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Accepts NGO Onboarding as parameter", notes = "", response = String.class, responseContainer = "")
+	public String onBoardNGO(Ngo ngo) {
 		System.out.println("Status OK");
-		return "Status OK"; 
+		return "Status OK";
 	}
 
-	
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces({ MediaType.APPLICATION_JSON })
 	@Path("/register")
-	@ApiOperation(value = "register a customer"
-	, notes = "An update occurs if the ID field is specified"
-	, response = User.class
-	, responseContainer = "")
-	//TODO: need a identifier to determine role
+	@ApiOperation(value = "register a customer", notes = "An update occurs if the ID field is specified", response = User.class, responseContainer = "")
+	// TODO: need a identifier to determine role
 	public Response registerUser(User user, @HeaderParam("user-type") String type) {
 		Map<String, String> userResponse = new HashMap<>();
-		
-		User u = orgUserService.register(setPassword(user), convertUserTypeToRole(type));
-		if (u != null) {
-			userResponse.put(SUCCESS, "Account has been created successfully");
-		} else {
-			userResponse.put(SUCCESS, SOMETHING_WENT_WRONG_PLEASE_TRY_AGAIN);
-		}
-		
-		return Response.ok(userResponse).build();
-	}
+		boolean validPassword = false;
+		validPassword = CheckPassword.passwordCheck(user);
+		if (validPassword == true) {
+			User u = orgUserService.register(setPassword(user), convertUserTypeToRole(type));
+			if (u != null) {
+				userResponse.put(SUCCESS, "Account has been created successfully");
+			} else {
+				userResponse.put(SUCCESS, SOMETHING_WENT_WRONG_PLEASE_TRY_AGAIN);
+			}
 
+			return Response.ok(userResponse).build();
+		} else {
+			userResponse.put(ERROR, "Wrong password format");
+			return Response.ok(userResponse).build();
+		}
+	}
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces({MediaType.APPLICATION_JSON})
+	@Produces({ MediaType.APPLICATION_JSON })
 	@Path("/volunteerSignup")
-	@ApiOperation(value = "Register a volunteer"
-	, notes = "An update occurs if the ID field is specified"
-	, response = Volunteer.class
-	, responseContainer = "")
+	@ApiOperation(value = "Register a volunteer", notes = "An update occurs if the ID field is specified", response = Volunteer.class, responseContainer = "")
 	public Volunteer registerVolunteer(Volunteer volunteer) {
-		return volunteerService.save(volunteer); 
+		return volunteerService.save(volunteer);
 	}
-	
 
 }
