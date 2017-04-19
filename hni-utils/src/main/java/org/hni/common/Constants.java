@@ -10,6 +10,11 @@ public class Constants {
 	public static final Long USER = 5L;  
 	public static final Long CLIENT = 7L;
 	
+	//Service
+	public static final String SUCCESS = "organizations";
+	public static final String ERROR = "providers";
+	public static final String RESPONSE = "organizations";
+	
 	// domains
 	public static final String ORGANIZATION = "organizations";
 	public static final String PROVIDER = "providers";

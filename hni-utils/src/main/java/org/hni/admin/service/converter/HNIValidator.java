@@ -16,68 +16,68 @@ import org.hni.user.om.Ngo;
 
 public class HNIValidator {
 
-	public static Map validateNgo(List<Ngo> ngo, Map errors) {
-		ngo.forEach(b -> {
+	public static Map validateNgo(Ngo ngo, Map errors) {
+		
 			
-			if (b.getName() == null) {
+			if (ngo.getName() == null) {
 				errors.put("Ngo -> name", "cannot be null");
 			}
-			if (b.getAddressId() == null) {
+			if (ngo.getAddressId() == null) {
 				errors.put("Ngo -> addressId", "cannot be null");
 			}
-			if (b.getPhone() == null) {
+			if (ngo.getPhone() == null) {
 				errors.put("Ngo -> phone", "cannot be null");
 			}
-			if (b.getWebsite() == null) {
+			if (ngo.getWebsite() == null) {
 				errors.put("Ngo -> website", "cannot be null");
 			}
-			if (b.getContactFirstName()== null) {
+			if (ngo.getContactFirstName()== null) {
 				errors.put("Ngo -> contactFirstName", "cannot be null");
 			}
-			if (b.getContactLastName()== null) {
+			if (ngo.getContactLastName()== null) {
 				errors.put("Ngo -> contactLastName", "cannot be null");
 			}
 			/*if (b.getFte()== null) {
 				errors.put("Ngo -> fte", "cannot be null");
 			}*/
-			if (b.getOverview()== null) {
+			if (ngo.getOverview()== null) {
 				errors.put("Ngo -> overview", "cannot be null");
 			}
-			if (b.getMission()== null) {
+			if (ngo.getMission()== null) {
 				errors.put("Ngo -> mission", "cannot be null");
 			}
-			if (b.getMonthlyBudget()== null) {
+			if (ngo.getMonthlyBudget()== null) {
 				errors.put("Ngo -> monthlyBudget", "cannot be null");
 			}
-			if (b.getFoodStampAssist()== null) {
+			if (ngo.getFoodStampAssist()== null) {
 				errors.put("Ngo -> foodStampAssist", "cannot be null");
 			}
-			if (b.getFoodBank()== null) {
+			if (ngo.getFoodBank()== null) {
 				errors.put("Ngo -> foodBank", "cannot be null");
 			}
-			if (b.getResourcesToClients()== null) {
+			if (ngo.getResourcesToClients()== null) {
 				errors.put("Ngo -> resourceToClient", "cannot be null");
 			}
-			if (b.getIndServDaily()== null) {
+			if (ngo.getIndServDaily()== null) {
 				errors.put("Ngo -> indServDaily", "cannot be null");
 			}
-			if (b.getIndServMonthly()== null) {
+			if (ngo.getIndServMonthly()== null) {
 				errors.put("Ngo -> indServMonthly", "cannot be null");
 			}
-			if (b.getIndServAnnual()== null) {
+			if (ngo.getIndServAnnual()== null) {
 				errors.put("Ngo -> indServAnnual", "cannot be null");
 			}
-			if (b.getClientInfo()== null) {
+			if (ngo.getClientInfo()== null) {
 				errors.put("Ngo -> clientInfo", "cannot be null");
 			}
-			if (b.getClientsUnsheltered()== null) {
+			if (ngo.getClientsUnsheltered()== null) {
 				errors.put("Ngo -> clientsUnsheltered", "cannot be null");
 			}
-			if (b.getClientsEmployed()== null) {
+			if (ngo.getClientsEmployed()== null) {
 				errors.put("Ngo -> clientsEmployed", "cannot be null");
 			}
 			
-		});
+		
 
 		return errors;
 
@@ -172,7 +172,7 @@ public class HNIValidator {
 		return errors;
 	}
 
-	/*public static Map validateFoodServicesAvailability(
+	public static Map validateFoodServicesAvailability(
 			List<FoodServiceAvailability> FoodServiceAvailability, Map errors) {
 
 		FoodServiceAvailability.forEach(b -> {
@@ -186,7 +186,7 @@ public class HNIValidator {
 		});
 		return errors;
 	}
-*/
+
 	public static Map validateFoodBank(List<FoodBank> FoodBank, Map errors) {
 
 		FoodBank.forEach(b -> {

@@ -251,7 +251,7 @@ public class HNIConverter {
 		return foodServices;
 	}
 
-	/*public static List<FoodServiceAvailability> getFoodServiceAvailabilityFromJson(
+	public static List<FoodServiceAvailability> getFoodServiceAvailabilityFromJson(
 			ObjectNode objectNode, Long ngoId) {
 		List<FoodServiceAvailability> foodServiceAvailability = new ArrayList<>();
 		JsonNode jsonNode = objectNode.get("service").get("serviceCalender");
@@ -295,7 +295,7 @@ public class HNIConverter {
 		return foodServiceAvailability;
 	}
 
-*/
+
 	public static List<FoodBank> getFoodBankFromJson(ObjectNode objectNode, Long ngoId) {
 		List<FoodBank> foodBanks = new ArrayList<>();
 		JsonNode serviceNode = objectNode.get("service");
