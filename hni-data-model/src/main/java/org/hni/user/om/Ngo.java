@@ -17,83 +17,71 @@ import org.hni.common.om.Persistable;
 public class Ngo implements Persistable, Serializable {
 
 	private static final long serialVersionUID = 7553475738921092329L;
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id")
 	private Long id;
-	
-	@Column(name = "name")
-	private String name;
-	
+
+	@Column(name = "user_id")
+	private Long userId;
+
 	@Column(name = "address_id")
 	private Long addressId;
-	
-	@Column(name = "phone")
-	private String phone;
-	
+
 	@Column(name = "website")
 	private String website;
 
-	@Column(name = "contact_first_name")
-	private String contactFirstName;
-	
-	@Column(name = "contact_last_name")
-	private String contactLastName;
-	
 	@Column(name = "fte")
-	private int fte;
-	
+	private Integer fte;
+	 
 	@Column(name = "overview")
 	private String overview;
-	
+
 	@Column(name = "mission")
 	private String mission;
-	
-	@Column(name = "endorsement_id")
-	private Long endorsementId;
-	
+
 	@Column(name = "monthly_budget")
-	private Long monthlyBudget;
-	
+	private Integer monthlyBudget;
+
 	@Column(name = "operating_cost")
-	private Long operatingCost;
-	
+	private Integer operatingCost;
+
 	@Column(name = "personal_cost")
-	private Long personalCost;
+	private Integer personalCost;
 	
 	@Column(name = "kitchen_volunteers")
-	private Long kitchenVolunteers;
+	private Integer kitchenVolunteers;
 	
 	@Column(name = "food_stamp_assist")
-	private Boolean foodStampAssist;
+	private Integer foodStampAssist;
 	
 	@Column(name = "food_bank")
-	private Boolean foodBank;
+	private Integer foodBank;
 	
 	@Column(name = "resources_to_clients")
-	private Long resourcesToClients;
+	private Integer resourcesToClients;
 	
 	@Column(name = "ind_serv_daily")
-	private Long indServDaily;
+	private Integer indidualsServedDaily;
 	
 	@Column(name = "ind_serv_monthly")
-	private Long indServMonthly;
+	private Integer individualsServedMonthly;
 	
 	@Column(name = "ind_serv_annual")
-	private Long indServAnnual;
+	private Integer individualsServedAnnual;
 	
 	@Column(name = "client_info")
-	private Boolean clientInfo;
+	private Integer clientInfo;
 	
 	@Column(name = "store_client_info")
 	private String storeClientInfo;
 	
 	@Column(name = "clients_unsheltered")
-	private Long clientsUnsheltered;
+	private Integer clientsUnSheltered;
 	
 	@Column(name = "clients_employed")
-	private Long clientsEmployed;
+	private Integer clientsEmployed;
 	
 	@Column(name = "created")
 	private Date created;
@@ -109,12 +97,12 @@ public class Ngo implements Persistable, Serializable {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public Long getUserId() {
+		return userId;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
 
 	public Long getAddressId() {
@@ -125,14 +113,6 @@ public class Ngo implements Persistable, Serializable {
 		this.addressId = addressId;
 	}
 
-	public String getPhone() {
-		return phone;
-	}
-
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
-
 	public String getWebsite() {
 		return website;
 	}
@@ -141,27 +121,11 @@ public class Ngo implements Persistable, Serializable {
 		this.website = website;
 	}
 
-	public String getContactFirstName() {
-		return contactFirstName;
-	}
-
-	public void setContactFirstName(String contactFirstName) {
-		this.contactFirstName = contactFirstName;
-	}
-
-	public String getContactLastName() {
-		return contactLastName;
-	}
-
-	public void setContactLastName(String contactLastName) {
-		this.contactLastName = contactLastName;
-	}
-
-	public int getFte() {
+	public Integer getFte() {
 		return fte;
 	}
 
-	public void setFte(int fte) {
+	public void setFte(Integer fte) {
 		this.fte = fte;
 	}
 
@@ -181,99 +145,91 @@ public class Ngo implements Persistable, Serializable {
 		this.mission = mission;
 	}
 
-	public Long getEndorsementId() {
-		return endorsementId;
-	}
-
-	public void setEndorsementId(Long endorsementId) {
-		this.endorsementId = endorsementId;
-	}
-
-	public Long getMonthlyBudget() {
+	public Integer getMonthlyBudget() {
 		return monthlyBudget;
 	}
 
-	public void setMonthlyBudget(Long monthlyBudget) {
+	public void setMonthlyBudget(Integer monthlyBudget) {
 		this.monthlyBudget = monthlyBudget;
 	}
 
-	public Long getOperatingCost() {
+	public Integer getOperatingCost() {
 		return operatingCost;
 	}
 
-	public void setOperatingCost(Long operatingCost) {
+	public void setOperatingCost(Integer operatingCost) {
 		this.operatingCost = operatingCost;
 	}
 
-	public Long getPersonalCost() {
+	public Integer getPersonalCost() {
 		return personalCost;
 	}
 
-	public void setPersonalCost(Long personalCost) {
+	public void setPersonalCost(Integer personalCost) {
 		this.personalCost = personalCost;
 	}
 
-	public Long getKitchenVolunteers() {
+	public Integer getKitchenVolunteers() {
 		return kitchenVolunteers;
 	}
 
-	public void setKitchenVolunteers(Long kitchenVolunteers) {
+	public void setKitchenVolunteers(Integer kitchenVolunteers) {
 		this.kitchenVolunteers = kitchenVolunteers;
 	}
 
-	public Boolean getFoodStampAssist() {
+	public Integer getFoodStampAssist() {
 		return foodStampAssist;
 	}
 
-	public void setFoodStampAssist(Boolean foodStampAssist) {
+	public void setFoodStampAssist(Integer foodStampAssist) {
 		this.foodStampAssist = foodStampAssist;
 	}
 
-	public Boolean getFoodBank() {
+	public Integer getFoodBank() {
 		return foodBank;
 	}
 
-	public void setFoodBank(Boolean foodBank) {
+	public void setFoodBank(Integer foodBank) {
 		this.foodBank = foodBank;
 	}
 
-	public Long getResourcesToClients() {
+	public Integer getResourcesToClients() {
 		return resourcesToClients;
 	}
 
-	public void setResourcesToClients(Long resourcesToClients) {
+	public void setResourcesToClients(Integer resourcesToClients) {
 		this.resourcesToClients = resourcesToClients;
 	}
 
-	public Long getIndServDaily() {
-		return indServDaily;
+	public Integer getIndidualsServedDaily() {
+		return indidualsServedDaily;
 	}
 
-	public void setIndServDaily(Long indServDaily) {
-		this.indServDaily = indServDaily;
+	public void setIndidualsServedDaily(Integer indidualsServedDaily) {
+		this.indidualsServedDaily = indidualsServedDaily;
 	}
 
-	public Long getIndServMonthly() {
-		return indServMonthly;
+	public Integer getIndividualsServedMonthly() {
+		return individualsServedMonthly;
 	}
 
-	public void setIndServMonthly(Long indServMonthly) {
-		this.indServMonthly = indServMonthly;
+	public void setIndividualsServedMonthly(Integer individualsServedMonthly) {
+		this.individualsServedMonthly = individualsServedMonthly;
 	}
 
-	public Long getIndServAnnual() {
-		return indServAnnual;
+	public Integer getIndividualsServedAnnual() {
+		return individualsServedAnnual;
 	}
 
-	public void setIndServAnnual(Long indServAnnual) {
-		this.indServAnnual = indServAnnual;
+	public void setIndividualsServedAnnual(Integer individualsServedAnnual) {
+		this.individualsServedAnnual = individualsServedAnnual;
 	}
 
-	public Boolean getClientInfo() {
+	public Integer getClientInfo() {
 		return clientInfo;
 	}
 
-	public void setClientInfo(Boolean clientInfo) {
+	public void setClientInfo(Integer clientInfo) {
 		this.clientInfo = clientInfo;
 	}
 
@@ -285,19 +241,19 @@ public class Ngo implements Persistable, Serializable {
 		this.storeClientInfo = storeClientInfo;
 	}
 
-	public Long getClientsUnsheltered() {
-		return clientsUnsheltered;
+	public Integer getClientsUnSheltered() {
+		return clientsUnSheltered;
 	}
 
-	public void setClientsUnsheltered(Long clientsUnsheltered) {
-		this.clientsUnsheltered = clientsUnsheltered;
+	public void setClientsUnSheltered(Integer clientsUnSheltered) {
+		this.clientsUnSheltered = clientsUnSheltered;
 	}
 
-	public Long getClientsEmployed() {
+	public Integer getClientsEmployed() {
 		return clientsEmployed;
 	}
 
-	public void setClientsEmployed(Long clientsEmployed) {
+	public void setClientsEmployed(Integer clientsEmployed) {
 		this.clientsEmployed = clientsEmployed;
 	}
 
@@ -316,4 +272,5 @@ public class Ngo implements Persistable, Serializable {
 	public void setCreatedBy(Long createdBy) {
 		this.createdBy = createdBy;
 	}
+
 }

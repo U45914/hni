@@ -214,5 +214,21 @@ public class UserOnboardingController extends AbstractBaseController {
 	}
 	
 	
+	
+	@GET
+	@Path("/ngo/get/{ngoId}")
+	@Produces({ MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "", notes = "", response = Map.class, responseContainer = "")
+	public Response getNGO(@PathParam("ngoId") Long ngoId) {
+		Map<String, String> response = new HashMap<>();
+		response.put(RESPONSE, ERROR);
+		try {
+			ObjectNode ngoDetailJSON = userOnBoardingService.getNGODetail(ngoId);
+			return Response.ok(ngoDetailJSON).build();
+		} catch (Exception e) {
+			response.put(ERROR, SOMETHING_WENT_WRONG_PLEASE_TRY_AGAIN);
+		}
+		return Response.ok(response).build();
+	}
 
 }

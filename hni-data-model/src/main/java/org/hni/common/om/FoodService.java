@@ -32,6 +32,9 @@ public class FoodService  implements Persistable, Serializable{
 	@Column(name = "total_count")
 	private Long totalCount;
 	
+	@Column
+	private String weekdays;
+	
 	@Column(name = "other")
 	private String other;
 	
@@ -71,6 +74,14 @@ public class FoodService  implements Persistable, Serializable{
 
 	public void setTotalCount(Long totalCount) {
 		this.totalCount = totalCount;
+	}
+
+	public String getWeekdays() {
+		return weekdays;
+	}
+
+	public void setWeekdays(String weekdays) {
+		this.weekdays = weekdays;
 	}
 
 	public String getOther() {

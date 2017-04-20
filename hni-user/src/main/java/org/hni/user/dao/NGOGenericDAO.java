@@ -17,18 +17,18 @@ public NGOGenericDAO()
 	super();
 	}
 
-public <T extends Persistable> T saveBatch(Class<T> clazz, List<T> objList) {
+public <T extends Persistable>List<T> saveBatch(Class<T> clazz, List<T> objList) {
 	for(T obj:objList){
 	if ( null == obj ) {
 		return null;
 	}
 	if ( obj.getId() != null ) {
-		return update(clazz, obj);
+		obj = update(clazz, obj);
 	} else {
-		return insert(clazz, obj);
+		obj = insert(clazz, obj);
 	}
 	}
-	return null;
+	return objList;
 }
 
 public List<NgoBasicDto> getAllNgo()
