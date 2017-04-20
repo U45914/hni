@@ -31,6 +31,10 @@ public class Invitation implements Persistable, Serializable{
 	private Date expirationDate;
 	@Column(name="created_date")
 	private Date createdDate;
+	@Column(name = "email")
+	private String email;
+	@Column(name = "invited_by")
+	private Long invitedBy;
 	
 	public Long getId() {
 		return id;
@@ -58,6 +62,19 @@ public class Invitation implements Persistable, Serializable{
 	}
 	public Date getCreatedDate() {
 		return createdDate;
+	}
+	
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	public Long getInvitedBy() {
+		return invitedBy;
+	}
+	public void setInvitedBy(Long invitedBy) {
+		this.invitedBy = invitedBy;
 	}
 	public void setCreatedDate(Date createdDate) {
 		this.createdDate = createdDate;

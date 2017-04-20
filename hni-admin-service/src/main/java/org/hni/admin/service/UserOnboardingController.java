@@ -1,5 +1,8 @@
 package org.hni.admin.service;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
@@ -16,6 +19,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import net.minidev.json.JSONObject;
+
 import org.hni.common.Constants;
 import org.hni.common.email.service.EmailComponent;
 import org.hni.organization.om.Organization;
@@ -24,6 +29,7 @@ import org.hni.user.dao.UserDAO;
 import org.hni.user.om.Invitation;
 import org.hni.user.om.User;
 import org.hni.user.om.UserPartialData;
+import org.hni.user.om.Volunteer;
 import org.hni.user.service.UserOnboardingService;
 import org.hni.user.service.UserPartialCreateService;
 import org.slf4j.Logger;
@@ -35,10 +41,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import net.minidev.json.JSONObject;
 
 @Api(value = "/onboard", description = "Operations on NGO")
 @Component
@@ -209,6 +211,30 @@ public class UserOnboardingController extends AbstractBaseController {
 		} catch (Exception e) {
 			_LOGGER.error("Exception while processing request @ isUserNameValid", e);
 			response.put(ERROR, SOMETHING_WENT_WRONG_PLEASE_TRY_AGAIN);
+		}
+		return Response.ok(response).build();
+	}
+	
+	@POST
+	@Path("/volunteer/save")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Produces({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = "Service for saving details of Volunteer", notes = "", response = Volunteer.class, responseContainer = "")
+	public Response volunteerOnBoarding(Volunteer volunteer){
+		User user = getLoggedInUser();
+		Map<String,String> response = new HashMap<>();
+		try{
+			Map<String,String> errors =   userOnBoardingService.buildVolunteerAndSave(volunteer,user);
+			if(errors!=null && errors.isEmpty()){
+				response.put(RESPONSE, SUCCESS);
+			}
+			else{
+				if(errors!=null){
+					response.putAll(errors);
+				}
+			}
+		}catch(Exception e){
+			_LOGGER.error("Volunteer save failed!");
 		}
 		return Response.ok(response).build();
 	}
