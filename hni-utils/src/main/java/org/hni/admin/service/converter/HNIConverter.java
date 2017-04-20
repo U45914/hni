@@ -65,6 +65,7 @@ public class HNIConverter {
 		ngo.setUserId((Long) ThreadContext.get(Constants.USERID));
 			ngo.setAddressId(1L);
 		ngo.setWebsite(overviewNode.get(WEBSITE).asText());
+			ngo.setFte(1);
 		ngo.setOverview(overviewNode.get(OVERVIEW).asText());
 		ngo.setMission(overviewNode.get(MISSION).asText());
 

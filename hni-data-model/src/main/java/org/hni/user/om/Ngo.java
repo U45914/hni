@@ -32,8 +32,9 @@ public class Ngo implements Persistable, Serializable {
 	@Column(name = "website")
 	private String website;
 
-	// `fte` INT(11) NOT NULL,
-	// private Integer fte;
+	@Column(name = "fte")
+	private Integer fte;
+	 
 	@Column(name = "overview")
 	private String overview;
 
@@ -118,6 +119,14 @@ public class Ngo implements Persistable, Serializable {
 
 	public void setWebsite(String website) {
 		this.website = website;
+	}
+
+	public Integer getFte() {
+		return fte;
+	}
+
+	public void setFte(Integer fte) {
+		this.fte = fte;
 	}
 
 	public String getOverview() {
