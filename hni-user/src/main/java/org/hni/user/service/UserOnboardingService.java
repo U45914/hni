@@ -7,6 +7,8 @@ import java.util.Map;
 import org.hni.admin.service.dto.NgoBasicDto;
 import org.hni.common.service.BaseService;
 import org.hni.user.om.Invitation;
+import org.hni.user.om.User;
+import org.hni.user.om.Volunteer;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -16,4 +18,5 @@ public interface UserOnboardingService extends BaseService<Invitation>{
 	Map<String,String> ngoSave(ObjectNode onboardData);
 	ObjectNode getNGODetail(Long ngoId);
 	List<NgoBasicDto> getAllNgo();
+	Map<String,String> buildVolunteerAndSave(Volunteer volunteer,  User user);
 }

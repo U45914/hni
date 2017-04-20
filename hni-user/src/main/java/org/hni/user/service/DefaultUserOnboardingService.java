@@ -9,9 +9,11 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.apache.shiro.util.ThreadContext;
 import org.hni.admin.service.converter.HNIConverter;
 import org.hni.admin.service.converter.HNIValidator;
 import org.hni.admin.service.dto.NgoBasicDto;
+import org.hni.common.Constants;
 import org.hni.common.HNIUtils;
 import org.hni.common.dao.BaseDAO;
 import org.hni.common.om.FoodBank;
@@ -20,13 +22,18 @@ import org.hni.common.om.MealDonationSource;
 import org.hni.common.om.MealFundingSource;
 import org.hni.common.om.NgoFundingSource;
 import org.hni.common.service.AbstractService;
+import org.hni.user.dao.AddressDAO;
 import org.hni.user.dao.NGOGenericDAO;
 import org.hni.user.dao.UserOnboardingDAO;
+import org.hni.user.dao.VolunteerDao;
+import org.hni.user.om.Address;
 import org.hni.user.om.BoardMember;
 import org.hni.user.om.BrandPartner;
 import org.hni.user.om.Invitation;
 import org.hni.user.om.LocalPartner;
 import org.hni.user.om.Ngo;
+import org.hni.user.om.User;
+import org.hni.user.om.Volunteer;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,6 +54,12 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 	
 	@Inject
 	private NGOGenericDAO ngoGenericDAO;
+	
+	@Inject
+	private AddressDAO addressDAO;
+	
+	@Inject
+	private VolunteerDao volunteerDao;
 
 	public DefaultUserOnboardingService(BaseDAO<Invitation> dao) {
 		super(dao);
@@ -90,15 +103,16 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 		HNIValidator.validateNgo(HNIConverter.getNGOFromJson(onboardData),errors);
 		HNIValidator.validateBoardMembers(HNIConverter.getBoardMembersFromJson(onboardData,null),errors);
 		HNIValidator.validateBrandPartners(HNIConverter.getBrandPartnersFromJson(onboardData,null),errors);
+		HNIValidator.validateLocalPartners(HNIConverter.getLocalPartnersFromJson(onboardData,null),errors);
 		HNIValidator.validateFoodBank(HNIConverter.getFoodBankFromJson(onboardData,null),errors);
 		HNIValidator.validateFoodServices(HNIConverter.getFoodServicesFromJson(onboardData,null),errors);
-		HNIValidator.validateLocalPartners(HNIConverter.getLocalPartnersFromJson(onboardData,null),errors);
-		HNIValidator.validateMealFundingSources(HNIConverter.getMealFundingSourcesFromJson(onboardData,null),errors);
 		HNIValidator.validateMealDonationSources( HNIConverter.getMealDonationSourceFromJson(onboardData,null),errors);
-		HNIValidator.validateNgoFoundingSources(HNIConverter.getNgoFundingSourcesFromJson(onboardData,null),errors);
+		HNIValidator.validateMealFundingSources(HNIConverter.getMealFundingSourcesFromJson(onboardData,null),errors);
+		HNIValidator.validateNgoFundingSources(HNIConverter.getNgoFundingSourcesFromJson(onboardData,null),errors);
 	}
 	
 	private String saveNGOData(ObjectNode onboardData){
+		ThreadContext.put(Constants.USERID, 1L);
 		Ngo ngo = ngoGenericDAO.save(Ngo.class ,HNIConverter.getNGOFromJson(onboardData));
 		ngoGenericDAO.saveBatch(BoardMember.class ,(HNIConverter.getBoardMembersFromJson(onboardData,ngo.getId())));
 		ngoGenericDAO.saveBatch(BrandPartner.class ,HNIConverter.getBrandPartnersFromJson(onboardData,ngo.getId()));
@@ -111,6 +125,31 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 		return SUCCESS;
 		
 	}
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class )
+	public Map<String,String> buildVolunteerAndSave(Volunteer volunteer, User user) {
+		Map<String, String> error = new HashMap<>();
+		HNIValidator.validateVolunteer(volunteer, error);
+		if(error!=null && error.isEmpty()){
+			Address address = addressDAO.save(volunteer.getAddress());
+			Long createdBy = getInvitedBy(volunteer);
+			if(createdBy==null){
+				createdBy = user.getId();
+			}
+			volunteer.setAddressId(address.getId());
+			volunteer.setCreated(new Date());
+			volunteer.setCreatedBy(createdBy);
+			volunteer.setUserId(user.getId());
+			volunteerDao.save(volunteer);
+		}
+		return error;
+	}
+	
+	private Long getInvitedBy(Volunteer volunteer) {
+		Invitation invitedBy = invitationDAO.getInvitedBy(volunteer.getEmail());
+		return invitedBy.getInvitedBy();
+	} 
+
 	
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class )

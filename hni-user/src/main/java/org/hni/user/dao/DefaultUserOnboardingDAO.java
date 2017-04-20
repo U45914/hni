@@ -10,6 +10,8 @@ import javax.persistence.TemporalType;
 
 import org.hni.common.dao.AbstractDAO;
 import org.hni.user.om.Invitation;
+import org.hni.user.om.User;
+import org.hni.user.om.Volunteer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -30,6 +32,15 @@ public class DefaultUserOnboardingDAO extends AbstractDAO<Invitation> implements
 			return q.getResultList();
 		} catch (NoResultException e) {
 			return Collections.emptyList();
+		}
+	}
+
+	public Invitation getInvitedBy(String email) {
+		try {
+			Query q = em.createQuery("SELECT x FROM Invitation x WHERE x.email = :email").setParameter("email", email);
+			return (Invitation) q.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
 		}
 	}
 }
