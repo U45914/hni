@@ -102,7 +102,6 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 	}
 	
 	private String saveNGOData(ObjectNode onboardData){
-		ThreadContext.put(Constants.USERID, 1L);
 		Ngo ngo = ngoGenericDAO.save(Ngo.class ,HNIConverter.getNGOFromJson(onboardData));
 		ngoGenericDAO.saveBatch(BoardMember.class ,(HNIConverter.getBoardMembersFromJson(onboardData,ngo.getId())));
 		ngoGenericDAO.saveBatch(BrandPartner.class ,HNIConverter.getBrandPartnersFromJson(onboardData,ngo.getId()));
