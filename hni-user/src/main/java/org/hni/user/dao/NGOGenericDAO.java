@@ -6,9 +6,7 @@ import java.util.List;
 import org.hni.admin.service.dto.NgoBasicDto;
 import org.hni.common.dao.DefaultGenericDAO;
 import org.hni.common.om.Persistable;
-import org.hni.organization.om.UserOrganizationRole;
-import org.hni.user.om.Ngo;
-import org.hni.user.om.User;
+import org.hni.type.HNIRoles;
 import org.springframework.stereotype.Component;
 @Component
 public class NGOGenericDAO extends DefaultGenericDAO {
@@ -34,23 +32,21 @@ public <T extends Persistable>List<T> saveBatch(Class<T> clazz, List<T> objList)
 public List<NgoBasicDto> getAllNgo()
 {
 	List<NgoBasicDto> ngos = new ArrayList<>();
-	List<Long> ngoRoleIds=  em.createQuery("select id from Role x where x.name='NGO'").getResultList();
-	Long ngoRoleId = ngoRoleIds.get(0);
-	List<UserOrganizationRole> userOrganizationRoles=em.createQuery("select x from UserOrganizationRole x where x.id.roleId=:roleId").setParameter("roleId", ngoRoleId).getResultList();
-	 for(UserOrganizationRole userOrganizationRole:userOrganizationRoles)
-	 {
-		 Long userId= userOrganizationRole.getId().getUserId();
-		 Ngo ngoDetail=get(Ngo.class, userId);
+	Long ngoRoleId =  HNIRoles.NGO.getRole();
+	List<Object[]> userOrganizationRoles=em.createNativeQuery("select u.id,u.first_name,u.last_name,u.mobile_phone,n.website from user_organization_role x INNER JOIN users u ON u.id = x.user_id LEFT OUTER JOIN ngo n ON n.id=u.id where x.role_id=:roleId").setParameter("roleId", ngoRoleId).getResultList();
+	for(Object[] u:userOrganizationRoles)
+	{
 		 NgoBasicDto ngoBasicDto = new NgoBasicDto();
-		 User ngo = get(User.class, userId);
+		 Long userId = Long.valueOf(u[0].toString());
+		
 		 ngoBasicDto.setUserId(userId);
-		 ngoBasicDto.setName(ngo.getFirstName()+" "+ngo.getLastName());
-		 ngoBasicDto.setPhone(ngo.getMobilePhone());
-		 ngoBasicDto.setWebsite(ngoDetail!=null?ngoDetail.getWebsite():"");
+		 ngoBasicDto.setName(u[1]+" "+u[2]);
+		 ngoBasicDto.setPhone((String) u[3]);
+		 ngoBasicDto.setWebsite(u[4]!=null?(String) u[4]:"");
 		 ngoBasicDto.setCreatedUsers((Long) em.createQuery("select count(id) from Ngo where createdBy=:userId").setParameter("userId", userId).getSingleResult());
-		 //TO DO the changes when Customer TABLE is alive instd of Ngo
+		 //TO DO the changes when Client TABLE is alive instd of Ngo
 		 ngos.add(ngoBasicDto);
-	 }
+	}
 	return ngos;
 	 
 	
