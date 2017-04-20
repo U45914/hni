@@ -8,10 +8,12 @@ import org.hni.common.om.FoodService;
 import org.hni.common.om.MealDonationSource;
 import org.hni.common.om.MealFundingSource;
 import org.hni.common.om.NgoFundingSource;
+import org.hni.user.om.Address;
 import org.hni.user.om.BoardMember;
 import org.hni.user.om.BrandPartner;
 import org.hni.user.om.LocalPartner;
 import org.hni.user.om.Ngo;
+import org.hni.user.om.Volunteer;
 
 public class HNIValidator {
 	/**
@@ -237,6 +239,60 @@ public class HNIValidator {
 
 		});
 		return errors;
+	}
+	
+	public static Map<String,String> validateVolunteer(Volunteer volunteer, Map<String, String> error){
+		
+		validateAddress(volunteer.getAddress(), error);
+		if(volunteer.getBirthday()==null){
+			error.put("Volunteer Birthday", "Cannot be null");
+		}
+		if(volunteer.getEducation()==null){
+			error.put("Volunteer Education", "Cannot be null");
+		}
+		if(volunteer.getEmployer()==null){
+			error.put("Volunteer Employer", "Cannot be null");
+		}
+		if(volunteer.getIncome()==null){
+			error.put("Volunteer Income", "Cannot be null");
+		}
+		if(volunteer.getKids()==null){
+			error.put("Volunteer Kids", "Cannot be null");
+		}
+		if(volunteer.getMaritalStatus()==null){
+			error.put("Volunteer Marital Status", "Cannot be null");
+		}
+		if(volunteer.getNonProfit()==null){
+			error.put("Volunteer Non Profit", "Cannot be null");
+		}
+		if(volunteer.getRace()==null){
+			error.put("Volunteer Race", "Cannot be null");
+		}
+		if(volunteer.getSex()==null){
+			error.put("Volunteer Sex", "Cannot be null");
+		}
+		
+		return error;
+	}
+	
+	public static Map<String,String> validateAddress(Address address, Map<String, String> error){
+		if(address.getName()==null){
+			error.put("Address Name", "Cannot be null");
+		}
+		if(address.getAddress1()==null){
+			error.put("Address address1","Cannot be null");
+		}
+		if(address.getCity()==null){
+			error.put("Address city","Cannot be null");
+		}
+		if(address.getState()==null || address.getState().length() >2){
+			error.put("Address state","Invalid entry");
+		}
+		if(address.getZip()==null){
+			error.put("Address zip","Cannot be null");
+		}
+		
+		return error;
 	}
 
 }
