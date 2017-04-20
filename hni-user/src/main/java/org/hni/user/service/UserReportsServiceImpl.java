@@ -5,19 +5,35 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.hni.admin.service.dto.NgoBasicDto;
+import org.hni.user.dao.CustomerDao;
 import org.hni.user.dao.NGOGenericDAO;
+import org.hni.user.om.User;
 import org.springframework.stereotype.Component;
-@Component
-public class UserReportsServiceImpl implements UserReportService{
 
-	
+@Component
+public class UserReportsServiceImpl implements UserReportService {
 
 	@Inject
 	private NGOGenericDAO ngoGenericDAO;
+
 	@Override
 	public List<NgoBasicDto> getAllNgo() {
-		
+
 		return ngoGenericDAO.getAllNgo();
+	}
+
+	@Inject
+	private CustomerDao customerDao;
+
+	@Override
+	public List<User> getAllCustomersByRole() {
+
+		return customerDao.getAllCustomersByRole();
+	}
+
+	@Override
+	public List<User> getAllCustomersUnderOrganisation(User user) {
+		return customerDao.getAllCustomersUnderOrganisation(user);
 	}
 
 }
