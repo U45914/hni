@@ -9,16 +9,13 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.apache.shiro.util.ThreadContext;
 import org.hni.admin.service.converter.HNIConverter;
 import org.hni.admin.service.converter.HNIValidator;
 import org.hni.admin.service.dto.NgoBasicDto;
-import org.hni.common.Constants;
 import org.hni.common.HNIUtils;
 import org.hni.common.dao.BaseDAO;
 import org.hni.common.om.FoodBank;
 import org.hni.common.om.FoodService;
-import org.hni.common.om.FoodServiceAvailability;
 import org.hni.common.om.MealDonationSource;
 import org.hni.common.om.MealFundingSource;
 import org.hni.common.om.NgoFundingSource;
@@ -114,8 +111,6 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 		return SUCCESS;
 		
 	}
-
-
 	
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class )

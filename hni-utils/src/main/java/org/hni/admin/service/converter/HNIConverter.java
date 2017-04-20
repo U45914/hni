@@ -26,8 +26,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import static org.hni.common.Constants.*;
 
 public class HNIConverter {
+
 	private static final Logger logger = LoggerFactory.getLogger(HNIConverter.class);
 
 	public static final String USERID = "userId";
@@ -55,32 +57,32 @@ public class HNIConverter {
 	 * @return
 	 */
 	public static Ngo getNGOFromJson(ObjectNode objectNode) {
-		JsonNode overviewNode = objectNode.get("overview");
-		JsonNode serviceNode = objectNode.get("service");
-		JsonNode clientNode = objectNode.get("client");
+		JsonNode overviewNode = objectNode.get(OVERVIEW);
+		JsonNode serviceNode = objectNode.get(SERVICE);
+		JsonNode clientNode = objectNode.get(CLIENT_NODE);
 
 		Ngo ngo = new Ngo();
-			ngo.setUserId(2L);
+		ngo.setUserId((Long) ThreadContext.get(Constants.USERID));
 			ngo.setAddressId(1L);
-		ngo.setWebsite(overviewNode.get("website").asText());
-		ngo.setOverview(overviewNode.get("overview").asText());
-		ngo.setMission(overviewNode.get("mission").asText());
+		ngo.setWebsite(overviewNode.get(WEBSITE).asText());
+		ngo.setOverview(overviewNode.get(OVERVIEW).asText());
+		ngo.setMission(overviewNode.get(MISSION).asText());
 
-		ngo.setMonthlyBudget(serviceNode.get("monthlyBudget").asInt());
-		ngo.setOperatingCost(serviceNode.get("operatingCost").asInt());
-		ngo.setPersonalCost(serviceNode.get("personalCost").asInt());
-		ngo.setKitchenVolunteers(serviceNode.get("volunteerNbr").asInt());
-		ngo.setFoodStampAssist(serviceNode.get("foodStamp").asInt());
-		ngo.setFoodBank(serviceNode.get("foodBankSelect").asInt());
+		ngo.setMonthlyBudget(serviceNode.get(MONTHLY_BUDGET).asInt());
+		ngo.setOperatingCost(serviceNode.get(OPERATING_COST).asInt());
+		ngo.setPersonalCost(serviceNode.get(PERSONAL_COST).asInt());
+		ngo.setKitchenVolunteers(serviceNode.get(VOLUNTEER_NBR).asInt());
+		ngo.setFoodStampAssist(serviceNode.get(FOOD_STAMP).asInt());
+		ngo.setFoodBank(serviceNode.get(FOOD_BANK_SELECT).asInt());
 
 			ngo.setResourcesToClients(1);
-		ngo.setIndidualsServedDaily(clientNode.get("individualsServedDaily").asInt());
-		ngo.setIndividualsServedMonthly(clientNode.get("individualsServedMonthly").asInt());
-		ngo.setIndividualsServedAnnual(clientNode.get("individualsServedAnnually").asInt());
-		ngo.setClientInfo(clientNode.get("individualClientInfoCollected").asInt());
+		ngo.setIndidualsServedDaily(clientNode.get(INDIVIDUALS_SERVED_DAILY).asInt());
+		ngo.setIndividualsServedMonthly(clientNode.get(INDIVIDUALS_SERVED_MONTHLY).asInt());
+		ngo.setIndividualsServedAnnual(clientNode.get(INDIVIDUALS_SERVED_ANNUALLY).asInt());
+		ngo.setClientInfo(clientNode.get(INDIVIDUAL_CLIENT_INFO_COLLECTED).asInt());
 			ngo.setStoreClientInfo("");
-		ngo.setClientsUnSheltered(clientNode.get("unshelteredClientPercentage").asInt());
-		ngo.setClientsEmployed(clientNode.get("employeedClientPercentage").asInt());
+		ngo.setClientsUnSheltered(clientNode.get(UNSHELTERED_CLIENT_PERCENTAGE).asInt());
+		ngo.setClientsEmployed(clientNode.get(EMPLOYEED_CLIENT_PERCENTAGE).asInt());
 		ngo.setCreated(new Date());
 		ngo.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
 
@@ -96,7 +98,7 @@ public class HNIConverter {
 	 */
 	public static List<BoardMember> getBoardMembersFromJson(ObjectNode objectNode, Long ngoId) {
 		List<BoardMember> boardMembers = new ArrayList<>();
-		JsonNode boardMemberArray = objectNode.get("stakeHolder").get("boardMembers");
+		JsonNode boardMemberArray = objectNode.get(STAKE_HOLDER).get(BOARD_MEMBERS);
 		if (boardMemberArray.isArray()) {
 			Iterator<JsonNode> boardMemberItr = boardMemberArray.iterator();
 			while (boardMemberItr.hasNext()) {
@@ -104,9 +106,9 @@ public class HNIConverter {
 
 				BoardMember boardMember = new BoardMember();
 				boardMember.setNgo_id(ngoId);
-				boardMember.setFirstName(boardMemberJSON.get("name").asText());
+				boardMember.setFirstName(boardMemberJSON.get(NAME).asText());
 					boardMember.setLastName("");
-				boardMember.setCompany(boardMemberJSON.get("company").asText());
+				boardMember.setCompany(boardMemberJSON.get(COMPANY).asText());
 				boardMember.setCreated(new Date());
 				boardMember.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
 				boardMember.setNgo_id(ngoId);
@@ -125,7 +127,7 @@ public class HNIConverter {
 	 */
 	public static List<BrandPartner> getBrandPartnersFromJson(ObjectNode objectNode, Long ngo_id) {
 		List<BrandPartner> brandPartners = new ArrayList<>();
-		JsonNode brandPartnerArray = objectNode.get("stakeHolder").get("brandPartners");
+		JsonNode brandPartnerArray = objectNode.get(STAKE_HOLDER).get(BRAND_PARTNERS);
 		if (brandPartnerArray.isArray()) {
 			Iterator<JsonNode> brandPartnerItr = brandPartnerArray.iterator();
 			while (brandPartnerItr.hasNext()) {
@@ -133,8 +135,8 @@ public class HNIConverter {
 
 				BrandPartner brandPartner = new BrandPartner();
 				brandPartner.setNgo_id(ngo_id);
-				brandPartner.setPhone(String.valueOf(brandPartnerJSON.get("phoneNumber").asInt()));
-				brandPartner.setCompany(brandPartnerJSON.get("company").asText());
+				brandPartner.setPhone(String.valueOf(brandPartnerJSON.get(PHONE_NUMBER).asInt()));
+				brandPartner.setCompany(brandPartnerJSON.get(COMPANY).asText());
 				brandPartner.setCreated(new Date());
 				brandPartner.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
 				brandPartners.add(brandPartner);
@@ -153,7 +155,7 @@ public class HNIConverter {
 	 */
 	public static List<LocalPartner> getLocalPartnersFromJson(ObjectNode objectNode, Long ngoId) {
 		List<LocalPartner> localPartners = new ArrayList<>();
-		JsonNode localPartnerArray = objectNode.get("stakeHolder").get("localPartners");
+		JsonNode localPartnerArray = objectNode.get(STAKE_HOLDER).get(LOCAL_PARTNERS);
 		if (localPartnerArray.isArray()) {
 			Iterator<JsonNode> localPartnerItr = localPartnerArray.iterator();
 			while (localPartnerItr.hasNext()) {
@@ -161,8 +163,8 @@ public class HNIConverter {
 
 				LocalPartner localPartner = new LocalPartner();
 				localPartner.setNgo_id(ngoId);
-				localPartner.setPhone(String.valueOf(localPartnerJSON.get("phoneNumber").asInt()));
-				localPartner.setCompany(localPartnerJSON.get("company").asText());
+				localPartner.setPhone(String.valueOf(localPartnerJSON.get(PHONE_NUMBER).asInt()));
+				localPartner.setCompany(localPartnerJSON.get(COMPANY).asText());
 				localPartner.setCreated(new Date());
 				localPartner.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
 				localPartners.add(localPartner);
@@ -180,10 +182,10 @@ public class HNIConverter {
 	 */
 	public static List<FoodBank> getFoodBankFromJson(ObjectNode objectNode, Long ngoId) {
 		List<FoodBank> foodBanks = new ArrayList<>();
-		JsonNode serviceNode = objectNode.get("service");
+		JsonNode serviceNode = objectNode.get(SERVICE);
 
-		if (serviceNode.get("foodBankSelect").asBoolean()) {
-			JsonNode foodBankArray = serviceNode.get("foodBankValue");
+		if (serviceNode.get(FOOD_BANK_SELECT).asBoolean()) {
+			JsonNode foodBankArray = serviceNode.get(FOOD_BANK_VALUE);
 			if (foodBankArray.isArray()) {
 				Iterator<JsonNode> foodBankItr = foodBankArray.iterator();
 				while (foodBankItr.hasNext()) {
@@ -208,36 +210,36 @@ public class HNIConverter {
 	 */
 	public static List<FoodService> getFoodServicesFromJson(ObjectNode objectNode, Long ngoId) {
 		List<FoodService> foodServices = new ArrayList<>();
-		JsonNode serviceNode = objectNode.get("service");
+		JsonNode serviceNode = objectNode.get(SERVICE);
 
-		if (serviceNode.get("brkfstChk").asBoolean()) {
+		if (serviceNode.get(BRKFST_CHK).asBoolean()) {
 			FoodService foodService = new FoodService();
 			foodService.setNgoId(ngoId);
 			foodService.setServiceType(Constants.BREAKFAST_ID);
-			foodService.setTotalCount(serviceNode.get("brkfstQty").asLong());
-			foodService.setWeekdays(serviceNode.get("brkfstAvailabilty").asText());
+			foodService.setTotalCount(serviceNode.get(BRKFST_QTY).asLong());
+			foodService.setWeekdays(serviceNode.get(BRKFST_AVAILABILTY).asText());
 				foodService.setOther("");
 			foodService.setCreated(new Date());
 			foodService.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
 			foodServices.add(foodService);
 		}
-		if (serviceNode.get("lunchChk").asBoolean()) {
+		if (serviceNode.get(LUNCH_CHK).asBoolean()) {
 			FoodService foodService = new FoodService();
 			foodService.setNgoId(ngoId);
 			foodService.setServiceType(Constants.LUNCH_ID);
-			foodService.setTotalCount(serviceNode.get("lunchQty").asLong());
-			foodService.setWeekdays(serviceNode.get("lunchAvailabilty").asText());
+			foodService.setTotalCount(serviceNode.get(LUNCH_QTY).asLong());
+			foodService.setWeekdays(serviceNode.get(LUNCH_AVAILABILTY).asText());
 				foodService.setOther("");
 			foodService.setCreated(new Date());
 			foodService.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
 			foodServices.add(foodService);
 		}
-		if (serviceNode.get("dinnerChk").asBoolean()) {
+		if (serviceNode.get(DINNER_CHK).asBoolean()) {
 			FoodService foodService = new FoodService();
 			foodService.setNgoId(ngoId);
 			foodService.setServiceType(Constants.DINNER_ID);
-			foodService.setTotalCount(serviceNode.get("dinnerQty").asLong());
-			foodService.setWeekdays(serviceNode.get("dinnerAvailabilty").asText());
+			foodService.setTotalCount(serviceNode.get(DINNER_QTY).asLong());
+			foodService.setWeekdays(serviceNode.get(DINNER_AVAILABILTY).asText());
 				foodService.setOther("");
 			foodService.setCreated(new Date());
 			foodService.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
@@ -256,15 +258,15 @@ public class HNIConverter {
 	 */
 	public static List<MealDonationSource> getMealDonationSourceFromJson(ObjectNode objectNode, Long ngoId) {
 		List<MealDonationSource> mealDonationSources = new ArrayList<>();
-		JsonNode mealDonationSourceArray = objectNode.get("funding").get("mealDonation");
+		JsonNode mealDonationSourceArray = objectNode.get(FUNDING).get(MEAL_DONATION);
 		if (mealDonationSourceArray.isArray()) {
 			Iterator<JsonNode> mealDonationSourceItr = mealDonationSourceArray.iterator();
 			while (mealDonationSourceItr.hasNext()) {
 				JsonNode mealDonationSourceJSON = mealDonationSourceItr.next();
 				MealDonationSource mealDonationSource = new MealDonationSource();
 				mealDonationSource.setNgoId(ngoId);
-				mealDonationSource.setSource(mealDonationSourceJSON.get("source").asText());
-				mealDonationSource.setFrequency(mealDonationSourceJSON.get("frequency").asText());
+				mealDonationSource.setSource(mealDonationSourceJSON.get(SOURCE).asText());
+				mealDonationSource.setFrequency(mealDonationSourceJSON.get(FREQUENCY).asText());
 				mealDonationSource.setCreated(new Date());
 				mealDonationSource.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
 				mealDonationSources.add(mealDonationSource);
@@ -282,15 +284,15 @@ public class HNIConverter {
 	 */
 	public static List<MealFundingSource> getMealFundingSourcesFromJson(ObjectNode objectNode, Long ngoId) {
 		List<MealFundingSource> mealFundingSources = new ArrayList<>();
-		JsonNode mealFundingSourceArray = objectNode.get("funding").get("mealFunding");
+		JsonNode mealFundingSourceArray = objectNode.get(FUNDING).get(MEAL_FUNDING);
 		if (mealFundingSourceArray.isArray()) {
 			Iterator<JsonNode> mealFundingSourceItr = mealFundingSourceArray.iterator();
 			while (mealFundingSourceItr.hasNext()) {
 				JsonNode mealFundingSourceJSON = mealFundingSourceItr.next();
 				MealFundingSource mealFundingSource = new MealFundingSource();
 				mealFundingSource.setNgoId(ngoId);
-				mealFundingSource.setAmount(mealFundingSourceJSON.get("amount").asDouble());
-				mealFundingSource.setSource(mealFundingSourceJSON.get("source").asText());
+				mealFundingSource.setAmount(mealFundingSourceJSON.get(AMOUNT).asDouble());
+				mealFundingSource.setSource(mealFundingSourceJSON.get(SOURCE).asText());
 				mealFundingSource.setCreated(new Date());
 				mealFundingSource.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
 				mealFundingSources.add(mealFundingSource);
@@ -308,15 +310,15 @@ public class HNIConverter {
 	 */
 	public static List<NgoFundingSource> getNgoFundingSourcesFromJson(ObjectNode objectNode, Long ngoId) {
 		List<NgoFundingSource> ngoFundingSources = new ArrayList<>();
-		JsonNode ngoFundingSourceArray = objectNode.get("funding").get("fundingSource");
+		JsonNode ngoFundingSourceArray = objectNode.get(FUNDING).get(FUNDING_SOURCE);
 		if (ngoFundingSourceArray.isArray()) {
 			Iterator<JsonNode> ngoFundingSourceItr = ngoFundingSourceArray.iterator();
 			while (ngoFundingSourceItr.hasNext()) {
 				JsonNode ngoFundingSourceJSON = ngoFundingSourceItr.next();
 				NgoFundingSource ngoFundingSource = new NgoFundingSource();
 				ngoFundingSource.setNgoId(ngoId);
-				ngoFundingSource.setAmount(ngoFundingSourceJSON.get("amount").asDouble());
-				ngoFundingSource.setSource(ngoFundingSourceJSON.get("source").asText());
+				ngoFundingSource.setAmount(ngoFundingSourceJSON.get(AMOUNT).asDouble());
+				ngoFundingSource.setSource(ngoFundingSourceJSON.get(SOURCE).asText());
 				ngoFundingSource.setCreated(new Date());
 				ngoFundingSource.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
 				ngoFundingSources.add(ngoFundingSource);
@@ -334,29 +336,29 @@ public class HNIConverter {
 	 */
 	public static ObjectNode convertNGOToJSON(Ngo ngo, ObjectNode parentJSON) {
 		ObjectNode overview = mapper.createObjectNode();
-		overview.put("website", ngo.getWebsite());
-		overview.put("overview", ngo.getOverview());
-		overview.put("mission", ngo.getMission());
-		parentJSON.set("overview", overview);
+		overview.put(WEBSITE, ngo.getWebsite());
+		overview.put(OVERVIEW, ngo.getOverview());
+		overview.put(MISSION, ngo.getMission());
+		parentJSON.set(OVERVIEW, overview);
 
 		ObjectNode service = mapper.createObjectNode();
-		service.put("monthlyBudget", ngo.getMonthlyBudget());
-		service.put("operatingCost", ngo.getOperatingCost());
-		service.put("personalCost", ngo.getPersonalCost());
-		service.put("volunteerNbr", ngo.getKitchenVolunteers());
-		service.put("foodBankSelect", ngo.getFoodBank());
-		service.put("foodStamp", ngo.getFoodStampAssist());
-		service.put("foodBankSelect", ngo.getFoodBank());
-		parentJSON.set("service", service);
+		service.put(MONTHLY_BUDGET, ngo.getMonthlyBudget());
+		service.put(OPERATING_COST, ngo.getOperatingCost());
+		service.put(PERSONAL_COST, ngo.getPersonalCost());
+		service.put(VOLUNTEER_NBR, ngo.getKitchenVolunteers());
+		service.put(FOOD_BANK_SELECT, ngo.getFoodBank());
+		service.put(FOOD_STAMP, ngo.getFoodStampAssist());
+		service.put(FOOD_BANK_SELECT, ngo.getFoodBank());
+		parentJSON.set(SERVICE, service);
 
 		ObjectNode client = mapper.createObjectNode();
-		client.put("individualsServedDaily", ngo.getIndidualsServedDaily());
-		client.put("individualsServedMonthly", ngo.getIndividualsServedMonthly());
-		client.put("individualsServedAnnually", ngo.getIndividualsServedAnnual());
-		client.put("individualClientInfoCollected", ngo.getClientInfo());
-		client.put("unshelteredClientPercentage", ngo.getClientsUnSheltered());
-		client.put("employeedClientPercentage", ngo.getClientsEmployed());
-		parentJSON.set("client", client);
+		client.put(INDIVIDUALS_SERVED_DAILY, ngo.getIndidualsServedDaily());
+		client.put(INDIVIDUALS_SERVED_MONTHLY, ngo.getIndividualsServedMonthly());
+		client.put(INDIVIDUALS_SERVED_ANNUALLY, ngo.getIndividualsServedAnnual());
+		client.put(INDIVIDUAL_CLIENT_INFO_COLLECTED, ngo.getClientInfo());
+		client.put(UNSHELTERED_CLIENT_PERCENTAGE, ngo.getClientsUnSheltered());
+		client.put(EMPLOYEED_CLIENT_PERCENTAGE, ngo.getClientsEmployed());
+		parentJSON.set(CLIENT_NODE, client);
 
 		return parentJSON;
 	}
@@ -369,15 +371,15 @@ public class HNIConverter {
 	 * @return
 	 */
 	public static ObjectNode convertBoardMembersToJSON(List<BoardMember> boardMembers, ObjectNode parentJSON) {
-		ObjectNode stakeHolderNode = (ObjectNode) parentJSON.get("stakeHolder");
+		ObjectNode stakeHolderNode = (ObjectNode) parentJSON.get(STAKE_HOLDER);
 		ArrayNode boardMemberJSONArray = mapper.createArrayNode();
 		boardMembers.forEach(bm -> {
 			ObjectNode boardMemberJSON = mapper.createObjectNode();
-			boardMemberJSON.put("company", bm.getCompany());
-			boardMemberJSON.put("name", bm.getFirstName());
+			boardMemberJSON.put(COMPANY, bm.getCompany());
+			boardMemberJSON.put(NAME, bm.getFirstName());
 			boardMemberJSONArray.add(boardMemberJSON);
 		});
-		stakeHolderNode.set("boardMembers", boardMemberJSONArray);
+		stakeHolderNode.set(BOARD_MEMBERS, boardMemberJSONArray);
 		return parentJSON;
 	}
 
@@ -389,15 +391,15 @@ public class HNIConverter {
 	 * @return
 	 */
 	public static ObjectNode convertBrandPartnersToJSON(List<BrandPartner> brandPartners, ObjectNode parentJSON) {
-		ObjectNode stakeHolderNode = (ObjectNode) parentJSON.get("stakeHolder");
+		ObjectNode stakeHolderNode = (ObjectNode) parentJSON.get(STAKE_HOLDER);
 		ArrayNode brandPartnerJSONArray = mapper.createArrayNode();
 		brandPartners.forEach(bp -> {
 			ObjectNode brandPartnerJSON = mapper.createObjectNode();
-			brandPartnerJSON.put("company", bp.getCompany());
-			brandPartnerJSON.put("phoneNumber", bp.getPhone());
+			brandPartnerJSON.put(COMPANY, bp.getCompany());
+			brandPartnerJSON.put(PHONE_NUMBER, bp.getPhone());
 			brandPartnerJSONArray.add(brandPartnerJSON);
 		});
-		stakeHolderNode.set("brandPartners", brandPartnerJSONArray);
+		stakeHolderNode.set(BRAND_PARTNERS, brandPartnerJSONArray);
 		return parentJSON;
 	}
 
@@ -409,15 +411,15 @@ public class HNIConverter {
 	 * @return
 	 */
 	public static ObjectNode convertLocalPartnerToJSON(List<LocalPartner> localPartners, ObjectNode parentJSON) {
-		ObjectNode stakeHolderNode = (ObjectNode) parentJSON.get("stakeHolder");
+		ObjectNode stakeHolderNode = (ObjectNode) parentJSON.get(STAKE_HOLDER);
 		ArrayNode localPartnerJSONArray = mapper.createArrayNode();
 		localPartners.forEach(lp -> {
 			ObjectNode localPartnerJSON = mapper.createObjectNode();
-			localPartnerJSON.put("company", lp.getCompany());
-			localPartnerJSON.put("phoneNumber", lp.getPhone());
+			localPartnerJSON.put(COMPANY, lp.getCompany());
+			localPartnerJSON.put(PHONE_NUMBER, lp.getPhone());
 			localPartnerJSONArray.add(localPartnerJSON);
 		});
-		stakeHolderNode.set("localPartners", localPartnerJSONArray);
+		stakeHolderNode.set(LOCAL_PARTNERS, localPartnerJSONArray);
 		return parentJSON;
 	}
 
@@ -430,14 +432,14 @@ public class HNIConverter {
 	 * @return
 	 */
 	public static ObjectNode convertFoodBanksToJSON(List<FoodBank> foodBanks, ObjectNode parentJSON) {
-		ObjectNode serviceNode = (ObjectNode) parentJSON.get("service");
+		ObjectNode serviceNode = (ObjectNode) parentJSON.get(SERVICE);
 		if (!foodBanks.isEmpty()) {
-			serviceNode.put("foodBankSelect", Boolean.TRUE);
+			serviceNode.put(FOOD_BANK_SELECT, Boolean.TRUE);
 			ArrayNode foodBankArray = new ObjectMapper().createArrayNode();
 			for (int i = 0; i < foodBanks.size(); i++) {
 				foodBankArray.add(foodBanks.get(i).getFoodBankName());
 			}
-			serviceNode.set("foodBankValue", foodBankArray);
+			serviceNode.set(FOOD_BANK_VALUE, foodBankArray);
 		}
 		return parentJSON;
 	}
@@ -450,26 +452,26 @@ public class HNIConverter {
 	 * @return
 	 */
 	public static ObjectNode convertFoodServiceToJSON(List<FoodService> foodServices, ObjectNode parentJSON) {
-		ObjectNode serviceNode = (ObjectNode) parentJSON.get("service");
+		ObjectNode serviceNode = (ObjectNode) parentJSON.get(SERVICE);
 		foodServices.forEach(fs -> {
 			if (fs.getServiceType().equals(1L)) {
-				serviceNode.put("brkfstChk", true);
-				serviceNode.put("brkfstQty", fs.getTotalCount());
-				serviceNode.put("brkfstAvailabilty", fs.getWeekdays());
+				serviceNode.put(BRKFST_CHK, true);
+				serviceNode.put(BRKFST_QTY, fs.getTotalCount());
+				serviceNode.put(BRKFST_AVAILABILTY, fs.getWeekdays());
 			}
 			if (fs.getServiceType().equals(2L)) {
-				serviceNode.put("lunchChk", true);
-				serviceNode.put("lunchQty", fs.getTotalCount());
-				serviceNode.put("lunchAvailabilty", fs.getWeekdays());
+				serviceNode.put(LUNCH_CHK, true);
+				serviceNode.put(LUNCH_QTY, fs.getTotalCount());
+				serviceNode.put(LUNCH_AVAILABILTY, fs.getWeekdays());
 			}
 			if (fs.getServiceType().equals(3L)) {
-				serviceNode.put("dinnerChk", true);
-				serviceNode.put("dinnerQty", fs.getTotalCount());
-				serviceNode.put("dinnerAvailabilty", fs.getWeekdays());
+				serviceNode.put(DINNER_CHK, true);
+				serviceNode.put(DINNER_QTY, fs.getTotalCount());
+				serviceNode.put(DINNER_AVAILABILTY, fs.getWeekdays());
 			}
 			if (fs.getServiceType().equals(4L)) {
-				serviceNode.put("baggedChk", true);
-				serviceNode.put("baggedQty", fs.getTotalCount());
+				serviceNode.put(BAGGED_CHK, true);
+				serviceNode.put(BAGGED_QTY, fs.getTotalCount());
 			}
 		});
 		return parentJSON;
@@ -483,16 +485,16 @@ public class HNIConverter {
 	 * @return
 	 */
 	public static ObjectNode convertMealDonationToJSON(List<MealDonationSource> mealDonations, ObjectNode parentJSON) {
-		ObjectNode fundingJSON = (ObjectNode) parentJSON.get("funding");
+		ObjectNode fundingJSON = (ObjectNode) parentJSON.get(FUNDING);
 		ArrayNode mealDonationJSONArray = mapper.createArrayNode();
 		mealDonations.forEach(md -> {
 			ObjectNode mealDonationJSON = mapper.createObjectNode();
-			mealDonationJSON.put("source", md.getSource());
-			mealDonationJSON.put("frequency", md.getFrequency());
+			mealDonationJSON.put(SOURCE, md.getSource());
+			mealDonationJSON.put(FREQUENCY, md.getFrequency());
 			mealDonationJSONArray.add(mealDonationJSON);
 		});
 
-		fundingJSON.set("mealDonation", mealDonationJSONArray);
+		fundingJSON.set(MEAL_DONATION, mealDonationJSONArray);
 		return parentJSON;
 	}
 
@@ -504,16 +506,16 @@ public class HNIConverter {
 	 * @return
 	 */
 	public static ObjectNode convertMealFundingToJSON(List<MealFundingSource> mealFundings, ObjectNode parentJSON) {
-		ObjectNode fundingJSON = (ObjectNode) parentJSON.get("funding");
+		ObjectNode fundingJSON = (ObjectNode) parentJSON.get(FUNDING);
 		ArrayNode mealFundingJSONArray = mapper.createArrayNode();
 		mealFundings.forEach(mf -> {
 			ObjectNode mealFundingJSON = mapper.createObjectNode();
-			mealFundingJSON.put("source", mf.getSource());
-			mealFundingJSON.put("amount", mf.getAmount());
+			mealFundingJSON.put(SOURCE, mf.getSource());
+			mealFundingJSON.put(AMOUNT, mf.getAmount());
 			mealFundingJSONArray.add(mealFundingJSON);
 		});
 
-		fundingJSON.set("mealFunding", mealFundingJSONArray);
+		fundingJSON.set(MEAL_FUNDING, mealFundingJSONArray);
 		return parentJSON;
 	}
 
@@ -525,16 +527,16 @@ public class HNIConverter {
 	 * @return
 	 */
 	public static ObjectNode convertFundingSourceToJSON(List<NgoFundingSource> fundingSources, ObjectNode parentJSON) {
-		ObjectNode fundingJSON = (ObjectNode) parentJSON.get("funding");
+		ObjectNode fundingJSON = (ObjectNode) parentJSON.get(FUNDING);
 		ArrayNode fundingSourceJSONArray = mapper.createArrayNode();
 		fundingSources.forEach(fs -> {
 			ObjectNode fundingSourceJSON = mapper.createObjectNode();
-			fundingSourceJSON.put("source", fs.getSource());
-			fundingSourceJSON.put("amount", fs.getAmount());
+			fundingSourceJSON.put(SOURCE, fs.getSource());
+			fundingSourceJSON.put(AMOUNT, fs.getAmount());
 			fundingSourceJSONArray.add(fundingSourceJSON);
 		});
 
-		fundingJSON.set("fundingSource", fundingSourceJSONArray);
+		fundingJSON.set(FUNDING_SOURCE, fundingSourceJSONArray);
 		return parentJSON;
 	}
 
