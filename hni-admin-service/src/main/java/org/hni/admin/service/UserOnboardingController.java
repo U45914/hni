@@ -21,6 +21,7 @@ import javax.ws.rs.core.Response;
 
 import net.minidev.json.JSONObject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hni.common.Constants;
 import org.hni.common.email.service.EmailComponent;
 import org.hni.organization.om.Organization;
@@ -81,8 +82,8 @@ public class UserOnboardingController extends AbstractBaseController {
 			boolean ors = organizationService.isAlreadyExists(org);
 			if (!ors) {
 				Organization organization = organizationService.save(org);
-				String UUID = userOnBoardingService.buildInvitationAndSave(organization.getId());
-				emailComponent.sendEmail(organization.getEmail(), UUID);
+				String UUID = userOnBoardingService.buildInvitationAndSave(organization.getId(), getLoggedInUser().getId(), organization.getEmail());
+				emailComponent.sendEmail(organization.getEmail(), UUID, "ngo" , "");
 				map.put(RESPONSE, SUCCESS);
 				return map;
 			} else {
@@ -95,16 +96,24 @@ public class UserOnboardingController extends AbstractBaseController {
 	}
 	
 	@POST
-	@Path("/ngo/user/invite")
+	@Path("/{userType}/user/invite")
 	@Produces({ MediaType.APPLICATION_JSON }) 
 	@Consumes({ MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "", notes = "", response = Map.class, responseContainer = "")
-	public Map<String, String> sendNGOActivationLinkToUsser(Map<String, String> userInfo) {
+	public Map<String, String> sendNGOActivationLinkToUsser(@PathParam("userType") String  userType, Map<String, String> userInfo) {
 		Map<String, String> map = new HashMap<>();
 		map.put(RESPONSE, ERROR);
 		try {
-			String UUID = userOnBoardingService.buildInvitationAndSave(Long.valueOf(userInfo.get("orgId")));
-			emailComponent.sendEmail(userInfo.get("email"), UUID);
+			String orgId = userInfo.get("orgId");
+			String message = userInfo.get("invitationMessage");
+			Long organizationId;
+			if (StringUtils.isNotEmpty(orgId)) {
+				organizationId = Long.valueOf(orgId);
+			} else {
+				organizationId = getLoggedInUser().getOrganizationId() != null ? getLoggedInUser().getOrganizationId() : 1;
+			}
+			String UUID = userOnBoardingService.buildInvitationAndSave(organizationId, getLoggedInUser().getId(), userInfo.get("email"));
+			emailComponent.sendEmail(userInfo.get("email"), UUID, userType, message);
 			map.put(RESPONSE, SUCCESS);
 			return map;	
 		} catch (Exception e) {
@@ -114,10 +123,10 @@ public class UserOnboardingController extends AbstractBaseController {
 	}
 
 	@GET
-	@Path("/activate/ngo/{invitationCode}")
+	@Path("/activate/{ngo}/{invitationCode}")
 	@Produces({ MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "", notes = "", response = Map.class, responseContainer = "")
-	public Map<String, String> activateNGO(@PathParam("invitationCode") String invitationCode) {
+	public Map<String, String> activateNGO(@PathParam("userType") String userType, @PathParam("invitationCode") String invitationCode) {
 		Map<String, String> map = new HashMap<>();
 		map.put(RESPONSE, ERROR);
 		List<Invitation> invitations = (List<Invitation>) userOnBoardingService.validateInvitationCode(invitationCode);

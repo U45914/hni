@@ -72,11 +72,13 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 
 
 	@Override
-	public String buildInvitationAndSave(Long orgId) {
+	public String buildInvitationAndSave(Long orgId, Long invitedBy, String email) {
 		String UUID = HNIUtils.getUUID();
 		Invitation invitation = new Invitation();
 		invitation.setOrganizationId(orgId.toString());
 		invitation.setInvitationCode(UUID);
+		invitation.setInvitedBy(invitedBy);
+		invitation.setEmail(email);
 		invitation.setCreatedDate(new Date());
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.DAY_OF_MONTH, 5);
