@@ -49,7 +49,7 @@ public class UserReportsController {
 		try
 		{
 		List<NgoBasicDto> ngo =  userReportService.getAllNgo();
-		response.put("header", HNIUtils.getHeader(Constants.USER_TYPES.get("ngo")));
+		response.put("headers", HNIUtils.getHeader(Constants.USER_TYPES.get("ngo")));
 		response.put("data", ngo);
 		}
 		catch(Exception e){

@@ -24,10 +24,10 @@ public class NgoBasicDto {
 		return name;
 	}
 	public void setName(String name) {
-		name = name;
+		this.name = name;
 	}
 	public void setPhone(String phone) {
-		phone = phone;
+		this.phone = phone;
 	}
 	public String getWebsite() {
 		return website;
