@@ -5,7 +5,6 @@
 		<groupId>org.hni</groupId>
 		<artifactId>hni-parent</artifactId>
 		<version>1.2-SNAPSHOT</version>
-		<relativePath>../hni-parent/pom.xml</relativePath>
 	</parent>
 
 	<artifactId>hni-utils</artifactId>
