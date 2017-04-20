@@ -63,13 +63,13 @@ public class Ngo implements Persistable, Serializable {
 	private Integer resourcesToClients;
 	
 	@Column(name = "ind_serv_daily")
-	private Integer indidualsServedDaily;
+	private Integer individualsServedDaily;
 	
 	@Column(name = "ind_serv_monthly")
 	private Integer individualsServedMonthly;
 	
 	@Column(name = "ind_serv_annual")
-	private Integer individualsServedAnnual;
+	private Integer individualsServedAnnually;
 	
 	@Column(name = "client_info")
 	private Integer clientInfo;
@@ -201,12 +201,12 @@ public class Ngo implements Persistable, Serializable {
 		this.resourcesToClients = resourcesToClients;
 	}
 
-	public Integer getIndidualsServedDaily() {
-		return indidualsServedDaily;
+	public Integer getIndividualsServedDaily() {
+		return individualsServedDaily;
 	}
 
-	public void setIndidualsServedDaily(Integer indidualsServedDaily) {
-		this.indidualsServedDaily = indidualsServedDaily;
+	public void setIndividualsServedDaily(Integer individualsServedDaily) {
+		this.individualsServedDaily = individualsServedDaily;
 	}
 
 	public Integer getIndividualsServedMonthly() {
@@ -217,12 +217,12 @@ public class Ngo implements Persistable, Serializable {
 		this.individualsServedMonthly = individualsServedMonthly;
 	}
 
-	public Integer getIndividualsServedAnnual() {
-		return individualsServedAnnual;
+	public Integer getIndividualsServedAnnually() {
+		return individualsServedAnnually;
 	}
 
-	public void setIndividualsServedAnnual(Integer individualsServedAnnual) {
-		this.individualsServedAnnual = individualsServedAnnual;
+	public void setIndividualsServedAnnually(Integer individualsServedAnnually) {
+		this.individualsServedAnnually = individualsServedAnnually;
 	}
 
 	public Integer getClientInfo() {

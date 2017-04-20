@@ -77,9 +77,9 @@ public class HNIConverter {
 		ngo.setFoodBank(serviceNode.get(FOOD_BANK_SELECT).asInt());
 
 			ngo.setResourcesToClients(1);
-		ngo.setIndidualsServedDaily(clientNode.get(INDIVIDUALS_SERVED_DAILY).asInt());
+		ngo.setIndividualsServedDaily(clientNode.get(INDIVIDUALS_SERVED_DAILY).asInt());
 		ngo.setIndividualsServedMonthly(clientNode.get(INDIVIDUALS_SERVED_MONTHLY).asInt());
-		ngo.setIndividualsServedAnnual(clientNode.get(INDIVIDUALS_SERVED_ANNUALLY).asInt());
+		ngo.setIndividualsServedAnnually(clientNode.get(INDIVIDUALS_SERVED_ANNUALLY).asInt());
 		ngo.setClientInfo(clientNode.get(INDIVIDUAL_CLIENT_INFO_COLLECTED).asInt());
 			ngo.setStoreClientInfo("");
 		ngo.setClientsUnSheltered(clientNode.get(UNSHELTERED_CLIENT_PERCENTAGE).asInt());
@@ -353,9 +353,9 @@ public class HNIConverter {
 		parentJSON.set(SERVICE, service);
 
 		ObjectNode client = mapper.createObjectNode();
-		client.put(INDIVIDUALS_SERVED_DAILY, ngo.getIndidualsServedDaily());
+		client.put(INDIVIDUALS_SERVED_DAILY, ngo.getIndividualsServedDaily());
 		client.put(INDIVIDUALS_SERVED_MONTHLY, ngo.getIndividualsServedMonthly());
-		client.put(INDIVIDUALS_SERVED_ANNUALLY, ngo.getIndividualsServedAnnual());
+		client.put(INDIVIDUALS_SERVED_ANNUALLY, ngo.getIndividualsServedAnnually());
 		client.put(INDIVIDUAL_CLIENT_INFO_COLLECTED, ngo.getClientInfo());
 		client.put(UNSHELTERED_CLIENT_PERCENTAGE, ngo.getClientsUnSheltered());
 		client.put(EMPLOYEED_CLIENT_PERCENTAGE, ngo.getClientsEmployed());
