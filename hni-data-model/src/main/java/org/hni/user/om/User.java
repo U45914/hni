@@ -1,17 +1,25 @@
 package org.hni.user.om;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hni.common.om.Persistable;
-import org.hni.user.om.type.Gender;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import java.io.Serializable;
-import java.util.Date;
+
+import org.hni.common.om.Persistable;
+import org.hni.user.om.type.Gender;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Represents any user defined in the system. Users can play several different
@@ -52,6 +60,8 @@ public class User implements Persistable, Serializable {
 	private String hashedSecret;
 	@Column(name = "salt")
 	private String salt;
+	
+	private Set<Address> addresseses = new HashSet<>(0);
 	
 	private transient String password;
 	private transient String token;
@@ -185,4 +195,15 @@ public class User implements Persistable, Serializable {
 	public void setOrganizationId(Long organizationId) {
 		this.organizationId = organizationId;
 	}
+	
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "user_address", joinColumns = { @JoinColumn(name = "user_id", nullable = false, updatable = false) }, inverseJoinColumns = { @JoinColumn(name = "address_id", nullable = false, updatable = false) })
+	public Set<Address> getAddresseses() {
+		return this.addresseses;
+	}
+
+	public void setAddresseses(Set<Address> addresseses) {
+		this.addresseses = addresseses;
+	}
+
 }
