@@ -60,8 +60,9 @@ public class User implements Persistable, Serializable {
 	private String hashedSecret;
 	@Column(name = "salt")
 	private String salt;
-	
-	private Set<Address> addresseses = new HashSet<>(0);
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "user_address", joinColumns = { @JoinColumn(name = "user_id", nullable = false, updatable = false) }, inverseJoinColumns = { @JoinColumn(name = "address_id",  referencedColumnName = "id", nullable = false, updatable = false) })	
+	private Set<Address> addresses = new HashSet<>(0);
 	
 	private transient String password;
 	private transient String token;
@@ -196,14 +197,12 @@ public class User implements Persistable, Serializable {
 		this.organizationId = organizationId;
 	}
 	
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "user_address", joinColumns = { @JoinColumn(name = "user_id", nullable = false, updatable = false) }, inverseJoinColumns = { @JoinColumn(name = "address_id", nullable = false, updatable = false) })
-	public Set<Address> getAddresseses() {
-		return this.addresseses;
+	public Set<Address> getAddresses() {
+		return this.addresses;
 	}
 
-	public void setAddresseses(Set<Address> addresseses) {
-		this.addresseses = addresseses;
+	public void setAddresses(Set<Address> addresses) {
+		this.addresses = addresses;
 	}
 
 }
