@@ -1,16 +1,16 @@
 package org.hni.user.om;
 
 
-import static javax.persistence.GenerationType.IDENTITY;
-
 import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+
+import static javax.persistence.GenerationType.IDENTITY;
+
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.hni.common.om.Persistable;
 
@@ -86,9 +86,6 @@ public class Client implements Persistable, Serializable {
 	private Integer exercisePerWeek;
 	private Integer lastVisitDoctor;
 	private Integer lastVisitDentist;
-	
-	@Transient
-	private Address address;
 
 	public Client() {
 	}
@@ -763,16 +760,6 @@ public class Client implements Persistable, Serializable {
 	@Column(name = "last_visit_dentist")
 	public Integer getLastVisitDentist() {
 		return this.lastVisitDentist;
-	}
-	
-	
-
-	public Address getAddress() {
-		return address;
-	}
-
-	public void setAddress(Address address) {
-		this.address = address;
 	}
 
 	public void setLastVisitDentist(Integer lastVisitDentist) {
