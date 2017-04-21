@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.hni.admin.service.dto.NgoBasicDto;
 import org.hni.common.service.BaseService;
+import org.hni.user.om.Client;
 import org.hni.user.om.Invitation;
 import org.hni.user.om.User;
 import org.hni.user.om.Volunteer;
@@ -19,4 +20,5 @@ public interface UserOnboardingService extends BaseService<Invitation>{
 	ObjectNode getNGODetail(Long ngoId);
 	List<NgoBasicDto> getAllNgo();
 	Map<String,String> buildVolunteerAndSave(Volunteer volunteer,  User user);
+	Map<String,String> clientSave(Client client, User user);
 }

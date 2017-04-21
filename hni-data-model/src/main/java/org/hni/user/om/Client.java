@@ -1,26 +1,32 @@
 package org.hni.user.om;
 
 
+import static javax.persistence.GenerationType.IDENTITY;
+
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import static javax.persistence.GenerationType.IDENTITY;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.hni.common.om.Persistable;
 
 @Entity
 @Table(name = "client")
-public class Client implements java.io.Serializable {
+public class Client implements Persistable, Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	private Integer id;
-	private int userId;
-	private int createdBy;
-	private int race;
-	private int addressId;
+	private Long userId;
+	private Long createdBy;
+	private Long race;
+	private Long addressId;
 	private Integer bday;
 	private Character beenArrested;
 	private Character beenConvicted;
@@ -80,18 +86,21 @@ public class Client implements java.io.Serializable {
 	private Integer exercisePerWeek;
 	private Integer lastVisitDoctor;
 	private Integer lastVisitDentist;
+	
+	@Transient
+	private Address address;
 
 	public Client() {
 	}
 
-	public Client(int userId, int createdBy, int race, int addressId) {
+	public Client(Long userId, Long createdBy, Long race, Long addressId) {
 		this.userId = userId;
 		this.createdBy = createdBy;
 		this.race = race;
 		this.addressId = addressId;
 	}
 
-	public Client(int userId, int createdBy, int race, int addressId,
+	public Client(Long userId, Long createdBy, Long race, Long addressId,
 			Integer bday, Character beenArrested, Character beenConvicted,
 			Character hasSmartPhone, String serviceProvider, String model,
 			Character haveMonthlyPlan, String monthlyPlanMinute,
@@ -194,38 +203,38 @@ public class Client implements java.io.Serializable {
 	}
 
 	@Column(name = "user_id", nullable = false)
-	public int getUserId() {
+	public Long getUserId() {
 		return this.userId;
 	}
 
-	public void setUserId(int userId) {
+	public void setUserId(Long userId) {
 		this.userId = userId;
 	}
 
 	@Column(name = "created_by", nullable = false)
-	public int getCreatedBy() {
+	public Long getCreatedBy() {
 		return this.createdBy;
 	}
 
-	public void setCreatedBy(int createdBy) {
+	public void setCreatedBy(Long createdBy) {
 		this.createdBy = createdBy;
 	}
 
 	@Column(name = "race", nullable = false)
-	public int getRace() {
+	public Long getRace() {
 		return this.race;
 	}
 
-	public void setRace(int race) {
+	public void setRace(Long race) {
 		this.race = race;
 	}
 
 	@Column(name = "address_id", nullable = false)
-	public int getAddressId() {
+	public Long getAddressId() {
 		return this.addressId;
 	}
 
-	public void setAddressId(int addressId) {
+	public void setAddressId(Long addressId) {
 		this.addressId = addressId;
 	}
 
@@ -754,6 +763,16 @@ public class Client implements java.io.Serializable {
 	@Column(name = "last_visit_dentist")
 	public Integer getLastVisitDentist() {
 		return this.lastVisitDentist;
+	}
+	
+	
+
+	public Address getAddress() {
+		return address;
+	}
+
+	public void setAddress(Address address) {
+		this.address = address;
 	}
 
 	public void setLastVisitDentist(Integer lastVisitDentist) {

@@ -27,6 +27,7 @@ import org.hni.common.email.service.EmailComponent;
 import org.hni.organization.om.Organization;
 import org.hni.organization.service.OrganizationService;
 import org.hni.user.dao.UserDAO;
+import org.hni.user.om.Client;
 import org.hni.user.om.Invitation;
 import org.hni.user.om.User;
 import org.hni.user.om.UserPartialData;
@@ -228,7 +229,7 @@ public class UserOnboardingController extends AbstractBaseController {
 	@Path("/volunteer/save")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
-	@ApiOperation(value = "Service for saving details of Volunteer", notes = "", response = Volunteer.class, responseContainer = "")
+	@ApiOperation(value = "Service for saving details of Volunteer", notes = "", response = Map.class, responseContainer = "")
 	public Response volunteerOnBoarding(Volunteer volunteer){
 		User user = getLoggedInUser();
 		Map<String,String> response = new HashMap<>();
@@ -262,6 +263,30 @@ public class UserOnboardingController extends AbstractBaseController {
 			return Response.ok(ngoDetailJSON).build();
 		} catch (Exception e) {
 			response.put(ERROR, SOMETHING_WENT_WRONG_PLEASE_TRY_AGAIN);
+		}
+		return Response.ok(response).build();
+	}
+	
+	@POST
+	@Path("/client/save")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Produces({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = "Service for saving details of Client", notes = "", response = Map.class, responseContainer = "")
+	public Response clientOnBoarding(Client client){
+		Map<String,String> response = new HashMap<>();
+		try{
+			User user = getLoggedInUser();
+			Map<String,String> errors = userOnBoardingService.clientSave(client, user);
+			if(errors!=null && errors.isEmpty()){
+				response.put(RESPONSE, SUCCESS);
+			}
+			else{
+				if(errors!=null){
+					response.putAll(errors);
+				}
+			}
+		}catch(Exception e){
+			_LOGGER.error("Client save failed!");
 		}
 		return Response.ok(response).build();
 	}
