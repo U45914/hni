@@ -55,7 +55,7 @@ public class CustomerDao extends DefaultGenericDAO {
 	public List<User> getAllCustomersEnrolledByNgo(User user) {
 		List<User> customers = new ArrayList<>();
 		Long role = HNIRoles.NGO.getRole();
-		Long userId = 4L;
+		Long userId = user.getId();
 
 		Query q = em
 				.createQuery("select  x from UserOrganizationRole x where x.id.roleId=:roleId and x.id.userId=:userId")
