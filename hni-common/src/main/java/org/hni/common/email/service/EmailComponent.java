@@ -44,7 +44,7 @@ public class EmailComponent {
 	@Value("#{hniProperties['mail.template.body']}")
 	private String emailBodyTemplate;
 
-	public boolean sendEmail(String receiverEmail, String UUID)
+	public boolean sendEmail(String receiverEmail, String UUID, String userType, String invitationMessage)
 			throws AddressException, MessagingException, UnsupportedEncodingException {
 		Properties props = new Properties();
 		props.put("mail.smtp.host", smtpHost);
@@ -63,9 +63,29 @@ public class EmailComponent {
 		message.setFrom(new InternetAddress(fromAddress, fromName));
 		message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(receiverEmail));
 		message.setSubject(emailSubTemplate);
-		message.setText(String.format(emailBodyTemplate, activateURL + UUID));
+		
+		message.setText(getEmailText(userType, UUID) + invitationMessage);
 
 		Transport.send(message);
 		return true;
+	}
+	
+	private String getEmailText(String userType, String code) {
+		StringBuilder emailTextBuilder = new StringBuilder(50);
+		emailTextBuilder.append(getInviteName(userType));
+		emailTextBuilder.append(emailBodyTemplate);
+		emailTextBuilder.append("\n\n\n\n");
+		return String.format(emailTextBuilder.toString(), activateURL + "/" + userType + code);
+	}
+	
+	private String getInviteName(String type) {
+		if ("ngo".equalsIgnoreCase(type)) {
+			return "Dear NGO";
+		} else if ("volunteer".equalsIgnoreCase("type")) {
+			return "Dear Volunteer";
+		} else {
+			return "Dear User";
+		}
+		
 	}
 }
