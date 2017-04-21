@@ -10,5 +10,6 @@ public interface UserReportService {
 	public List<NgoBasicDto> getAllNgo() ;
 	public List<User> getAllCustomersByRole();
 	public List<User> getAllCustomersUnderOrganisation(User user);
+	public List<User> getAllCustomersEnrolledByNgo(User user);
 	
 }

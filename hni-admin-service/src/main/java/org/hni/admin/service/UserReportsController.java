@@ -103,4 +103,25 @@ public class UserReportsController extends AbstractBaseController {
 		return Response.ok(response).build();
 
 	}
+	
+	@GET
+	@Path("/customersenrolledbyngo")
+	@Produces({ MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Service for getting all Customer details by Role", notes = "", response = List.class, responseContainer = "")
+	public Response getAllCustomersEnrolledByNgo() {
+
+		User user = getLoggedInUser();
+		Map<String, Object> response = new HashMap<>();
+		try {
+			List<User> customers = userReportService.getAllCustomersEnrolledByNgo(user);
+			response.put("headers", HNIUtils.getHeader(Constants.USER_TYPES.get("customer")));
+			response.put("data", customers);
+		} catch (Exception e) {
+			_LOGGER.error("Error in get Customers created by an Ngo Service:" + e.getMessage(), e);
+			response.put(Constants.RESPONSE, Constants.ERROR);
+		}
+		response.put(Constants.RESPONSE, Constants.SUCCESS);
+		return Response.ok(response).build();
+
+	}
 }

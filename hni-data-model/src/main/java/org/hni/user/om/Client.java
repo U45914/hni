@@ -17,8 +17,8 @@ public class Client implements java.io.Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	private Integer id;
-	private int userId;
-	private int createdBy;
+	private Long userId;
+	private Long createdBy;
 	private int race;
 	private int addressId;
 	private Integer bday;
@@ -84,14 +84,14 @@ public class Client implements java.io.Serializable {
 	public Client() {
 	}
 
-	public Client(int userId, int createdBy, int race, int addressId) {
+	public Client(Long userId, Long createdBy, int race, int addressId) {
 		this.userId = userId;
 		this.createdBy = createdBy;
 		this.race = race;
 		this.addressId = addressId;
 	}
 
-	public Client(int userId, int createdBy, int race, int addressId,
+	public Client(Long userId, Long createdBy, int race, int addressId,
 			Integer bday, Character beenArrested, Character beenConvicted,
 			Character hasSmartPhone, String serviceProvider, String model,
 			Character haveMonthlyPlan, String monthlyPlanMinute,
@@ -194,20 +194,20 @@ public class Client implements java.io.Serializable {
 	}
 
 	@Column(name = "user_id", nullable = false)
-	public int getUserId() {
+	public Long getUserId() {
 		return this.userId;
 	}
 
-	public void setUserId(int userId) {
+	public void setUserId(Long userId) {
 		this.userId = userId;
 	}
 
 	@Column(name = "created_by", nullable = false)
-	public int getCreatedBy() {
+	public Long getCreatedBy() {
 		return this.createdBy;
 	}
 
-	public void setCreatedBy(int createdBy) {
+	public void setCreatedBy(Long createdBy) {
 		this.createdBy = createdBy;
 	}
 

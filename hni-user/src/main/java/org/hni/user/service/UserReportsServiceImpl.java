@@ -36,4 +36,9 @@ public class UserReportsServiceImpl implements UserReportService {
 		return customerDao.getAllCustomersUnderOrganisation(user);
 	}
 
+	@Override
+	public List<User> getAllCustomersEnrolledByNgo(User user) {
+		return customerDao.getAllCustomersEnrolledByNgo(user);
+	}
+
 }
