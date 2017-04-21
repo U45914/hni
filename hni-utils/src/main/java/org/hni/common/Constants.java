@@ -11,9 +11,9 @@ public class Constants {
 	public static final Long CLIENT = 7L;
 	
 	//Service
-	public static final String SUCCESS = "organizations";
-	public static final String ERROR = "providers";
-	public static final String RESPONSE = "organizations";
+	public static final String SUCCESS = "success";
+	public static final String ERROR = "error";
+	public static final String RESPONSE = "response";
 	
 	// domains
 	public static final String ORGANIZATION = "organizations";
