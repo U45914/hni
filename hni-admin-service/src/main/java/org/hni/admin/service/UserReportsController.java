@@ -1,5 +1,6 @@
 package org.hni.admin.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,9 +12,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.shiro.util.ThreadContext;
 import org.hni.admin.service.dto.NgoBasicDto;
 import org.hni.common.Constants;
 import org.hni.common.HNIUtils;
+import org.hni.user.om.Volunteer;
 import org.hni.user.service.UserReportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +24,7 @@ import org.springframework.stereotype.Component;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import net.minidev.json.JSONObject;
 
 /*'Super User'
 'Administrator'
@@ -33,7 +37,7 @@ import io.swagger.annotations.ApiOperation;
 @Api(value = "/reports/view", description = "Reports for all user type")
 @Component
 @Path("/reports/view")
-public class UserReportsController {
+public class UserReportsController extends AbstractBaseController {
 	
 	private static final Logger _LOGGER = LoggerFactory.getLogger(UserOnboardingController.class);
 
@@ -61,6 +65,34 @@ public class UserReportsController {
 	 
 	}
 	
-	
+	@GET
+	@Path("/getAllVolunteers")
+	@Produces({ MediaType.APPLICATION_JSON })
+
+	public Response getAllVolunteers() {
+		Map<String, Object> response = new HashMap<>();
+		Long userId = (Long) ThreadContext.get(Constants.USERID);		
+		List<JSONObject> dataList = new ArrayList<>();
+		try {
+				List<Volunteer> volunteers = userReportService.getAllVolunteers(userId);
+				for(Volunteer volunteer : volunteers){
+					JSONObject json = new JSONObject();
+					json.put("name", volunteer.getFirstName() + " " + volunteer.getLastName());
+					json.put("gender", volunteer.getSex());
+					json.put("email", volunteer.getEmail());
+					dataList.add(json);
+			}
+			response.put("header", HNIUtils.getHeader(Constants.USER_TYPES.get("volunteer")));
+			response.put("data", dataList);
+			response.put(Constants.RESPONSE, Constants.SUCCESS);
+		} catch (Exception e) {
+			_LOGGER.error("Error in getting volunteers : " + e.getMessage(), e);
+			response.put(Constants.RESPONSE, Constants.ERROR);
+		}
+
+		return Response.ok(response).build();
+
+	}
+
 	
 }

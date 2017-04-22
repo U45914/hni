@@ -7,6 +7,7 @@ import org.hni.admin.service.dto.NgoBasicDto;
 import org.hni.common.dao.DefaultGenericDAO;
 import org.hni.common.om.Persistable;
 import org.hni.type.HNIRoles;
+import org.hni.user.om.Volunteer;
 import org.springframework.stereotype.Component;
 @Component
 public class NGOGenericDAO extends DefaultGenericDAO {
@@ -50,6 +51,37 @@ public List<NgoBasicDto> getAllNgo()
 	return ngos;
 	 
 	
+}
+
+public List<Volunteer> getAllVolunteers(Long loggedInUserId) {
+
+	List<Volunteer> volunteerList = new ArrayList<>();
+	List<Long> orgIds = em.createQuery("select x.id.orgId from UserOrganizationRole x where x.id.userId=:userId ")
+				  		  .setParameter("userId", loggedInUserId)
+				  		  .getResultList();
+	if(orgIds.size() > 0){
+		Long orgId = orgIds.get(0);		
+		List<Long> volunteerRoleIds = em.createQuery("select id from Role x where x.name='Volunteer'")
+										.getResultList();
+		
+		Long volunteerRoleId = volunteerRoleIds.get(0);		
+		List<Object[]> userDetails = em.createNativeQuery("SELECT u.id, u.first_name, u.last_name, u.gender_code, u.email FROM users u INNER JOIN user_organization_role uo WHERE uo.role_id=:roleId AND uo.organization_id=:orgId AND u.id = uo.user_id")
+									   .setParameter("roleId", volunteerRoleId)
+									   .setParameter("orgId", orgId)
+									   .getResultList();
+		
+		for (Object[] user : userDetails) {			
+			Volunteer volunteer = new Volunteer();		
+			volunteer.setId(Long.valueOf(user[0].toString()));
+			volunteer.setFirstName(user[1].toString());
+			volunteer.setLastName(user[2].toString());
+			volunteer.setSex(user[3].toString());
+			volunteer.setEmail(user[4].toString());
+			volunteerList.add(volunteer);
+		}		
+	}
+	
+	return volunteerList;
 }
 	
 }
