@@ -21,8 +21,7 @@ public class HNIUtils {
 			headers.add(addField("phone", "Phone Number"));
 			headers.add(addField("website", "Website URL"));
 			headers.add(addField("createdUsers", "No of Created Users"));
-		}
-		if (roleId == Constants.USER_TYPES.get("customer")) {
+		} else if (roleId == Constants.USER_TYPES.get("customer")) {
 
 			headers.add(addField("firstname", "First Name"));
 			headers.add(addField("lastname", "Last Name"));
@@ -30,6 +29,11 @@ public class HNIUtils {
 			headers.add(addField("email", "Email Id"));
 			headers.add(addField("genderCode", "Gender"));
 
+		} else if(roleId == Constants.USER_TYPES.get("volunteer")){
+			headers.add(addField("name", "Name"));
+			headers.add(addField("gender", "Gender"));
+			headers.add(addField("email", "Email ID"));
+			
 		}
 		return headers;
 	}

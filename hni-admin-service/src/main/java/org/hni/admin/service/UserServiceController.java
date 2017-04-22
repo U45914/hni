@@ -232,5 +232,13 @@ public class UserServiceController extends AbstractBaseController {
 			return Response.ok(userResponse).build();
 		}
 	}
+	
+	@GET
+	@Path("/volunteer/{id}")
+	@Produces({ MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Returns the volunteer details of specified id.", notes = "", response = Volunteer.class, responseContainer = "")
+	public Volunteer getVolunteerById(@QueryParam("id") Long volunteerId) {
+		return volunteerService.getVolunteerDetails(volunteerId);
+	}
 
 }

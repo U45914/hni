@@ -23,12 +23,14 @@ import org.hni.common.om.MealFundingSource;
 import org.hni.common.om.NgoFundingSource;
 import org.hni.common.service.AbstractService;
 import org.hni.user.dao.AddressDAO;
+import org.hni.user.dao.ClientDAO;
 import org.hni.user.dao.NGOGenericDAO;
 import org.hni.user.dao.UserOnboardingDAO;
 import org.hni.user.dao.VolunteerDao;
 import org.hni.user.om.Address;
 import org.hni.user.om.BoardMember;
 import org.hni.user.om.BrandPartner;
+import org.hni.user.om.Client;
 import org.hni.user.om.Invitation;
 import org.hni.user.om.LocalPartner;
 import org.hni.user.om.Ngo;
@@ -60,6 +62,9 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 	
 	@Inject
 	private VolunteerDao volunteerDao;
+	
+	@Inject
+	private ClientDAO clientDAO;
 
 	public DefaultUserOnboardingService(BaseDAO<Invitation> dao) {
 		super(dao);
@@ -178,6 +183,18 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 	@Override
 	public List<NgoBasicDto> getAllNgo() {
 		return ngoGenericDAO.getAllNgo();
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class )
+	public Map<String,String> clientSave(Client client, User user) {
+		client.setUserId(user.getId());
+		Map<String, String> error = new HashMap<>();
+		HNIValidator.validateClient(client, error);
+		if(error!=null && error.isEmpty()){
+			clientDAO.save(client);
+		}
+		return error;
 	}
 	 
 }

@@ -1,16 +1,22 @@
 package org.hni.user.om;
 
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+
 import static javax.persistence.GenerationType.IDENTITY;
+
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hni.common.om.Persistable;
+
 @Entity
 @Table(name = "client")
-public class Client implements java.io.Serializable {
+public class Client implements Persistable, Serializable {
 
 	/**
 	 * 
@@ -19,8 +25,8 @@ public class Client implements java.io.Serializable {
 	private Integer id;
 	private Long userId;
 	private Long createdBy;
-	private int race;
-	private int addressId;
+	private Long race;
+	private Long addressId;
 	private Integer bday;
 	private Character beenArrested;
 	private Character beenConvicted;
@@ -84,14 +90,14 @@ public class Client implements java.io.Serializable {
 	public Client() {
 	}
 
-	public Client(Long userId, Long createdBy, int race, int addressId) {
+	public Client(Long userId, Long createdBy, Long race, Long addressId) {
 		this.userId = userId;
 		this.createdBy = createdBy;
 		this.race = race;
 		this.addressId = addressId;
 	}
 
-	public Client(Long userId, Long createdBy, int race, int addressId,
+	public Client(Long userId, Long createdBy, Long race, Long addressId,
 			Integer bday, Character beenArrested, Character beenConvicted,
 			Character hasSmartPhone, String serviceProvider, String model,
 			Character haveMonthlyPlan, String monthlyPlanMinute,
@@ -212,20 +218,20 @@ public class Client implements java.io.Serializable {
 	}
 
 	@Column(name = "race", nullable = false)
-	public int getRace() {
+	public Long getRace() {
 		return this.race;
 	}
 
-	public void setRace(int race) {
+	public void setRace(Long race) {
 		this.race = race;
 	}
 
 	@Column(name = "address_id", nullable = false)
-	public int getAddressId() {
+	public Long getAddressId() {
 		return this.addressId;
 	}
 
-	public void setAddressId(int addressId) {
+	public void setAddressId(Long addressId) {
 		this.addressId = addressId;
 	}
 

@@ -8,6 +8,7 @@ import org.hni.admin.service.dto.NgoBasicDto;
 import org.hni.user.dao.CustomerDao;
 import org.hni.user.dao.NGOGenericDAO;
 import org.hni.user.om.User;
+import org.hni.user.om.Volunteer;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -18,8 +19,12 @@ public class UserReportsServiceImpl implements UserReportService {
 
 	@Override
 	public List<NgoBasicDto> getAllNgo() {
-
 		return ngoGenericDAO.getAllNgo();
+	}
+
+	@Override
+	public List<Volunteer> getAllVolunteers(Long userId){
+		return ngoGenericDAO.getAllVolunteers(userId);
 	}
 
 	@Inject

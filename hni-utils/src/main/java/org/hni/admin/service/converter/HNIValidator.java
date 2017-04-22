@@ -11,6 +11,7 @@ import org.hni.common.om.NgoFundingSource;
 import org.hni.user.om.Address;
 import org.hni.user.om.BoardMember;
 import org.hni.user.om.BrandPartner;
+import org.hni.user.om.Client;
 import org.hni.user.om.LocalPartner;
 import org.hni.user.om.Ngo;
 import org.hni.user.om.Volunteer;
@@ -295,4 +296,20 @@ public class HNIValidator {
 		return error;
 	}
 
+	public static Map<String,String> validateClient(Client client, Map<String,String> error){
+		if(client.getUserId()==null){
+			error.put("Client userID", "Cannot be null");
+		}
+		if(client.getCreatedBy()==null){
+			error.put("Client createdBy", "Cannot be null");
+		}
+		if(client.getRace()==null){
+			error.put("Client race", "Cannot be null");
+		}
+		if(client.getAddressId()==null){
+			error.put("Client addressId", "Cannot be null");
+		}
+		
+		return error;
+	}
 }
