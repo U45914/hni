@@ -1,9 +1,15 @@
 package org.hni.user.service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.inject.Inject;
 
+import org.hni.admin.service.converter.HNIValidator;
 import org.hni.common.service.AbstractService;
+import org.hni.user.dao.AddressDAO;
 import org.hni.user.dao.VolunteerDao;
+import org.hni.user.om.Address;
 import org.hni.user.om.Volunteer;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -14,16 +20,24 @@ import org.springframework.transaction.annotation.Transactional;
 public class DefaultVolunteerService extends AbstractService<Volunteer> implements VolunteerService {
  
 	private VolunteerDao volunteerDao;
-
+	
+	private AddressDAO addressDAO;
+	
 	@Inject
-	public DefaultVolunteerService(VolunteerDao volunteerDao) {
+	public DefaultVolunteerService(VolunteerDao volunteerDao,AddressDAO addressDAO) {
 		super(volunteerDao);
 		this.volunteerDao = volunteerDao;
+		this.addressDAO = addressDAO;
 	}
 	
 	@Override
 	public Volunteer save(Volunteer volunteer) {
 		return volunteerDao.save(volunteer);
+	}
+
+	@Override
+	public Volunteer getVolunteerDetails(Long volunteerId) {
+		return volunteerDao.get(volunteerId);
 	}
 
 /*	
