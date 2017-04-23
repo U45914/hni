@@ -15,4 +15,5 @@ public interface UserOrganizationRoleDAO extends BaseDAO<UserOrganizationRole> {
 	Collection<UserOrganizationRole> get(User user);
 	Collection<UserOrganizationRole> byRole(Role role);
 	Collection<HniServices> getHniServicesByRole(Long orgId, Long roleId);
+	boolean getProfileStatus(User user);
 }

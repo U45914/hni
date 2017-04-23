@@ -2,8 +2,10 @@ package org.hni.organization.dao;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import javax.persistence.NoResultException;
+import javax.persistence.Parameter;
 import javax.persistence.Query;
 
 import org.hni.common.dao.AbstractDAO;
@@ -12,6 +14,7 @@ import org.hni.organization.om.Organization;
 import org.hni.organization.om.UserOrganizationRole;
 import org.hni.organization.om.HniServices;
 import org.hni.user.om.User;
+import org.hni.user.om.UserPartialData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -68,6 +71,14 @@ public class DefaultUserOrganizationRoleDAO extends AbstractDAO<UserOrganization
 		} catch(NoResultException e) {
 			return Collections.emptyList();
 		}
+	}
+
+	@Override
+	public boolean getProfileStatus(User user) {
+		int userId= user.getId().intValue();
+		Query q =   em.createQuery("SELECT u from UserPartialData u where u.userId = :userId ORDER BY lastUpdated desc").setParameter("userId", userId);
+		UserPartialData userPartialData =  (UserPartialData) q.getResultList().get(0);
+		return userPartialData.getStatus()!=null?userPartialData.getStatus().equalsIgnoreCase("Y")?true:false:false;
 	}
 
 }

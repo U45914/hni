@@ -7,6 +7,7 @@ import org.hni.admin.service.dto.NgoBasicDto;
 import org.hni.common.dao.DefaultGenericDAO;
 import org.hni.common.om.Persistable;
 import org.hni.type.HNIRoles;
+import org.hni.user.om.UserPartialData;
 import org.hni.user.om.Volunteer;
 import org.springframework.stereotype.Component;
 @Component
@@ -44,7 +45,7 @@ public List<NgoBasicDto> getAllNgo()
 		 ngoBasicDto.setName(u[1]+" "+u[2]);
 		 ngoBasicDto.setPhone((String) u[3]);
 		 ngoBasicDto.setWebsite(u[4]!=null?(String) u[4]:"");
-		 ngoBasicDto.setCreatedUsers((Long) em.createQuery("select count(id) from Ngo where createdBy=:userId").setParameter("userId", userId).getSingleResult());
+		 ngoBasicDto.setCreatedUsers((Long) em.createQuery("select count(id) from Client where createdBy=:userId").setParameter("userId", userId).getSingleResult());
 		 //TO DO the changes when Client TABLE is alive instd of Ngo
 		 ngos.add(ngoBasicDto);
 	}
@@ -83,5 +84,9 @@ public List<Volunteer> getAllVolunteers(Long loggedInUserId) {
 	
 	return volunteerList;
 }
-	
+public void updateStatus(int userId) {
+	UserPartialData user = get(UserPartialData.class,em.createQuery("select x.id from UserPartialData x where x.userId =:userId").setParameter("userId", userId).getSingleResult());
+	user.setStatus("Y");
+	save(UserPartialData.class,user);
+}
 }
