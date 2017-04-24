@@ -105,4 +105,8 @@ public interface OrganizationUserService extends UserService {
 	 */
 	
 	Collection<HniServices> getHniServices(Collection<UserOrganizationRole> userOrganizationRoles);
+	
+	/*user profile completion status
+	 * */
+	public boolean getProfileStatus(User user);
 }

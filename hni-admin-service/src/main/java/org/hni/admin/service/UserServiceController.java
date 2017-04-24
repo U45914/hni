@@ -183,15 +183,18 @@ public class UserServiceController extends AbstractBaseController {
 	@Path("/services")
 	@Produces({ MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "Returns the various user services/functionalities", notes = "", response = HniServicesDto.class, responseContainer = "")
-	public Collection<HniServicesDto> getUserunctionalities() {
+	public Response getUserunctionalities() {
 		logger.info("Invoked method to retrieve hni services...");
+		Map<String, Object> userResponse = new HashMap<>();
 		if (isPermitted(Constants.USERID, Constants.PERMISSIONS, 0L)) {
 			User user = getLoggedInUser();
 			if (null != user) {
 				logger.info("User details fetch successfull");
 				Collection<UserOrganizationRole> userOrganisationRoles = orgUserService.getUserOrganizationRoles(user);
 				Collection<HniServices> hniServices = orgUserService.getHniServices(userOrganisationRoles);
-				return HNIConverter.convertToServiceDtos(hniServices);
+				userResponse.put("data", HNIConverter.convertToServiceDtos(hniServices));
+				userResponse.put("profileStatus", orgUserService.getProfileStatus(user));
+				return Response.ok(userResponse).build();
 			}
 		}
 		logger.info("Not enough permissions...");

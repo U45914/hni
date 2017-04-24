@@ -150,4 +150,10 @@ public class DefaultOrganizationUserService extends DefaultUserService implement
 		}
 		return Role.get(HNIRoles.USER.getRole());
 	}
+
+	@Override
+	public boolean getProfileStatus(User user) {
+		
+		return uorDao.getProfileStatus(user);
+	}
 }
