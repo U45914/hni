@@ -68,7 +68,7 @@ public class UserReportsController extends AbstractBaseController {
 	}
 
 	@GET
-	@Path("/customersbyrole")
+	@Path("/customers/role")
 	@Produces({ MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "Service for getting all Customer details by Role", notes = "", response = List.class, responseContainer = "")
 	public Response getAllCustomersByRole() {
@@ -88,7 +88,7 @@ public class UserReportsController extends AbstractBaseController {
 	}
 
 	@GET
-	@Path("/customersunderorg")
+	@Path("/customers/organization")
 	@Produces({ MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "Service for getting all Customer details by Role", notes = "", response = List.class, responseContainer = "")
 	public Response getAllCustomersUnderOrganisation() {
@@ -137,7 +137,7 @@ public class UserReportsController extends AbstractBaseController {
 
 	}
 	@GET
-	@Path("/customersenrolledbyngo")
+	@Path("/customers/ngo")
 	@Produces({ MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "Service for getting all Customer details by Role", notes = "", response = List.class, responseContainer = "")
 	public Response getAllCustomersEnrolledByNgo() {
