@@ -37,9 +37,11 @@ import org.hni.organization.om.UserOrganizationRole;
 import org.hni.organization.service.OrganizationUserService;
 import org.hni.passwordvalidater.CheckPassword;
 import org.hni.security.dao.RoleDAO;
+import org.hni.user.om.Client;
 import org.hni.user.om.Ngo;
 import org.hni.user.om.User;
 import org.hni.user.om.Volunteer;
+import org.hni.user.service.UserOnboardingService;
 import org.hni.user.service.UserService;
 import org.hni.user.service.VolunteerService;
 import org.slf4j.Logger;
@@ -50,7 +52,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Path("/users")
 public class UserServiceController extends AbstractBaseController {
-	private static final Logger logger = LoggerFactory.getLogger(UserServiceController.class);
+	private static final Logger _LOGGER = LoggerFactory.getLogger(UserServiceController.class);
 
 	@Inject
 	private OrganizationUserService orgUserService;
@@ -67,6 +69,9 @@ public class UserServiceController extends AbstractBaseController {
 
 	@Context
 	private HttpServletRequest servletRequest;
+	
+	@Inject
+	private UserOnboardingService userOnBoardingService;
 
 	@GET
 	@Path("/{id}")
@@ -184,12 +189,12 @@ public class UserServiceController extends AbstractBaseController {
 	@Produces({ MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "Returns the various user services/functionalities", notes = "", response = HniServicesDto.class, responseContainer = "")
 	public Response getUserunctionalities() {
-		logger.info("Invoked method to retrieve hni services...");
+		_LOGGER.info("Invoked method to retrieve hni services...");
 		Map<String, Object> userResponse = new HashMap<>();
 		if (isPermitted(Constants.USERID, Constants.PERMISSIONS, 0L)) {
 			User user = getLoggedInUser();
 			if (null != user) {
-				logger.info("User details fetch successfull");
+				_LOGGER.info("User details fetch successfull");
 				Collection<UserOrganizationRole> userOrganisationRoles = orgUserService.getUserOrganizationRoles(user);
 				Collection<HniServices> hniServices = orgUserService.getHniServices(userOrganisationRoles);
 				userResponse.put("data", HNIConverter.convertToServiceDtos(hniServices));
@@ -197,7 +202,7 @@ public class UserServiceController extends AbstractBaseController {
 				return Response.ok(userResponse).build();
 			}
 		}
-		logger.info("Not enough permissions...");
+		_LOGGER.info("Not enough permissions...");
 		throw new HNIException("You must have elevated permissions to do this.");
 	}
 
@@ -244,4 +249,52 @@ public class UserServiceController extends AbstractBaseController {
 		return volunteerService.getVolunteerDetails(volunteerId);
 	}
 
+	@POST
+	@Path("/client/save")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Produces({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = "Service for saving details of Client", notes = "", response = Map.class, responseContainer = "")
+	public Response clientOnBoarding(Client client){
+		Map<String,String> response = new HashMap<>();
+		try{
+			User user = getLoggedInUser();
+			Map<String,String> errors = userOnBoardingService.clientSave(client, user);
+			if(errors!=null && errors.isEmpty()){
+				response.put(RESPONSE, SUCCESS);
+			}
+			else{
+				if(errors!=null){
+					response.putAll(errors);
+				}
+			}
+		}catch(Exception e){
+			_LOGGER.error("Client save failed!");
+		}
+		return Response.ok(response).build();
+	}
+	
+	@POST
+	@Path("/volunteer/save")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Produces({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = "Service for saving details of Volunteer", notes = "", response = Map.class, responseContainer = "")
+	public Response volunteerOnBoarding(Volunteer volunteer){
+		User user = getLoggedInUser();
+		Map<String,String> response = new HashMap<>();
+		try{
+			Map<String,String> errors =   userOnBoardingService.buildVolunteerAndSave(volunteer,user);
+			if(errors!=null && errors.isEmpty()){
+				response.put(RESPONSE, SUCCESS);
+			}
+			else{
+				if(errors!=null){
+					response.putAll(errors);
+				}
+			}
+		}catch(Exception e){
+			_LOGGER.error("Volunteer save failed!");
+		}
+		return Response.ok(response).build();
+	}
+	
 }

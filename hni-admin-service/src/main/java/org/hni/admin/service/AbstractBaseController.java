@@ -75,6 +75,8 @@ public class AbstractBaseController {
 	protected Long convertUserTypeToRole(String type) {
 		if (type.equalsIgnoreCase("ngo")) {
 			return HNIRoles.NGO.getRole();
+		} else if (type.equalsIgnoreCase("volunteer")) {
+			return HNIRoles.VOLUNTEERS.getRole();
 		}
 		return HNIRoles.USER.getRole();
 	}
