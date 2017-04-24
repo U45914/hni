@@ -302,7 +302,7 @@ CREATE TABLE IF NOT EXISTS `partial_orders` (
   `user_id` INT NULL,
   `provider_location_id` INT NULL,
   `menu_item_id` INT NULL,
-  `order_item_id` INT NULL,
+  `chosen_menu_id` INT NULL,
   `chosen_provider_id` INT NULL,
   `transaction_phase` VARCHAR(45) NULL,
   `address` VARCHAR(160) NULL,
@@ -328,204 +328,358 @@ CREATE TABLE IF NOT EXISTS `partial_orders_provider_locations` (
 ENGINE = InnoDB;
 
 -- -----------------------------------------------------
--- Table `partial_orders_order_items`
+-- Table `partial_orders_menu_selections`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `partial_orders_order_items` (
+CREATE TABLE IF NOT EXISTS `partial_orders_menu_selections` (
   `id` INT NOT NULL,
-  `order_item_id` INT NOT NULL)
+  `menu_item_id` INT NOT NULL)
 ENGINE = InnoDB;
--- -----------------------------------------------------
--- Table `ngo`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `ngo` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(255) NOT NULL,
-  `address_id`	INT NOT NULL,
-  `phone`	VARCHAR (45) NOT NULL,
-  `website`	VARCHAR (255) NOT NULL,
-  `contact_first_name`	VARCHAR (255) NOT NULL,
-  `contact_last_name`	VARCHAR (255) NOT NULL,
-  `fte`	INT NOT NULL,
-  `overview`	VARCHAR (2048) NOT NULL,
-  `mission`	VARCHAR (2048) NOT NULL,
-  `endorsement_id`	INT NULL,
-  `monthly_budget`	INT NOT NULL,
-  `operating_cost`	INT NULL,
-  `personal_cost`	INT NULL,
-  `kitchen_volunteers`	INT NULL,
-  `food_stamp_assist`	BOOLEAN NOT NULL,
-  `food_bank`	BOOLEAN NOT NULL,
-  `resources_to_clients` INT NOT NULL,
-  `ind_serv_daily`	INT NOT NULL,
-  `ind_serv_monthly`	INT NOT NULL,
-  `ind_serv_annual`	INT NOT NULL,
-  `client_info`	BOOLEAN NOT NULL,
-  `store_client_info`	VARCHAR(255) NULL,
-  `clients_unsheltered`	INT NOT NULL,
-  `clients_employed`	INT NOT NULL,
-  `created` DATETIME NOT NULL,
-  `created_by` INT NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
 
 -- -----------------------------------------------------
 -- Table `board_members`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `board_members` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `ngo_id`	INT NOT NULL,
-  `first_name`	VARCHAR (255) NOT NULL,
-  `last_name`	VARCHAR (255) NOT NULL,
-  `company`	VARCHAR(255) NOT NULL,
-  `created` DATETIME NOT NULL,
-  `created_by` INT NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ngo_id` int(11) NOT NULL,
+  `first_name` varchar(255) NOT NULL,
+  `last_name` varchar(255) NOT NULL,
+  `company` varchar(255) NOT NULL,
+  `created` datetime NOT NULL,
+  `created_by` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+  ) ENGINE=InnoDB DEFAULT ;
 
 
 -- -----------------------------------------------------
 -- Table `brand_partners`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `brand_partners` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `ngo_id`	INT NOT NULL,
-  `phone`	VARCHAR (45) NOT NULL,
-  `company`	VARCHAR(255) NOT NULL,
-  `created` DATETIME NOT NULL,
-  `created_by` INT NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `local_partners`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `local_partners` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `ngo_id`	INT NOT NULL,
-  `phone`	VARCHAR (45) NOT NULL,
-  `company`	VARCHAR(255) NOT NULL,
-  `created` DATETIME NOT NULL,
-  `created_by` INT NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ngo_id` int(11) NOT NULL,
+  `phone` varchar(45) NOT NULL,
+  `company` varchar(255) NOT NULL,
+  `created` datetime NOT NULL,
+  `created_by` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+) ENGINE=InnoDB DEFAULT ;
 
 -- -----------------------------------------------------
--- Table `ngo_funding_sources`
+-- Table `client`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `ngo_funding_sources` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `ngo_id`	INT NOT NULL,
-  `amount`	DOUBLE NOT NULL,
-  `source`	VARCHAR(255) NOT NULL,
-  `created` DATETIME NOT NULL,
-  `created_by` INT NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
+CREATE TABLE IF NOT EXISTS `client` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL DEFAULT '0',
+  `created_by` int(11) NOT NULL DEFAULT '0',
+  `race` int(11) NOT NULL DEFAULT '0',
+  `address_id` int(11) NOT NULL DEFAULT '0',
+  `bday` int(11) DEFAULT '0',
+  `been_arrested` char(1) DEFAULT '0',
+  `been_convicted` char(1) DEFAULT '0',
+  `has_smart_phone` char(1) DEFAULT '0',
+  `service_provider` varchar(50) DEFAULT '0',
+  `model` varchar(50) DEFAULT '0',
+  `have_monthly_plan` char(1) DEFAULT '0',
+  `monthly_plan_minute` varchar(50) DEFAULT '0',
+  `monthly_plan_data` varchar(50) DEFAULT '0',
+  `monthly_plan_cost` varchar(50) DEFAULT '0',
+  `alt_monthly_plan` int(11) DEFAULT '0',
+  `alt_monthly_plan_together` varchar(50) DEFAULT '0',
+  `sliblings` int(11) DEFAULT '0',
+  `kids` int(11) DEFAULT '0',
+  `live_at_home` char(1) DEFAULT '0',
+  `sheltered` int(11) DEFAULT '0',
+  `parent_education` int(11) DEFAULT '0',
+  `education` int(11) DEFAULT '0',
+  `enrollment_status` int(11) DEFAULT '0',
+  `enrollment_location` varchar(50) DEFAULT '0',
+  `work_status` int(11) DEFAULT '0',
+  `time_to_workplace` int(11) DEFAULT '0',
+  `no_of_job` int(11) DEFAULT '0',
+  `employer` varchar(50) DEFAULT '0',
+  `job_title` varchar(50) DEFAULT '0',
+  `duration_of_employement` int(11) DEFAULT '0',
+  `unemployment_benfits` char(1) DEFAULT '0',
+  `reason_unemployment_benefits` varchar(100) DEFAULT '0',
+  `total_income` double DEFAULT '0',
+  `rate_amount` int(11) DEFAULT '0',
+  `rate_type` int(11) DEFAULT '0',
+  `avg_hours_per_week` varchar(255) DEFAULT '0',
+  `resident_status` int(11) DEFAULT '0',
+  `dollar_spend_food` int(11) DEFAULT '0',
+  `dollar_spend_clothes` int(11) DEFAULT '0',
+  `dollar_spend_entertainment` int(11) DEFAULT '0',
+  `dollar_spend_transport` int(11) DEFAULT '0',
+  `dollar_spend_savings` int(11) DEFAULT '0',
+  `meals_per_day` int(11) DEFAULT '0',
+  `food_preference` int(11) DEFAULT '0',
+  `food_source` varchar(50) DEFAULT '0',
+  `cook` char(1) DEFAULT '0',
+  `travel_for_food_distance` int(11) DEFAULT '0',
+  `traval_for_food_time` int(11) DEFAULT '0',
+  `sub_food_program` char(1) DEFAULT '0',
+  `sub_food_program_entity` varchar(50) DEFAULT '0',
+  `sub_food_program_duration` int(11) DEFAULT '0',
+  `sub_food_program_renew` int(11) DEFAULT '0',
+  `sub_food_program_exp` varchar(256) DEFAULT '0',
+  `allergies` varchar(256) DEFAULT '0',
+  `addiction` char(1) DEFAULT '0',
+  `addiction_type` varchar(50) DEFAULT '0',
+  `mental_health_issue` char(1) DEFAULT '0',
+  `mental_health_issue_history` varchar(256) DEFAULT '0',
+  `height` varchar(50) DEFAULT '0',
+  `weight` varchar(50) DEFAULT '0',
+  `exercise_per_week` int(11) DEFAULT '0',
+  `last_visit_doctor` int(11) DEFAULT '0',
+  `last_visit_dentist` int(11) DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT ;
 
 -- -----------------------------------------------------
--- Table `meal_funding_sources`
+-- Table `education`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `meal_funding_sources` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `ngo_id`	INT NOT NULL,
-  `amount`	DOUBLE NOT NULL,
-  `source`	VARCHAR(255) NOT NULL,
-  `created` DATETIME NOT NULL,
-  `created_by` INT NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
+CREATE TABLE IF NOT EXISTS `education` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `education_desc` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT ;
+
+-- -----------------------------------------------------
+-- Table `food_bank`
+-- -----------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS `food_bank` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ngo_id` int(11) NOT NULL,
+  `food_bank_name` varchar(255) NOT NULL,
+  `created` datetime NOT NULL,
+  `created_by` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+) ENGINE=InnoDB DEFAULT ;
 
 -- -----------------------------------------------------
 -- Table `food_services`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `food_services` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `ngo_id`	INT NOT NULL,
-  `service_type`	INT NOT NULL,
-  `total_count`	INT NOT NULL,
-  `other`	VARCHAR(255) NOT NULL,
-  `created` DATETIME NOT NULL,
-  `created_by` INT NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ngo_id` int(11) NOT NULL,
+  `service_type` int(11) NOT NULL,
+  `weekdays` varchar(150) NOT NULL,
+  `total_count` int(11) NOT NULL,
+  `other` varchar(255) NOT NULL,
+  `created` datetime NOT NULL,
+  `created_by` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+) ENGINE=InnoDB DEFAULT ;
 
 -- -----------------------------------------------------
--- Table `food_services_availability`
+-- Table `hni_services`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `food_services_availability` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `food_services_id`	INT NOT NULL,
-  `week_day`	VARCHAR(255) NOT NULL,
-  `created` DATETIME NOT NULL,
-  `created_by` INT NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
+CREATE TABLE IF NOT EXISTS `hni_services` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `org_id` int(11) NOT NULL,
+  `role_id` int(11) NOT NULL,
+  `service_name` varchar(75) NOT NULL,
+  `service_path` varchar(100) NOT NULL,
+  `service_img` varchar(500) DEFAULT NULL,
+  `active` varchar(1) NOT NULL,
+  `created` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT ;
 
 -- -----------------------------------------------------
--- Table `food_bank`
+-- Table `income`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `food_bank` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `ngo_id`	INT NOT NULL,
-  `food_bank_name`	VARCHAR(255) NOT NULL,
-  `created` DATETIME NOT NULL,
-  `created_by` INT NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
+CREATE TABLE IF NOT EXISTS `income` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `income_desc` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT ;
 
+-- -----------------------------------------------------
+-- Table `invitation`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `invitation` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `org_id` int(11) NOT NULL,
+  `invite_code` varchar(50) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `invited_by` int(11) NOT NULL,
+  `token_expire_date` date NOT NULL,
+  `created_date` date NOT NULL,
+  PRIMARY KEY (`id`),
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT ;
 
+-- -----------------------------------------------------
+-- Table `local_partners`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `local_partners` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ngo_id` int(11) NOT NULL,
+  `phone` varchar(45) NOT NULL,
+  `company` varchar(255) NOT NULL,
+  `created` datetime NOT NULL,
+  `created_by` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+) ENGINE=InnoDB DEFAULT ;
+
+-- -----------------------------------------------------
+-- Table `marital_status`
+-- -----------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS `marital_status` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `marital_status_desc` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT ;
 -- -----------------------------------------------------
 -- Table `meal_donation_sources`
 -- -----------------------------------------------------
+
 CREATE TABLE IF NOT EXISTS `meal_donation_sources` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `ngo_id`	INT NOT NULL,
-  `source`	VARCHAR(255) NOT NULL,
-  `frequency`	VARCHAR(255) NOT NULL,
-  `created` DATETIME NOT NULL,
-  `created_by` INT NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ngo_id` int(11) NOT NULL,
+  `source` varchar(255) NOT NULL,
+  `frequency` varchar(255) NOT NULL,
+  `created` datetime NOT NULL,
+  `created_by` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+) ENGINE=InnoDB DEFAULT ;
 
 -- -----------------------------------------------------
--- Table `services`
+-- Table `meal_funding_sources`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `hni_services` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `org_id` INT NOT NULL,
-  `role_id` INT NOT NULL,
-  `service_name` VARCHAR(75) NOT NULL,
-  `service_path` VARCHAR(100) NOT NULL,
-  `service_img` VARCHAR(500) NULL,
-  `active` VARCHAR(1) NOT NULL,
-  `created` DATETIME NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS `meal_funding_sources` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ngo_id` int(11) NOT NULL,
+  `amount` double NOT NULL,
+  `source` varchar(255) NOT NULL,
+  `created` datetime NOT NULL,
+  `created_by` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+) ENGINE=InnoDB DEFAULT ;
+
+-- -----------------------------------------------------
+-- Table `ngo`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `ngo` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `address_id` int(11) NOT NULL,
+  `website` varchar(255) NOT NULL,
+  `fte` int(11) NOT NULL,
+  `overview` varchar(2048) NOT NULL,
+  `mission` varchar(2048) NOT NULL,
+  `monthly_budget` int(11) NOT NULL,
+  `operating_cost` int(11) DEFAULT NULL,
+  `personal_cost` int(11) DEFAULT NULL,
+  `kitchen_volunteers` int(11) DEFAULT NULL,
+  `food_stamp_assist` tinyint(1) NOT NULL,
+  `food_bank` tinyint(1) NOT NULL,
+  `resources_to_clients` int(11) NOT NULL,
+  `ind_serv_daily` int(11) NOT NULL,
+  `ind_serv_monthly` int(11) NOT NULL,
+  `ind_serv_annual` int(11) NOT NULL,
+  `client_info` tinyint(1) NOT NULL,
+  `store_client_info` varchar(255) DEFAULT NULL,
+  `clients_unsheltered` int(11) NOT NULL,
+  `clients_employed` int(11) NOT NULL,
+  `created` datetime NOT NULL,
+  `created_by` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+) ENGINE=InnoDB DEFAULT ;
+
+-- -----------------------------------------------------
+-- Table `ngo_funding_sources`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `ngo_funding_sources` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ngo_id` int(11) NOT NULL,
+  `amount` double NOT NULL,
+  `source` varchar(255) NOT NULL,
+  `created` datetime NOT NULL,
+  `created_by` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+) ENGINE=InnoDB DEFAULT ;
+
+-- -----------------------------------------------------
+-- Table `partial_orders_order_items`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `partial_orders_order_items` (
+  `id` int(11) NOT NULL,
+  `order_item_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT ;
+
+-- -----------------------------------------------------
+-- Table `race`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `race` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `race_desc` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT ;
+
+-- -----------------------------------------------------
+-- Table `user_address`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `user_address` (
+  `user_id` int(11) NOT NULL,
+  `address_id` int(11) NOT NULL,
+  PRIMARY KEY (`user_id`,`address_id`),
+) ENGINE=InnoDB DEFAULT ;
 
 -- -----------------------------------------------------
 -- Table `user_profile_tmp`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `user_profile_tmp` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `type` VARCHAR(45) NOT NULL,
-  `user_id` INT NULL,
-  `data` VARCHAR(2500) NOT NULL,
-  `created` DATETIME NOT NULL,
-  `last_updated` DATETIME NOT NULL,
-  `status` VARCHAR(1) NULL,
-  PRIMARY KEY (`id`))
-  ENGINE = InnoDB;;
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `type` varchar(45) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `data` blob NOT NULL,
+  `created` datetime NOT NULL,
+  `last_updated` datetime NOT NULL,
+  `status` varchar(1) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+) ENGINE=InnoDB DEFAULT ;
+
 -- -----------------------------------------------------
--- Table `invitation`
+-- Table `user_status`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS  `invitation` (
-`id` INT NOT NULL AUTO_INCREMENT,
-`org_id` VARCHAR(50) NOT NULL,
-`invite_code` VARCHAR(50) NOT NULL,
-`token_expire_date` DATE NOT NULL,
-`created_date` DATE NOT NULL,
-PRIMARY KEY (`id`))
-ENGINE=InnoDB;
+CREATE TABLE IF NOT EXISTS `user_status` (
+  `user_id` int(11) NOT NULL,
+  `status` varchar(2) NOT NULL
+) ENGINE=InnoDB DEFAULT ;
+
+-- -----------------------------------------------------
+-- Table `volunteer`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `volunteer` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `created` date NOT NULL,
+  `created_by` int(11) NOT NULL,
+  `address_id` int(11) NOT NULL,
+  `birthday` date NOT NULL,
+  `sex` char(1) NOT NULL,
+  `race` int(11) NOT NULL,
+  `education` int(11) NOT NULL,
+  `marital_status` int(11) NOT NULL,
+  `income` int(11) NOT NULL,
+  `kids` int(11) NOT NULL,
+  `employer` varchar(100) NOT NULL,
+  `non_profit` char(1) NOT NULL COMMENT 'Yes or No',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT ;
+
+-- -----------------------------------------------------
+-- Table `volunteer_availability`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `volunteer_availability` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `created` date NOT NULL,
+  `created_by` int(11) NOT NULL,
+  `volunteer_id` int(11) NOT NULL,
+  `timeline` int(11) NOT NULL COMMENT 'It should be a list of time rages, constants',
+  `weekday` varchar(50) NOT NULL COMMENT 'sunday, monday, etc',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT ;
