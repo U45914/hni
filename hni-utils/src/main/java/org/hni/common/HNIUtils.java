@@ -23,8 +23,8 @@ public class HNIUtils {
 			headers.add(addField("createdUsers", "No of Created Users"));
 		} else if (roleId == Constants.USER_TYPES.get("customer")) {
 
-			headers.add(addField("firstname", "First Name"));
-			headers.add(addField("lastname", "Last Name"));
+			headers.add(addField("firstName", "First Name"));
+			headers.add(addField("lastName", "Last Name"));
 			headers.add(addField("mobilePhone", "Phone Number"));
 			headers.add(addField("email", "Email Id"));
 			headers.add(addField("genderCode", "Gender"));
