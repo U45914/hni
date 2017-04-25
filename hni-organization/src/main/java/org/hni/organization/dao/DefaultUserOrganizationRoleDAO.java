@@ -77,8 +77,13 @@ public class DefaultUserOrganizationRoleDAO extends AbstractDAO<UserOrganization
 	public boolean getProfileStatus(User user) {
 		int userId= user.getId().intValue();
 		Query q =   em.createQuery("SELECT u from UserPartialData u where u.userId = :userId ORDER BY lastUpdated desc").setParameter("userId", userId);
-		UserPartialData userPartialData =  (UserPartialData) q.getResultList().get(0);
-		return userPartialData.getStatus()!=null?userPartialData.getStatus().equalsIgnoreCase("Y")?true:false:false;
-	}
+		List<UserPartialData> userPartialDataList =  q.getResultList();
+		if(!userPartialDataList.isEmpty())
+		{
+		UserPartialData userPartialData = userPartialDataList.get(0);
+		return userPartialData.getStatus()!=null?userPartialData.getStatus().equalsIgnoreCase("Y")?true:false:true;
+		}
+		return true;
+		}
 
 }
