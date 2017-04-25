@@ -1,5 +1,49 @@
 package org.hni.admin.service.converter;
 
+import static org.hni.common.Constants.AMOUNT;
+import static org.hni.common.Constants.BAGGED_CHK;
+import static org.hni.common.Constants.BAGGED_QTY;
+import static org.hni.common.Constants.BOARD_MEMBERS;
+import static org.hni.common.Constants.BRAND_PARTNERS;
+import static org.hni.common.Constants.BRKFST_AVAILABILTY;
+import static org.hni.common.Constants.BRKFST_CHK;
+import static org.hni.common.Constants.BRKFST_QTY;
+import static org.hni.common.Constants.CLIENT_NODE;
+import static org.hni.common.Constants.COMPANY;
+import static org.hni.common.Constants.DINNER_AVAILABILTY;
+import static org.hni.common.Constants.DINNER_CHK;
+import static org.hni.common.Constants.DINNER_QTY;
+import static org.hni.common.Constants.EMPLOYEED_CLIENT_PERCENTAGE;
+import static org.hni.common.Constants.FOOD_BANK_SELECT;
+import static org.hni.common.Constants.FOOD_BANK_VALUE;
+import static org.hni.common.Constants.FOOD_STAMP;
+import static org.hni.common.Constants.FREQUENCY;
+import static org.hni.common.Constants.FUNDING;
+import static org.hni.common.Constants.FUNDING_SOURCE;
+import static org.hni.common.Constants.INDIVIDUALS_SERVED_ANNUALLY;
+import static org.hni.common.Constants.INDIVIDUALS_SERVED_DAILY;
+import static org.hni.common.Constants.INDIVIDUALS_SERVED_MONTHLY;
+import static org.hni.common.Constants.INDIVIDUAL_CLIENT_INFO_COLLECTED;
+import static org.hni.common.Constants.LOCAL_PARTNERS;
+import static org.hni.common.Constants.LUNCH_AVAILABILTY;
+import static org.hni.common.Constants.LUNCH_CHK;
+import static org.hni.common.Constants.LUNCH_QTY;
+import static org.hni.common.Constants.MEAL_DONATION;
+import static org.hni.common.Constants.MEAL_FUNDING;
+import static org.hni.common.Constants.MISSION;
+import static org.hni.common.Constants.MONTHLY_BUDGET;
+import static org.hni.common.Constants.NAME;
+import static org.hni.common.Constants.OPERATING_COST;
+import static org.hni.common.Constants.OVERVIEW;
+import static org.hni.common.Constants.PERSONAL_COST;
+import static org.hni.common.Constants.PHONE_NUMBER;
+import static org.hni.common.Constants.SERVICE;
+import static org.hni.common.Constants.SOURCE;
+import static org.hni.common.Constants.STAKE_HOLDER;
+import static org.hni.common.Constants.UNSHELTERED_CLIENT_PERCENTAGE;
+import static org.hni.common.Constants.VOLUNTEER_NBR;
+import static org.hni.common.Constants.WEBSITE;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -26,7 +70,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import static org.hni.common.Constants.*;
 
 public class HNIConverter {
 
@@ -56,7 +99,7 @@ public class HNIConverter {
 	 * @param objectNode
 	 * @return
 	 */
-	public static Ngo getNGOFromJson(ObjectNode objectNode) {
+	public static Ngo getNGOFromJson(ObjectNode objectNode, Long createdBy) {
 		JsonNode overviewNode = objectNode.get(OVERVIEW);
 		JsonNode serviceNode = objectNode.get(SERVICE);
 		JsonNode clientNode = objectNode.get(CLIENT_NODE);
@@ -85,7 +128,7 @@ public class HNIConverter {
 		ngo.setClientsUnSheltered(clientNode.get(UNSHELTERED_CLIENT_PERCENTAGE).asInt());
 		ngo.setClientsEmployed(clientNode.get(EMPLOYEED_CLIENT_PERCENTAGE).asInt());
 		ngo.setCreated(new Date());
-		ngo.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
+		ngo.setCreatedBy(createdBy);
 
 		return ngo;
 	}
@@ -97,7 +140,7 @@ public class HNIConverter {
 	 * @param ngoId
 	 * @return
 	 */
-	public static List<BoardMember> getBoardMembersFromJson(ObjectNode objectNode, Long ngoId) {
+	public static List<BoardMember> getBoardMembersFromJson(ObjectNode objectNode, Long ngoId, Long createdBy) {
 		List<BoardMember> boardMembers = new ArrayList<>();
 		JsonNode boardMemberArray = objectNode.get(STAKE_HOLDER).get(BOARD_MEMBERS);
 		if (boardMemberArray.isArray()) {
@@ -111,7 +154,7 @@ public class HNIConverter {
 					boardMember.setLastName("");
 				boardMember.setCompany(boardMemberJSON.get(COMPANY).asText());
 				boardMember.setCreated(new Date());
-				boardMember.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
+				boardMember.setCreatedBy(createdBy);
 				boardMember.setNgo_id(ngoId);
 				boardMembers.add(boardMember);
 			}
@@ -126,7 +169,7 @@ public class HNIConverter {
 	 * @param ngo_id
 	 * @return
 	 */
-	public static List<BrandPartner> getBrandPartnersFromJson(ObjectNode objectNode, Long ngo_id) {
+	public static List<BrandPartner> getBrandPartnersFromJson(ObjectNode objectNode, Long ngo_id, Long createdBy) {
 		List<BrandPartner> brandPartners = new ArrayList<>();
 		JsonNode brandPartnerArray = objectNode.get(STAKE_HOLDER).get(BRAND_PARTNERS);
 		if (brandPartnerArray.isArray()) {
@@ -139,7 +182,7 @@ public class HNIConverter {
 				brandPartner.setPhone(String.valueOf(brandPartnerJSON.get(PHONE_NUMBER).asInt()));
 				brandPartner.setCompany(brandPartnerJSON.get(COMPANY).asText());
 				brandPartner.setCreated(new Date());
-				brandPartner.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
+				brandPartner.setCreatedBy(createdBy);
 				brandPartners.add(brandPartner);
 			}
 		}
@@ -154,7 +197,7 @@ public class HNIConverter {
 	 *            Id
 	 * @return
 	 */
-	public static List<LocalPartner> getLocalPartnersFromJson(ObjectNode objectNode, Long ngoId) {
+	public static List<LocalPartner> getLocalPartnersFromJson(ObjectNode objectNode, Long ngoId, Long createdBy) {
 		List<LocalPartner> localPartners = new ArrayList<>();
 		JsonNode localPartnerArray = objectNode.get(STAKE_HOLDER).get(LOCAL_PARTNERS);
 		if (localPartnerArray.isArray()) {
@@ -167,7 +210,7 @@ public class HNIConverter {
 				localPartner.setPhone(String.valueOf(localPartnerJSON.get(PHONE_NUMBER).asInt()));
 				localPartner.setCompany(localPartnerJSON.get(COMPANY).asText());
 				localPartner.setCreated(new Date());
-				localPartner.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
+				localPartner.setCreatedBy(createdBy);
 				localPartners.add(localPartner);
 			}
 		}
@@ -181,7 +224,7 @@ public class HNIConverter {
 	 * @param ngoId
 	 * @return
 	 */
-	public static List<FoodBank> getFoodBankFromJson(ObjectNode objectNode, Long ngoId) {
+	public static List<FoodBank> getFoodBankFromJson(ObjectNode objectNode, Long ngoId, Long createdBy) {
 		List<FoodBank> foodBanks = new ArrayList<>();
 		JsonNode serviceNode = objectNode.get(SERVICE);
 
@@ -194,7 +237,7 @@ public class HNIConverter {
 					foodBank.setNgoId(ngoId);
 					foodBank.setFoodBankName(foodBankItr.next().asText());
 					foodBank.setCreated(new Date());
-					foodBank.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
+					foodBank.setCreatedBy(createdBy);
 					foodBanks.add(foodBank);
 				}
 			}
@@ -209,7 +252,7 @@ public class HNIConverter {
 	 * @param ngoId
 	 * @return
 	 */
-	public static List<FoodService> getFoodServicesFromJson(ObjectNode objectNode, Long ngoId) {
+	public static List<FoodService> getFoodServicesFromJson(ObjectNode objectNode, Long ngoId, Long createdBy) {
 		List<FoodService> foodServices = new ArrayList<>();
 		JsonNode serviceNode = objectNode.get(SERVICE);
 
@@ -221,7 +264,7 @@ public class HNIConverter {
 			foodService.setWeekdays(serviceNode.get(BRKFST_AVAILABILTY).asText());
 				foodService.setOther("");
 			foodService.setCreated(new Date());
-			foodService.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
+			foodService.setCreatedBy(createdBy);
 			foodServices.add(foodService);
 		}
 		if (serviceNode.get(LUNCH_CHK).asBoolean()) {
@@ -232,7 +275,7 @@ public class HNIConverter {
 			foodService.setWeekdays(serviceNode.get(LUNCH_AVAILABILTY).asText());
 				foodService.setOther("");
 			foodService.setCreated(new Date());
-			foodService.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
+			foodService.setCreatedBy(createdBy);
 			foodServices.add(foodService);
 		}
 		if (serviceNode.get(DINNER_CHK).asBoolean()) {
@@ -243,7 +286,7 @@ public class HNIConverter {
 			foodService.setWeekdays(serviceNode.get(DINNER_AVAILABILTY).asText());
 				foodService.setOther("");
 			foodService.setCreated(new Date());
-			foodService.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
+			foodService.setCreatedBy(createdBy);
 			foodServices.add(foodService);
 		}
 
@@ -257,7 +300,7 @@ public class HNIConverter {
 	 * @param ngoId
 	 * @return
 	 */
-	public static List<MealDonationSource> getMealDonationSourceFromJson(ObjectNode objectNode, Long ngoId) {
+	public static List<MealDonationSource> getMealDonationSourceFromJson(ObjectNode objectNode, Long ngoId, Long createdBy) {
 		List<MealDonationSource> mealDonationSources = new ArrayList<>();
 		JsonNode mealDonationSourceArray = objectNode.get(FUNDING).get(MEAL_DONATION);
 		if (mealDonationSourceArray.isArray()) {
@@ -269,7 +312,7 @@ public class HNIConverter {
 				mealDonationSource.setSource(mealDonationSourceJSON.get(SOURCE).asText());
 				mealDonationSource.setFrequency(mealDonationSourceJSON.get(FREQUENCY).asText());
 				mealDonationSource.setCreated(new Date());
-				mealDonationSource.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
+				mealDonationSource.setCreatedBy(createdBy);
 				mealDonationSources.add(mealDonationSource);
 			}
 		}
@@ -283,7 +326,7 @@ public class HNIConverter {
 	 * @param ngoId
 	 * @return
 	 */
-	public static List<MealFundingSource> getMealFundingSourcesFromJson(ObjectNode objectNode, Long ngoId) {
+	public static List<MealFundingSource> getMealFundingSourcesFromJson(ObjectNode objectNode, Long ngoId, Long createdBy) {
 		List<MealFundingSource> mealFundingSources = new ArrayList<>();
 		JsonNode mealFundingSourceArray = objectNode.get(FUNDING).get(MEAL_FUNDING);
 		if (mealFundingSourceArray.isArray()) {
@@ -295,7 +338,7 @@ public class HNIConverter {
 				mealFundingSource.setAmount(mealFundingSourceJSON.get(AMOUNT).asDouble());
 				mealFundingSource.setSource(mealFundingSourceJSON.get(SOURCE).asText());
 				mealFundingSource.setCreated(new Date());
-				mealFundingSource.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
+				mealFundingSource.setCreatedBy(createdBy);
 				mealFundingSources.add(mealFundingSource);
 			}
 		}
@@ -309,7 +352,7 @@ public class HNIConverter {
 	 * @param ngoId
 	 * @return
 	 */
-	public static List<NgoFundingSource> getNgoFundingSourcesFromJson(ObjectNode objectNode, Long ngoId) {
+	public static List<NgoFundingSource> getNgoFundingSourcesFromJson(ObjectNode objectNode, Long ngoId, Long createdBy) {
 		List<NgoFundingSource> ngoFundingSources = new ArrayList<>();
 		JsonNode ngoFundingSourceArray = objectNode.get(FUNDING).get(FUNDING_SOURCE);
 		if (ngoFundingSourceArray.isArray()) {
@@ -321,7 +364,7 @@ public class HNIConverter {
 				ngoFundingSource.setAmount(ngoFundingSourceJSON.get(AMOUNT).asDouble());
 				ngoFundingSource.setSource(ngoFundingSourceJSON.get(SOURCE).asText());
 				ngoFundingSource.setCreated(new Date());
-				ngoFundingSource.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
+				ngoFundingSource.setCreatedBy(createdBy);
 				ngoFundingSources.add(ngoFundingSource);
 			}
 		}

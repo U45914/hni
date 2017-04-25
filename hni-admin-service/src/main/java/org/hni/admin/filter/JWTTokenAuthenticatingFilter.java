@@ -1,7 +1,6 @@
 package org.hni.admin.filter;
 
 import java.io.IOException;
-import java.util.Enumeration;
 
 import javax.inject.Inject;
 import javax.servlet.ServletException;
@@ -19,7 +18,6 @@ import org.apache.shiro.web.filter.authc.AuthenticatingFilter;
 import org.hni.common.Constants;
 import org.hni.security.realm.token.JWTAuthenticationToken;
 import org.hni.security.realm.token.JWTTokenFactory;
-import org.hni.security.service.UserTokenService;
 import org.hni.user.dao.UserDAO;
 import org.hni.user.om.User;
 import org.slf4j.Logger;
