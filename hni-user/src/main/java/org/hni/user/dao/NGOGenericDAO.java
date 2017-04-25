@@ -85,8 +85,11 @@ public List<Volunteer> getAllVolunteers(Long loggedInUserId) {
 	return volunteerList;
 }
 public void updateStatus(int userId) {
-	UserPartialData user = get(UserPartialData.class,em.createQuery("select x.id from UserPartialData x where x.userId =:userId").setParameter("userId", userId).getSingleResult());
+	Long id = (Long) em.createQuery("select x.id from UserPartialData x where x.userId =:userId").setParameter("userId", userId).getSingleResult();
+	if(id!=null){
+	UserPartialData user = get(UserPartialData.class,id);
 	user.setStatus("Y");
 	save(UserPartialData.class,user);
+	}
 }
 }
