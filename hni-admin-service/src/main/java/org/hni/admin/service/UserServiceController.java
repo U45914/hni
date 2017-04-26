@@ -1,9 +1,7 @@
 package org.hni.admin.service;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,13 +38,18 @@ import org.hni.security.dao.RoleDAO;
 import org.hni.user.om.Client;
 import org.hni.user.om.Ngo;
 import org.hni.user.om.User;
+import org.hni.user.om.UserPartialData;
 import org.hni.user.om.Volunteer;
 import org.hni.user.service.UserOnboardingService;
+import org.hni.user.service.UserPartialCreateService;
 import org.hni.user.service.UserService;
 import org.hni.user.service.VolunteerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 @Api(value = "/users", description = "Operations on Users and to manage Users relationships to organiations")
 @Component
@@ -72,6 +75,9 @@ public class UserServiceController extends AbstractBaseController {
 	
 	@Inject
 	private UserOnboardingService userOnBoardingService;
+	
+	@Inject
+	private UserPartialCreateService userPartialCreateService;
 
 	@GET
 	@Path("/{id}")
@@ -221,7 +227,6 @@ public class UserServiceController extends AbstractBaseController {
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Path("/register")
 	@ApiOperation(value = "register a customer", notes = "An update occurs if the ID field is specified", response = User.class, responseContainer = "")
-	// TODO: need a identifier to determine role
 	public Response registerUser(User user, @HeaderParam("user-type") String type) {
 		Map<String, String> userResponse = new HashMap<>();
 		boolean validPassword = false;
@@ -229,6 +234,17 @@ public class UserServiceController extends AbstractBaseController {
 		if (validPassword == true) {
 			User u = orgUserService.register(setPassword(user), convertUserTypeToRole(type));
 			if (u != null) {
+				
+				UserPartialData userProfileTempInfo = new UserPartialData();
+				userProfileTempInfo.setUserId(u.getId());
+				userProfileTempInfo.setLastUpdated(new Date());
+				userProfileTempInfo.setCreated(new Date());
+				userProfileTempInfo.setStatus(Constants.N);
+				userProfileTempInfo.setType(type);
+				userProfileTempInfo.setData("{}");
+				// Saving user data to userProfileTable for user profile redirection
+				userPartialCreateService.save(userProfileTempInfo);
+				
 				userResponse.put(SUCCESS, "Account has been created successfully");
 			} else {
 				userResponse.put(SUCCESS, SOMETHING_WENT_WRONG_PLEASE_TRY_AGAIN);
