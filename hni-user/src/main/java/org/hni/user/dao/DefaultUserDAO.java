@@ -57,9 +57,12 @@ public class DefaultUserDAO extends AbstractDAO<User> implements UserDAO {
 		Integer id = null ;
 		String query = "select id from "+getTableByType(type) + " where user_id =:userId";
 		List<Object> ids = em.createNativeQuery(query).setParameter("userId", userId).getResultList();
-		if(ids!=null)
+		if(ids!=null){
 			id =  (Integer) ids.get(0);
 		return id.longValue();
+		}
+		return 0L;
+		
 			
 	}
 	private String getTableByType(String type)

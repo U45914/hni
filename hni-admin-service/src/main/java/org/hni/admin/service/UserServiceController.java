@@ -317,12 +317,19 @@ public class UserServiceController extends AbstractBaseController {
 	@GET
 	@Path("/{type}/profile")
 	@Produces({ MediaType.APPLICATION_JSON })
-	@ApiOperation(value = "Returns Profile data of logged in user", notes = "", response = HniServicesDto.class, responseContainer = "")
+	@ApiOperation(value = "Returns Profile data of logged in user", notes = "", response = Map.class, responseContainer = "")
 	public Response getUserProfiles(@PathParam("type") String type) {
 		Map<String, Object> response = null;
 		try{
 			User user = getLoggedInUser();
-			response  = userOnBoardingService.getUserProfiles(type, user);
+			Long userId = null;
+			if(user!=null){
+				userId = user.getId();
+			}
+			else{
+				return Response.serverError().build();
+			}
+			response  = userOnBoardingService.getUserProfiles(type, userId);
 			if(response!=null && !response.isEmpty()){
 				return Response.ok(response).build();
 			}

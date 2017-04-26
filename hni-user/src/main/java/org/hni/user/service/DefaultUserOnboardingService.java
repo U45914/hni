@@ -203,8 +203,8 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 	}
 
 	@Override
-	public Map<String, Object> getUserProfiles(String type, User user) {
-		Long id =findIdByType(user!=null?user.getId():1L,type);
+	public Map<String, Object> getUserProfiles(String type, Long userId) {
+		Long id =findIdByType(userId,type);
 		Map<String,Object> response = new HashMap<>();
 		
 		if(type!=null && type.equalsIgnoreCase("ngo")){
