@@ -68,7 +68,7 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 	private ClientDAO clientDAO;
 	
 	@Inject
-	private UserDAO userDAO;
+	private UserDAO userDao;
 
 	public DefaultUserOnboardingService(BaseDAO<Invitation> dao) {
 		super(dao);
@@ -124,7 +124,7 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 	
 	private String saveNGOData(ObjectNode onboardData){
 		Long userId = (Long) ThreadContext.get(Constants.USERID);
-		User user = userDAO.get(userId);
+		User user = userDao.get(userId);
 		Invitation invitation = invitationDAO.getInvitedBy(user.getEmail());
 		
 		Ngo ngo = ngoGenericDAO.save(Ngo.class ,HNIConverter.getNGOFromJson(onboardData, invitation.getInvitedBy()));
@@ -204,5 +204,31 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 		}
 		return error;
 	}
+
+	@Override
+	public Map<String, Object> getUserProfiles(String type, Long userId) {
+		Long id =findIdByType(userId,type);
+		Map<String,Object> response = new HashMap<>();
+		
+		if(type!=null && type.equalsIgnoreCase("ngo")){
+			response.put("response",this.getNGODetail(id));
+		
+		}
+		else if(type.equalsIgnoreCase("Volunteer")){
+			response.put("response",volunteerDao.get(id));
+		}
+		else if(type.equalsIgnoreCase("Customer")){
+			response.put("response",ngoGenericDAO.get(Client.class,id));
+		}
+		
+		return response;
+	}
+	 private  Long findIdByType(Long userId,String type)
+	 {
+		
+		 return userDao.findTypeIdByUser(userId, type);
+		 
+	 }
+	 
 	 
 }

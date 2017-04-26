@@ -149,8 +149,8 @@ public class UserOnboardingController extends AbstractBaseController {
 			UserPartialData userPartialDataUpdate = userPartialCreateService.getUserPartialDataByUserId(getLoggedInUser().getId().intValue());
 			if(userPartialDataUpdate==null){
 				UserPartialData userPartialData = new UserPartialData();
-				userPartialData.setType(Constants.USER_TYPES.get(userType).intValue());
-				userPartialData.setUserId(getLoggedInUser().getId().intValue());
+				userPartialData.setType(userType);
+				userPartialData.setUserId(getLoggedInUser().getId());
 				userPartialData.setData(json.toString());
 				userPartialData.setCreated(new Date());
 				userPartialData.setLastUpdated(new Date());

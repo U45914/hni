@@ -1,7 +1,9 @@
 package org.hni.user.dao;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -49,4 +51,27 @@ public class DefaultUserDAO extends AbstractDAO<User> implements UserDAO {
 			return null;
 		}
 	}
+
+	@Override
+	public Long findTypeIdByUser(Long userId, String type) {
+		Integer id = null ;
+		String query = "select id from "+getTableByType(type) + " where user_id =:userId";
+		List<Object> ids = em.createNativeQuery(query).setParameter("userId", userId).getResultList();
+		if(ids!=null){
+			id =  (Integer) ids.get(0);
+		return id.longValue();
+		}
+		return 0L;
+		
+			
+	}
+	private String getTableByType(String type)
+	 {
+		Map<String,String> tableType = new HashMap<>();
+		tableType.put("ngo", "ngo");
+		tableType.put("Volunteer", "volunteer");
+		tableType.put("Customer", "client");
+		return tableType.get(type);
+		 
+	 }
 }
