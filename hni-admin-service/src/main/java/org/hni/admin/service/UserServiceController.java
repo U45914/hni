@@ -297,4 +297,24 @@ public class UserServiceController extends AbstractBaseController {
 		return Response.ok(response).build();
 	}
 	
+
+	@GET
+	@Path("/{type}/profile")
+	@Produces({ MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Returns Profile data of logged in user", notes = "", response = HniServicesDto.class, responseContainer = "")
+	public Response getUserProfiles(@PathParam("type") String type) {
+		Map<String, Object> response = null;
+		try{
+			User user = getLoggedInUser();
+			response  = userOnBoardingService.getUserProfiles(type, user);
+			if(response!=null && !response.isEmpty()){
+				return Response.ok(response).build();
+			}
+			
+		}catch(Exception e){
+			_LOGGER.error("User Profile fetching failed!");
+			return Response.serverError().build();
+		}
+		return Response.ok(response).build();
+	}
 }

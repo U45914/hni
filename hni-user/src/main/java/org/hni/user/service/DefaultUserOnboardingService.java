@@ -25,6 +25,7 @@ import org.hni.common.service.AbstractService;
 import org.hni.user.dao.AddressDAO;
 import org.hni.user.dao.ClientDAO;
 import org.hni.user.dao.NGOGenericDAO;
+import org.hni.user.dao.UserDAO;
 import org.hni.user.dao.UserOnboardingDAO;
 import org.hni.user.dao.VolunteerDao;
 import org.hni.user.om.Address;
@@ -65,6 +66,9 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 	
 	@Inject
 	private ClientDAO clientDAO;
+	
+	@Inject
+	private UserDAO userDao;
 
 	public DefaultUserOnboardingService(BaseDAO<Invitation> dao) {
 		super(dao);
@@ -197,5 +201,31 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 		}
 		return error;
 	}
+
+	@Override
+	public Map<String, Object> getUserProfiles(String type, User user) {
+		Long id =findIdByType(user!=null?user.getId():1L,type);
+		Map<String,Object> response = new HashMap<>();
+		
+		if(type!=null && type.equalsIgnoreCase("ngo")){
+			response.put("response",this.getNGODetail(id));
+		
+		}
+		else if(type.equalsIgnoreCase("Volunteer")){
+			response.put("response",volunteerDao.get(id));
+		}
+		else if(type.equalsIgnoreCase("Customer")){
+			response.put("response",ngoGenericDAO.get(Client.class,id));
+		}
+		
+		return response;
+	}
+	 private  Long findIdByType(Long userId,String type)
+	 {
+		
+		 return userDao.findTypeIdByUser(userId, type);
+		 
+	 }
+	 
 	 
 }
