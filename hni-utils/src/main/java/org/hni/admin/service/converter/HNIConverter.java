@@ -78,6 +78,15 @@ public class HNIConverter {
 	public static final String USERID = "userId";
 
 	private static ObjectMapper mapper = new ObjectMapper();
+	
+	public static String convertJSONArrayToString(ArrayNode jsonArray){
+		StringBuilder stringBuilder = new StringBuilder("");
+		jsonArray.forEach(b -> {
+			stringBuilder.append(b.asText());
+			stringBuilder.append(",");
+		});
+		return stringBuilder.substring(0, stringBuilder.length()-1).trim();
+	}
 
 	public static Collection<HniServicesDto> convertToServiceDtos(Collection<HniServices> hniServices) {
 		Collection<HniServicesDto> hniServicesDtoList = new ArrayList<>();
@@ -261,7 +270,7 @@ public class HNIConverter {
 			foodService.setNgoId(ngoId);
 			foodService.setServiceType(Constants.BREAKFAST_ID);
 			foodService.setTotalCount(serviceNode.get(BRKFST_QTY).asLong());
-			foodService.setWeekdays(serviceNode.get(BRKFST_AVAILABILTY).asText());
+			foodService.setWeekdays(convertJSONArrayToString((ArrayNode) serviceNode.get(BRKFST_AVAILABILTY)));
 				foodService.setOther("");
 			foodService.setCreated(new Date());
 			foodService.setCreatedBy(createdBy);
@@ -272,7 +281,7 @@ public class HNIConverter {
 			foodService.setNgoId(ngoId);
 			foodService.setServiceType(Constants.LUNCH_ID);
 			foodService.setTotalCount(serviceNode.get(LUNCH_QTY).asLong());
-			foodService.setWeekdays(serviceNode.get(LUNCH_AVAILABILTY).asText());
+			foodService.setWeekdays(convertJSONArrayToString((ArrayNode) serviceNode.get(LUNCH_AVAILABILTY)));
 				foodService.setOther("");
 			foodService.setCreated(new Date());
 			foodService.setCreatedBy(createdBy);
@@ -283,7 +292,7 @@ public class HNIConverter {
 			foodService.setNgoId(ngoId);
 			foodService.setServiceType(Constants.DINNER_ID);
 			foodService.setTotalCount(serviceNode.get(DINNER_QTY).asLong());
-			foodService.setWeekdays(serviceNode.get(DINNER_AVAILABILTY).asText());
+			foodService.setWeekdays(convertJSONArrayToString((ArrayNode) serviceNode.get(DINNER_AVAILABILTY)));
 				foodService.setOther("");
 			foodService.setCreated(new Date());
 			foodService.setCreatedBy(createdBy);
