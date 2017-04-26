@@ -12,4 +12,6 @@ public interface UserDAO extends BaseDAO<User> {
 	List<User> byLastName(String lastName);
 
 	User byEmailAddress(String emailAddress);
+	
+	Long findTypeIdByUser(Long userId,String type);
 }
