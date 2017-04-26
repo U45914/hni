@@ -1,8 +1,12 @@
 package org.hni.admin.service;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -27,6 +31,7 @@ import org.apache.shiro.util.ThreadContext;
 import org.hni.admin.service.converter.HNIConverter;
 import org.hni.admin.service.dto.HniServicesDto;
 import org.hni.common.Constants;
+import org.hni.common.HNIUtils;
 import org.hni.common.exception.HNIException;
 import org.hni.common.om.Role;
 import org.hni.organization.om.HniServices;
@@ -37,9 +42,11 @@ import org.hni.passwordvalidater.CheckPassword;
 import org.hni.security.dao.RoleDAO;
 import org.hni.user.om.Client;
 import org.hni.user.om.Ngo;
+import org.hni.user.om.Report;
 import org.hni.user.om.User;
 import org.hni.user.om.UserPartialData;
 import org.hni.user.om.Volunteer;
+import org.hni.user.service.ReportServices;
 import org.hni.user.service.UserOnboardingService;
 import org.hni.user.service.UserPartialCreateService;
 import org.hni.user.service.UserService;
@@ -78,6 +85,9 @@ public class UserServiceController extends AbstractBaseController {
 	
 	@Inject
 	private UserPartialCreateService userPartialCreateService;
+
+	@Inject
+	private ReportServices reportServices;
 
 	@GET
 	@Path("/{id}")
@@ -339,5 +349,33 @@ public class UserServiceController extends AbstractBaseController {
 			return Response.serverError().build();
 		}
 		return Response.ok(response).build();
+	}
+	@GET
+	@Path("/reports")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Produces({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = "Service for getting the report headings", notes = "", response = List.class, responseContainer = "")
+	public Response getReportHeadings(){
+		Long role;
+		Map<String,Object> response = new HashMap<>();
+		try {
+			User user = getLoggedInUser();
+			if (null != user) {
+				_LOGGER.info("User details fetch successfull");
+				List<UserOrganizationRole> userOrganisationRoles = (List<UserOrganizationRole>) orgUserService.getUserOrganizationRoles(user);
+				 role=userOrganisationRoles.get(0).getId().getRoleId();
+				 List<Report> headings = reportServices.getReportHeadings(role);
+				 //response.put("headers", HNIUtils.getHeader(Constants.USER_TYPES.get("customer")));
+				 response.put("data", headings);
+			}
+			
+			
+		} catch (Exception e) {
+			_LOGGER.error("Error in get Customers under an organization Service:" + e.getMessage(), e);
+			response.put(Constants.RESPONSE, Constants.ERROR);
+		}
+		response.put(Constants.RESPONSE, Constants.SUCCESS);
+		return Response.ok(response).build();
+
 	}
 }

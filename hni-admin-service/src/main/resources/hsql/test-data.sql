@@ -190,3 +190,24 @@ insert into hni_services(org_id,role_id,service_name,service_path,service_img,ac
 insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,4,'My Orders','my-orders','','Y',now());
 insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,4,'User Profile','user-profile','','Y',now());
 insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,4,'Change Password','change-password','','Y',now());
+
+
+--Reports
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) values(1, 'all/ngo', 'NGO list', 1)
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) values(2, 'all/volunteer', 'Volunteer list', 1)
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) values(3, 'customers/role', 'All customers list', 1)
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) values(4, 'customers/organization\r\n', 'Customers under your organization', 1)
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) values(5, 'customers/ngo', 'Customers ', 6)
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) values(6, 'customers/ngo', 'Customers under NGO', 7)
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`)  values(7, 'all/volunteer', 'Volunteer list', 6)
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`)  values(8, 'all/volunteer', 'Volunteer list', 5)
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) values(9, 'all/volunteer', 'Volunteer list', 7)
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) values(10, 'all/ngo', 'NGO List', 6)
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) values(11, 'orders/all', 'Orders', 4)
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) values(12, 'orders/all', 'Orders completed', 3)
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) values(13, 'orders/all', 'Orders ', 2)
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) values(14, 'orders/all', 'Orders', 6)
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) values(15, 'orders/all', 'Orders placed', 1)
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`)  values(16, 'all/organization', 'Organization', 1)
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) values(17, 'provider/all', 'Providers', 1)
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) values(18, 'orders/all', 'Orders', 7)

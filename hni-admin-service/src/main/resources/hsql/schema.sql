@@ -683,3 +683,14 @@ CREATE TABLE IF NOT EXISTS `volunteer_availability` (
   `weekday` varchar(50) NOT NULL COMMENT 'sunday, monday, etc',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT ;
+
+-- -----------------------------------------------------
+-- Table `reports`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `reports` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `report_path` varchar(50) NOT NULL,
+  `label` varchar(50) NOT NULL,
+  `role` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT ;
