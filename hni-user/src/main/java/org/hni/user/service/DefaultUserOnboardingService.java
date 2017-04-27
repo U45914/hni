@@ -175,7 +175,9 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 		ObjectNode parentJSON = mapper.createObjectNode();
 		ObjectNode overViewNode = mapper.createObjectNode();
 		// set Address to overview
-		overViewNode.put("address", HNIConverter.getAddress(mapper.createObjectNode(), user.getAddresses()));
+		if (user != null) {
+			overViewNode.put("address", HNIConverter.getAddress(mapper.createObjectNode(), user.getAddresses()));
+		}
 
 		parentJSON.set("overview", overViewNode);
 		parentJSON.set("stakeHolder", mapper.createObjectNode());

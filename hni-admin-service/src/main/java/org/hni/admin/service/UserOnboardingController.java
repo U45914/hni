@@ -241,7 +241,7 @@ public class UserOnboardingController extends AbstractBaseController {
 		Map<String, String> response = new HashMap<>();
 		response.put(RESPONSE, ERROR);
 		try {
-			ObjectNode ngoDetailJSON = userOnBoardingService.getNGODetail(ngoId);
+			ObjectNode ngoDetailJSON = userOnBoardingService.getNGODetail(ngoId, null);
 			return Response.ok(ngoDetailJSON).build();
 		} catch (Exception e) {
 			response.put(ERROR, SOMETHING_WENT_WRONG_PLEASE_TRY_AGAIN);
