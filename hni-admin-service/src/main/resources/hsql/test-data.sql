@@ -145,6 +145,7 @@ insert into provider_locations values(1, 'Subway #1', 1, 4, now(), 1);
 insert into provider_locations values(2, 'Taco Bell #1', 2, 5, now(), 1);
 insert into provider_locations values(3, 'Chipolte #1', 3, 6, now(), 1);
 
+truncate table payment_instruments;
 insert into payment_instruments values(1, 1, 'gift', '1', '1000-0000-0000-0001','A', 10, 10, null, '1234');
 insert into payment_instruments values(2, 1, 'gift', '2', '2000-0000-0000-0001','A', 10, 10, null, '1234');
 insert into payment_instruments values(3, 1, 'gift', '3', '3000-0000-0000-0001','A', 10, 10, null, '1234');
@@ -156,10 +157,12 @@ insert into payment_instruments values(8, 1, 'gift', '8', '8000-0000-0000-0001',
 insert into payment_instruments values(9, 1, 'gift', '9', '9000-0000-0000-0001','A', 10, 10, null, '1234');
 insert into payment_instruments values(10, 1, 'gift', '10', '1100-0000-0000-0001','A', 10, 10, null, '1234');
 
+truncate table provider_location_hours;
 insert into provider_location_hours values(1,1,'Mon',8,20);
 insert into provider_location_hours values(2,2,'Mon',8,20);
 insert into provider_location_hours values(3,3,'Mon',8,20);
 
+truncate table hni_services;
 -- Super Admin
 insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,1,'NGO Invitation','ngoInvitation','','Y',now());
 insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,1,'Customer Onboarding','custOnboard','','Y',now());
@@ -192,22 +195,23 @@ insert into hni_services(org_id,role_id,service_name,service_path,service_img,ac
 insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,4,'Change Password','change-password','','Y',now());
 
 
---Reports
-INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES (1, 'ngo/all', 'NGO list', 1)
-INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(2, 'volunteers/all', 'Volunteer list', 1)
-INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(3, 'customers/all', 'All customers list', 1)
-INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(5, 'customers/ngo', 'Customers ', 6)
-INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(6, 'customers/ngo', 'Customers', 7)
-INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(7, 'volunteers/all', 'Volunteer list', 6)
-INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(8, 'volunteers/all', 'Volunteer list', 5)
-INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(9, 'volunteers/all', 'Volunteer list', 7)
-INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(10, 'ngo/all', 'NGO List', 6)
-INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(11, 'orders/all', 'Orders', 4)
-INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(12, 'orders/all', 'Orders completed', 3)
-INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(13, 'orders/all', 'Orders ', 2)
-INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(14, 'orders/all', 'Orders', 6)
-INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(15, 'orders/all', 'Orders placed', 1)
-INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(16, 'customers/organization', 'Organization', 6)
-INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(17, 'provider/all', 'Providers', 1)
-INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(18, 'orders/all', 'Orders', 7)
-INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(19, 'customers/organization', 'Organization', 7)
+-- Reports
+truncate table reports;
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES (1, 'ngo/all', 'NGO list', 1);
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(2, 'volunteers/all', 'Volunteer list', 1);
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(3, 'customers/all', 'All customers list', 1);
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(5, 'customers/ngo', 'Customers ', 6);
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(6, 'customers/ngo', 'Customers', 7);
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(7, 'volunteers/all', 'Volunteer list', 6);
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(8, 'volunteers/all', 'Volunteer list', 5);
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(9, 'volunteers/all', 'Volunteer list', 7);
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(10, 'ngo/all', 'NGO List', 6);
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(11, 'orders/all', 'Orders', 4);
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(12, 'orders/all', 'Orders completed', 3);
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(13, 'orders/all', 'Orders ', 2);
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(14, 'orders/all', 'Orders', 6);
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(15, 'orders/all', 'Orders placed', 1);
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(16, 'customers/organization', 'Organization', 6);
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(17, 'provider/all', 'Providers', 1);
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(18, 'orders/all', 'Orders', 7);
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(19, 'customers/organization', 'Organization', 7);

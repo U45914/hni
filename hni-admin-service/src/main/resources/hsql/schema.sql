@@ -506,6 +506,7 @@ CREATE TABLE IF NOT EXISTS `invitation` (
   `invited_by` int(11) NOT NULL,
   `token_expire_date` date NOT NULL,
   `created_date` date NOT NULL,
+  `activated` int(2) NOT NULL,
   PRIMARY KEY (`id`),
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT ;
 

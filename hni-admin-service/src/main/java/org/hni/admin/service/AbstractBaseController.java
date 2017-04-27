@@ -25,6 +25,7 @@ public class AbstractBaseController {
 	protected static final String SUCCESS = "success";
 	protected static final String ERROR = "error";
 	protected static final String RESPONSE = "response";
+	protected static final String USER_NAME = "userName";
 	
 	@Inject
 	protected OrganizationUserService organizationUserService;

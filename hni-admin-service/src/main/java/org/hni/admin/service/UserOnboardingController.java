@@ -101,7 +101,7 @@ public class UserOnboardingController extends AbstractBaseController {
 	@Produces({ MediaType.APPLICATION_JSON }) 
 	@Consumes({ MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "", notes = "", response = Map.class, responseContainer = "")
-	public Map<String, String> sendNGOActivationLinkToUsser(@PathParam("userType") String  userType, Map<String, String> userInfo) {
+	public Map<String, String> sendNGOActivationLinkToUser(@PathParam("userType") String  userType, Map<String, String> userInfo) {
 		Map<String, String> map = new HashMap<>();
 		map.put(RESPONSE, ERROR);
 		try {
@@ -114,7 +114,12 @@ public class UserOnboardingController extends AbstractBaseController {
 				organizationId = getLoggedInUser().getOrganizationId() != null ? getLoggedInUser().getOrganizationId() : 1;
 			}
 			String UUID = userOnBoardingService.buildInvitationAndSave(organizationId, getLoggedInUser().getId(), userInfo.get("email"));
-			emailComponent.sendEmail(userInfo.get("email"), UUID, userType, message);
+			if (UUID != null) {
+				emailComponent.sendEmail(userInfo.get("email"), UUID, userType, message);
+			} else {
+				map.put(RESPONSE, ERROR);
+				map.put("message", "A user with " + userInfo.get("email") + " already exists");
+			}
 			map.put(RESPONSE, SUCCESS);
 			return map;	
 		} catch (Exception e) {
@@ -134,6 +139,7 @@ public class UserOnboardingController extends AbstractBaseController {
 		if (!invitations.isEmpty()) {
 			map.put(RESPONSE, SUCCESS);
 			map.put(ORG_ID, invitations.get(0).getOrganizationId());
+			map.put(USER_NAME, invitations.get(0).getEmail());
 			return map;
 		}
 		return map;

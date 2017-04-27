@@ -1,8 +1,5 @@
 package org.hni.admin.service;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -31,7 +28,6 @@ import org.apache.shiro.util.ThreadContext;
 import org.hni.admin.service.converter.HNIConverter;
 import org.hni.admin.service.dto.HniServicesDto;
 import org.hni.common.Constants;
-import org.hni.common.HNIUtils;
 import org.hni.common.exception.HNIException;
 import org.hni.common.om.Role;
 import org.hni.organization.om.HniServices;
@@ -237,7 +233,7 @@ public class UserServiceController extends AbstractBaseController {
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Path("/register")
 	@ApiOperation(value = "register a customer", notes = "An update occurs if the ID field is specified", response = User.class, responseContainer = "")
-	public Response registerUser(User user, @HeaderParam("user-type") String type) {
+	public Response registerUser(User user, @HeaderParam("user-type") String type, @HeaderParam("act-code") String activationCode) {
 		Map<String, String> userResponse = new HashMap<>();
 		boolean validPassword = false;
 		validPassword = CheckPassword.passwordCheck(user);
@@ -254,7 +250,7 @@ public class UserServiceController extends AbstractBaseController {
 				userProfileTempInfo.setData("{}");
 				// Saving user data to userProfileTable for user profile redirection
 				userPartialCreateService.save(userProfileTempInfo);
-				
+				userOnBoardingService.finalizeRegistration(activationCode);
 				userResponse.put(SUCCESS, "Account has been created successfully");
 			} else {
 				userResponse.put(SUCCESS, SOMETHING_WENT_WRONG_PLEASE_TRY_AGAIN);

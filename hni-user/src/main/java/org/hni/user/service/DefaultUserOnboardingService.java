@@ -82,18 +82,23 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 
 	@Override
 	public String buildInvitationAndSave(Long orgId, Long invitedBy, String email) {
-		String UUID = HNIUtils.getUUID();
-		Invitation invitation = new Invitation();
-		invitation.setOrganizationId(orgId.toString());
-		invitation.setInvitationCode(UUID);
-		invitation.setInvitedBy(invitedBy);
-		invitation.setEmail(email);
-		invitation.setCreatedDate(new Date());
-		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.DAY_OF_MONTH, 5);
-		invitation.setExpirationDate(cal.getTime());
-		invitationDAO.save(invitation);
-		return UUID;
+		User user = userDao.byEmailAddress(email);
+		if (user != null) {
+			String UUID = HNIUtils.getUUID();
+			Invitation invitation = new Invitation();
+			invitation.setOrganizationId(orgId.toString());
+			invitation.setInvitationCode(UUID);
+			invitation.setInvitedBy(invitedBy);
+			invitation.setEmail(email);
+			invitation.setCreatedDate(new Date());
+			Calendar cal = Calendar.getInstance();
+			cal.add(Calendar.DAY_OF_MONTH, 5);
+			invitation.setExpirationDate(cal.getTime());
+			invitationDAO.save(invitation);
+			return UUID;
+		} else {
+			return null;
+		}
 	}
 
 	@Override
@@ -226,6 +231,11 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 		 return userDao.findTypeIdByUser(userId, type);
 		 
 	 }
+
+	@Override
+	public Invitation finalizeRegistration(String activationCode) {
+		return invitationDAO.updateInvitationStatus(activationCode);
+	}
 	 
 	 
 }

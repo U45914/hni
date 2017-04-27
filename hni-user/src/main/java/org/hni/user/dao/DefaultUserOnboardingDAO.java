@@ -26,7 +26,7 @@ public class DefaultUserOnboardingDAO extends AbstractDAO<Invitation> implements
 
 	public Collection<Invitation> validateInvitationCode(String invitationCode){
 		try {
-			Query q = em.createQuery("SELECT x FROM Invitation x WHERE x.invitationCode = :invitationCode and x.expirationDate>=:today")
+			Query q = em.createQuery("SELECT x FROM Invitation x WHERE x.invitationCode = :invitationCode and x.activated = 0 and x.expirationDate>=:today")
 						.setParameter("invitationCode", invitationCode)
 						.setParameter("today", new Date(),TemporalType.DATE);
 			return q.getResultList();
@@ -39,6 +39,22 @@ public class DefaultUserOnboardingDAO extends AbstractDAO<Invitation> implements
 		try {
 			Query q = em.createQuery("SELECT x FROM Invitation x WHERE x.email = :email").setParameter("email", email);
 			return (Invitation) q.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
+	@Override
+	public Invitation updateInvitationStatus(String activationCode) {
+		try {
+			Query q = em.createQuery("SELECT x FROM Invitation x WHERE x.invitationCode = :invitationCode");
+			q.setParameter("invitationCode", activationCode);
+			Invitation invitation = (Invitation) q.getSingleResult();
+			// 1 = completed
+			// 0 = Not Complete
+			invitation.setActivated(1); 
+			super.update(invitation);
+			return invitation;
 		} catch (NoResultException e) {
 			return null;
 		}
