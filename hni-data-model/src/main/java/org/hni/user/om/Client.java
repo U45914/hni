@@ -11,6 +11,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hni.common.om.Persistable;
 
@@ -26,7 +27,8 @@ public class Client implements Persistable, Serializable {
 	private Long userId;
 	private Long createdBy;
 	private Long race;
-	private Long addressId;
+	@Transient
+	private Address address;
 	private Integer bday;
 	private Character beenArrested;
 	private Character beenConvicted;
@@ -90,14 +92,13 @@ public class Client implements Persistable, Serializable {
 	public Client() {
 	}
 
-	public Client(Long userId, Long createdBy, Long race, Long addressId) {
+	public Client(Long userId, Long createdBy, Long race) {
 		this.userId = userId;
 		this.createdBy = createdBy;
 		this.race = race;
-		this.addressId = addressId;
 	}
 
-	public Client(Long userId, Long createdBy, Long race, Long addressId,
+	public Client(Long userId, Long createdBy, Long race,
 			Integer bday, Character beenArrested, Character beenConvicted,
 			Character hasSmartPhone, String serviceProvider, String model,
 			Character haveMonthlyPlan, String monthlyPlanMinute,
@@ -126,7 +127,6 @@ public class Client implements Persistable, Serializable {
 		this.userId = userId;
 		this.createdBy = createdBy;
 		this.race = race;
-		this.addressId = addressId;
 		this.bday = bday;
 		this.beenArrested = beenArrested;
 		this.beenConvicted = beenConvicted;
@@ -225,14 +225,13 @@ public class Client implements Persistable, Serializable {
 	public void setRace(Long race) {
 		this.race = race;
 	}
-
-	@Column(name = "address_id", nullable = false)
-	public Long getAddressId() {
-		return this.addressId;
+	
+	public Address getAddress() {
+		return address;
 	}
-
-	public void setAddressId(Long addressId) {
-		this.addressId = addressId;
+	
+	public void setAddress(Address address) {
+		this.address = address;
 	}
 
 	@Column(name = "bday")

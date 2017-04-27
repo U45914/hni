@@ -280,6 +280,8 @@ public class UserServiceController extends AbstractBaseController {
 		Map<String,String> response = new HashMap<>();
 		try{
 			User user = getLoggedInUser();
+			user.setAddresses(getAddressSet(client.getAddress()));
+			userService.update(user);
 			Map<String,String> errors = userOnBoardingService.clientSave(client, user);
 			if(errors!=null && errors.isEmpty()){
 				response.put(RESPONSE, SUCCESS);

@@ -1,10 +1,55 @@
 package org.hni.admin.service.converter;
 
+import static org.hni.common.Constants.AMOUNT;
+import static org.hni.common.Constants.BAGGED_CHK;
+import static org.hni.common.Constants.BAGGED_QTY;
+import static org.hni.common.Constants.BOARD_MEMBERS;
+import static org.hni.common.Constants.BRAND_PARTNERS;
+import static org.hni.common.Constants.BRKFST_AVAILABILTY;
+import static org.hni.common.Constants.BRKFST_CHK;
+import static org.hni.common.Constants.BRKFST_QTY;
+import static org.hni.common.Constants.CLIENT_NODE;
+import static org.hni.common.Constants.COMPANY;
+import static org.hni.common.Constants.DINNER_AVAILABILTY;
+import static org.hni.common.Constants.DINNER_CHK;
+import static org.hni.common.Constants.DINNER_QTY;
+import static org.hni.common.Constants.EMPLOYEED_CLIENT_PERCENTAGE;
+import static org.hni.common.Constants.FOOD_BANK_SELECT;
+import static org.hni.common.Constants.FOOD_BANK_VALUE;
+import static org.hni.common.Constants.FOOD_STAMP;
+import static org.hni.common.Constants.FREQUENCY;
+import static org.hni.common.Constants.FUNDING;
+import static org.hni.common.Constants.FUNDING_SOURCE;
+import static org.hni.common.Constants.INDIVIDUALS_SERVED_ANNUALLY;
+import static org.hni.common.Constants.INDIVIDUALS_SERVED_DAILY;
+import static org.hni.common.Constants.INDIVIDUALS_SERVED_MONTHLY;
+import static org.hni.common.Constants.INDIVIDUAL_CLIENT_INFO_COLLECTED;
+import static org.hni.common.Constants.LOCAL_PARTNERS;
+import static org.hni.common.Constants.LUNCH_AVAILABILTY;
+import static org.hni.common.Constants.LUNCH_CHK;
+import static org.hni.common.Constants.LUNCH_QTY;
+import static org.hni.common.Constants.MEAL_DONATION;
+import static org.hni.common.Constants.MEAL_FUNDING;
+import static org.hni.common.Constants.MISSION;
+import static org.hni.common.Constants.MONTHLY_BUDGET;
+import static org.hni.common.Constants.NAME;
+import static org.hni.common.Constants.OPERATING_COST;
+import static org.hni.common.Constants.OVERVIEW;
+import static org.hni.common.Constants.PERSONAL_COST;
+import static org.hni.common.Constants.PHONE_NUMBER;
+import static org.hni.common.Constants.SERVICE;
+import static org.hni.common.Constants.SOURCE;
+import static org.hni.common.Constants.STAKE_HOLDER;
+import static org.hni.common.Constants.UNSHELTERED_CLIENT_PERCENTAGE;
+import static org.hni.common.Constants.VOLUNTEER_NBR;
+import static org.hni.common.Constants.WEBSITE;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.shiro.util.ThreadContext;
 import org.hni.admin.service.dto.HniServicesDto;
@@ -15,6 +60,7 @@ import org.hni.common.om.MealDonationSource;
 import org.hni.common.om.MealFundingSource;
 import org.hni.common.om.NgoFundingSource;
 import org.hni.organization.om.HniServices;
+import org.hni.user.om.Address;
 import org.hni.user.om.BoardMember;
 import org.hni.user.om.BrandPartner;
 import org.hni.user.om.LocalPartner;
@@ -26,7 +72,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import static org.hni.common.Constants.*;
 
 public class HNIConverter {
 
@@ -539,6 +584,20 @@ public class HNIConverter {
 
 		fundingJSON.set(FUNDING_SOURCE, fundingSourceJSONArray);
 		return parentJSON;
+	}
+	
+	public static ObjectNode getAddress(ObjectNode addressNode, Set<Address> addresses) {
+		if (addresses != null && !addresses.isEmpty()) {
+			Address address = addresses.iterator().next();
+			addressNode.put("address1", address.getAddress1());
+			addressNode.put("address2", address.getAddress2());
+			addressNode.put("name", address.getName());
+			addressNode.put("city", address.getCity());
+			addressNode.put("state", address.getState());
+			addressNode.put("zip", address.getZip());
+		}
+		
+		return addressNode;
 	}
 
 }

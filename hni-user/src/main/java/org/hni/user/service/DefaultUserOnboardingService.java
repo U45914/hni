@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -50,7 +51,7 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 	
 	private static final String SUCCESS = "Success";
 
-
+	ObjectMapper mapper = new ObjectMapper();
 	@Inject
 	private UserOnboardingDAO invitationDAO;
 
@@ -170,13 +171,17 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 	
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class )
-	public ObjectNode getNGODetail(Long ngoId) {
-		ObjectNode parentJSON = new ObjectMapper().createObjectNode();
-		parentJSON.set("overview", new ObjectMapper().createObjectNode());
-		parentJSON.set("stakeHolder", new ObjectMapper().createObjectNode());
-		parentJSON.set("service", new ObjectMapper().createObjectNode());
-		parentJSON.set("funding", new ObjectMapper().createObjectNode());
-		parentJSON.set("client", new ObjectMapper().createObjectNode());
+	public ObjectNode getNGODetail(Long ngoId, User user) {
+		ObjectNode parentJSON = mapper.createObjectNode();
+		ObjectNode overViewNode = mapper.createObjectNode();
+		// set Address to overview
+		overViewNode.put("address", HNIConverter.getAddress(mapper.createObjectNode(), user.getAddresses()));
+
+		parentJSON.set("overview", overViewNode);
+		parentJSON.set("stakeHolder", mapper.createObjectNode());
+		parentJSON.set("service", mapper.createObjectNode());
+		parentJSON.set("funding", mapper.createObjectNode());
+		parentJSON.set("client", mapper.createObjectNode());
 		
 		HNIConverter.convertNGOToJSON((Ngo) ngoGenericDAO.get(Ngo.class, ngoId), parentJSON);
 		HNIConverter.convertBoardMembersToJSON(ngoGenericDAO.find(BoardMember.class, "select x from BoardMember x where x.ngo_id=?1 ", ngoId), parentJSON);
@@ -201,7 +206,7 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 		client.setUserId(user.getId());
 		Map<String, String> error = new HashMap<>();
 		HNIValidator.validateClient(client, error);
-		if(error!=null && error.isEmpty()){
+		if(error!=null && error.isEmpty()) {
 			clientDAO.save(client);
 		}
 		return error;
@@ -209,27 +214,36 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 
 	@Override
 	public Map<String, Object> getUserProfiles(String type, Long userId) {
-		Long id =findIdByType(userId,type);
+		Long id = findIdByType(userId,type);
+		User user = userDao.get(userId);
+		
 		Map<String,Object> response = new HashMap<>();
 		
 		if(type!=null && type.equalsIgnoreCase("ngo")){
-			response.put("response",this.getNGODetail(id));
-		
-		}
-		else if(type.equalsIgnoreCase("Volunteer")){
-			response.put("response",volunteerDao.get(id));
-		}
-		else if(type.equalsIgnoreCase("Customer")){
-			response.put("response",ngoGenericDAO.get(Client.class,id));
+			ObjectNode ngoInfo = this.getNGODetail(id, user);
+			response.put("response", ngoInfo);
+		} else if(type.equalsIgnoreCase("Volunteer")){
+			Volunteer volunteer = volunteerDao.get(id);
+			volunteer.setAddress(getAddress(user.getAddresses()));
+			response.put("response", volunteer);
+		} else if(type.equalsIgnoreCase("Customer")){
+			Client client = ngoGenericDAO.get(Client.class,id);
+			client.setAddress(getAddress(user.getAddresses()));
+			response.put("response", ngoGenericDAO.get(Client.class,id));
 		}
 		
 		return response;
 	}
-	 private  Long findIdByType(Long userId,String type)
-	 {
-		
+	 private  Long findIdByType(Long userId,String type) {
 		 return userDao.findTypeIdByUser(userId, type);
-		 
+	 }
+	 
+	 private Address getAddress(Set<Address> userAddresses) {
+		 if (userAddresses != null && !userAddresses.isEmpty()) {
+			 return userAddresses.iterator().next();
+		 } else {
+			 return new Address();
+		 }
 	 }
 
 	@Override

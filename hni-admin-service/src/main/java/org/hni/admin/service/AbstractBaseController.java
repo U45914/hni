@@ -1,5 +1,8 @@
 package org.hni.admin.service;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
@@ -11,6 +14,7 @@ import org.hni.common.Constants;
 import org.hni.organization.service.OrganizationUserService;
 import org.hni.security.utils.HNISecurityUtils;
 import org.hni.type.HNIRoles;
+import org.hni.user.om.Address;
 import org.hni.user.om.User;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -82,4 +86,10 @@ public class AbstractBaseController {
 		return HNIRoles.USER.getRole();
 	}
 
+	protected Set<Address> getAddressSet(Address address) {
+		Set<Address> addresses = new HashSet<>(1);
+		addresses.add(address);
+		
+		return addresses;
+	}
 }
