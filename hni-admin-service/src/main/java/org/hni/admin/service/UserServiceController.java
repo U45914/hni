@@ -114,7 +114,6 @@ public class UserServiceController extends AbstractBaseController {
 		if (isPermitted(Constants.ORGANIZATION, Constants.DELETE, id)) {
 			User user = new User(id);
 			Organization org = new Organization(orgId);
-			Role role = Role.get(roleId);
 			orgUserService.delete(user, org, Role.get(roleId));
 			return "OK";
 		}
@@ -176,12 +175,7 @@ public class UserServiceController extends AbstractBaseController {
 	@Produces({ MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "Returns info about the user in the current thread context", notes = "", response = User.class, responseContainer = "")
 	public User getUser() {
-		Long userId = (Long) ThreadContext.get(Constants.USERID); // this was
-																	// placed
-																	// onto the
-																	// context
-																	// by the
-																	// JWTTokenAuthenticatingFilter
+		Long userId = (Long) ThreadContext.get(Constants.USERID); 
 		return orgUserService.get(userId);
 	}
 
@@ -268,6 +262,7 @@ public class UserServiceController extends AbstractBaseController {
 	@Produces({ MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "Returns the volunteer details of specified id.", notes = "", response = Volunteer.class, responseContainer = "")
 	public Volunteer getVolunteerById(@QueryParam("id") Long volunteerId) {
+		//TODO: Get user object and set Address to Volunteer
 		return volunteerService.getVolunteerDetails(volunteerId);
 	}
 
@@ -306,7 +301,7 @@ public class UserServiceController extends AbstractBaseController {
 		User user = getLoggedInUser();
 		Map<String,String> response = new HashMap<>();
 		try{
-			Map<String,String> errors =   userOnBoardingService.buildVolunteerAndSave(volunteer,user);
+			Map<String,String> errors =   userOnBoardingService.buildVolunteerAndSave(volunteer, user);
 			if(errors!=null && errors.isEmpty()){
 				response.put(RESPONSE, SUCCESS);
 			}
@@ -328,21 +323,20 @@ public class UserServiceController extends AbstractBaseController {
 	@ApiOperation(value = "Returns Profile data of logged in user", notes = "", response = Map.class, responseContainer = "")
 	public Response getUserProfiles(@PathParam("type") String type) {
 		Map<String, Object> response = null;
-		try{
+		try {
 			User user = getLoggedInUser();
 			Long userId = null;
-			if(user!=null){
+			if (user != null) {
 				userId = user.getId();
-			}
-			else{
+			} else {
 				return Response.serverError().build();
 			}
-			response  = userOnBoardingService.getUserProfiles(type, userId);
-			if(response!=null && !response.isEmpty()){
+			response = userOnBoardingService.getUserProfiles(type, userId);
+			if (response != null && !response.isEmpty()) {
 				return Response.ok(response).build();
 			}
-			
-		}catch(Exception e){
+
+		} catch (Exception e) {
 			_LOGGER.error("User Profile fetching failed!");
 			return Response.serverError().build();
 		}

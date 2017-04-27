@@ -26,9 +26,6 @@ public class Ngo implements Persistable, Serializable {
 	@Column(name = "user_id")
 	private Long userId;
 
-	@Column(name = "address_id")
-	private Long addressId;
-
 	@Column(name = "website")
 	private String website;
 
@@ -103,14 +100,6 @@ public class Ngo implements Persistable, Serializable {
 
 	public void setUserId(Long userId) {
 		this.userId = userId;
-	}
-
-	public Long getAddressId() {
-		return addressId;
-	}
-
-	public void setAddressId(Long addressId) {
-		this.addressId = addressId;
 	}
 
 	public String getWebsite() {

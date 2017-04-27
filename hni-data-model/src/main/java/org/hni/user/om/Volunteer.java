@@ -35,9 +35,6 @@ public class Volunteer implements Persistable, Serializable  {
 	@Column(name = "created_by")
 	private Long createdBy;
 	
-	@Column(name = "address_id")
-	private Long addressId;
-	
 	@Column(name = "birthday")
 	private Date birthday;
 	
@@ -111,14 +108,6 @@ public class Volunteer implements Persistable, Serializable  {
 
 	public void setCreatedBy(Long createdBy) {
 		this.createdBy = createdBy;
-	}
-
-	public Long getAddressId() {
-		return addressId;
-	}
-
-	public void setAddressId(Long addressId) {
-		this.addressId = addressId;
 	}
 
 	public Date getBirthday() {

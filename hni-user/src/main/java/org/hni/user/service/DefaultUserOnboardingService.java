@@ -10,11 +10,9 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.apache.shiro.util.ThreadContext;
 import org.hni.admin.service.converter.HNIConverter;
 import org.hni.admin.service.converter.HNIValidator;
 import org.hni.admin.service.dto.NgoBasicDto;
-import org.hni.common.Constants;
 import org.hni.common.HNIUtils;
 import org.hni.common.dao.BaseDAO;
 import org.hni.common.om.FoodBank;
@@ -104,14 +102,13 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class )
-	public Map<String, String> ngoSave(ObjectNode onboardData) {
-		Map<String,String> messages = new HashMap<>();
+	public Map<String, String> ngoSave(ObjectNode onboardData, User user) {
+		Map<String, String> messages = new HashMap<>();
 		validateNGO(onboardData, messages);
-		if(messages!=null && messages.isEmpty()){
-		saveNGOData(onboardData);
-		}
-		else{
-		return messages;
+		if (messages != null && messages.isEmpty()) {
+			saveNGOData(onboardData, user);
+		} else {
+			return messages;
 		}
 		return messages;
 	}
@@ -128,9 +125,12 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 		HNIValidator.validateNgoFundingSources(HNIConverter.getNgoFundingSourcesFromJson(onboardData,null),errors);
 	}
 	
-	private String saveNGOData(ObjectNode onboardData){
-		ThreadContext.put(Constants.USERID, 1L);
+	private String saveNGOData(ObjectNode onboardData, User user){
 		Ngo ngo = ngoGenericDAO.save(Ngo.class ,HNIConverter.getNGOFromJson(onboardData));
+		
+		user.setAddresses(HNIConverter.getAddressSet(onboardData));
+		userDao.update(user);
+		
 		ngoGenericDAO.saveBatch(BoardMember.class ,(HNIConverter.getBoardMembersFromJson(onboardData,ngo.getId())));
 		ngoGenericDAO.saveBatch(BrandPartner.class ,HNIConverter.getBrandPartnersFromJson(onboardData,ngo.getId()));
 		ngoGenericDAO.saveBatch(LocalPartner.class ,HNIConverter.getLocalPartnersFromJson(onboardData,ngo.getId()));
@@ -150,11 +150,12 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 		HNIValidator.validateVolunteer(volunteer, error);
 		if(error!=null && error.isEmpty()){
 			Address address = addressDAO.save(volunteer.getAddress());
+			user.getAddresses().add(address);
+			userDao.update(user);
 			Long createdBy = getInvitedBy(volunteer);
 			if(createdBy==null){
 				createdBy = user.getId();
 			}
-			volunteer.setAddressId(address.getId());
 			volunteer.setCreated(new Date());
 			volunteer.setCreatedBy(createdBy);
 			volunteer.setUserId(user.getId());
@@ -169,12 +170,14 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 	} 
 
 	
+	@SuppressWarnings("deprecation")
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class )
 	public ObjectNode getNGODetail(Long ngoId, User user) {
 		ObjectNode parentJSON = mapper.createObjectNode();
 		ObjectNode overViewNode = mapper.createObjectNode();
 		// set Address to overview
+		// TODO if user is null try to get from user table using the user_id of NGO table
 		if (user != null) {
 			overViewNode.put("address", HNIConverter.getAddress(mapper.createObjectNode(), user.getAddresses()));
 		}

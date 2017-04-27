@@ -47,6 +47,7 @@ import static org.hni.common.Constants.WEBSITE;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -108,9 +109,9 @@ public class HNIConverter {
 
 		Ngo ngo = new Ngo();
 		ngo.setUserId((Long) ThreadContext.get(Constants.USERID));
-			ngo.setAddressId(1L);
+		
 		ngo.setWebsite(overviewNode.get(WEBSITE).asText());
-			ngo.setFte(1);
+		ngo.setFte(1);
 		ngo.setOverview(overviewNode.get(OVERVIEW).asText());
 		ngo.setMission(overviewNode.get(MISSION).asText());
 
@@ -121,12 +122,13 @@ public class HNIConverter {
 		ngo.setFoodStampAssist(serviceNode.get(FOOD_STAMP).asInt());
 		ngo.setFoodBank(serviceNode.get(FOOD_BANK_SELECT).asInt());
 
-			ngo.setResourcesToClients(1);
+		ngo.setResourcesToClients(1);
 		ngo.setIndividualsServedDaily(clientNode.get(INDIVIDUALS_SERVED_DAILY).asInt());
 		ngo.setIndividualsServedMonthly(clientNode.get(INDIVIDUALS_SERVED_MONTHLY).asInt());
 		ngo.setIndividualsServedAnnually(clientNode.get(INDIVIDUALS_SERVED_ANNUALLY).asInt());
 		ngo.setClientInfo(clientNode.get(INDIVIDUAL_CLIENT_INFO_COLLECTED).asInt());
-			ngo.setStoreClientInfo("");
+		
+		ngo.setStoreClientInfo("");
 		ngo.setClientsUnSheltered(clientNode.get(UNSHELTERED_CLIENT_PERCENTAGE).asInt());
 		ngo.setClientsEmployed(clientNode.get(EMPLOYEED_CLIENT_PERCENTAGE).asInt());
 		ngo.setCreated(new Date());
@@ -598,6 +600,24 @@ public class HNIConverter {
 		}
 		
 		return addressNode;
+	}
+
+	public static Set<Address> getAddressSet(ObjectNode onboardData) {
+		// TODO Auto-generated method stub
+		JsonNode jsonNode = onboardData.get(OVERVIEW);
+		JsonNode addressNode = jsonNode.get("address");
+		Address addr = new Address();
+		addr.setAddress1(addressNode.get("address1").asText());
+		addr.setAddress1(addressNode.get("address2").asText());
+		addr.setAddress1(addressNode.get("name").asText());
+		addr.setAddress1(addressNode.get("city").asText());
+		addr.setAddress1(addressNode.get("state").asText());
+		addr.setAddress1(addressNode.get("zip").asText());
+		
+		Set<Address> addresses = new HashSet<>();
+		addresses.add(addr);
+		
+		return addresses;
 	}
 
 }

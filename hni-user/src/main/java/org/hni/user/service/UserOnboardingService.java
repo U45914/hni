@@ -16,7 +16,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public interface UserOnboardingService extends BaseService<Invitation>{
 	String buildInvitationAndSave(Long orgId, Long invitedBy, String email);
 	Collection<Invitation> validateInvitationCode(String invitationCode);
-	Map<String,String> ngoSave(ObjectNode onboardData);
+	Map<String,String> ngoSave(ObjectNode onboardData, User user);
 	ObjectNode getNGODetail(Long ngoId, User user);
 	List<NgoBasicDto> getAllNgo();
 	Map<String,String> buildVolunteerAndSave(Volunteer volunteer,  User user);
