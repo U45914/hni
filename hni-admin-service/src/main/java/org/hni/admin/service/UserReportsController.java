@@ -90,7 +90,7 @@ public class UserReportsController extends AbstractBaseController {
 	@GET
 	@Path("/customers/organization")
 	@Produces({ MediaType.APPLICATION_JSON })
-	@ApiOperation(value = "Service for getting all Customer details under an organization", notes = "", response = List.class, responseContainer = "")
+	@ApiOperation(value = "Service for getting all Customer details under an organization", notes = "", response = Map.class, responseContainer = "")
 	public Response getAllCustomersUnderOrganisation() {
 
 		User user = getLoggedInUser();
