@@ -48,7 +48,7 @@ public class UserReportsController extends AbstractBaseController {
 	private UserReportService userReportService;
 
 	@GET
-	@Path("/NGO")
+	@Path("/ngo/all")
 	@Produces({ MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "Service for getting basic detail of NGO", notes = "", response = List.class, responseContainer = "")
 	public Response getAllNgo() {
@@ -68,7 +68,7 @@ public class UserReportsController extends AbstractBaseController {
 	}
 
 	@GET
-	@Path("/customers/role")
+	@Path("/customers/all")
 	@Produces({ MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "Service for getting all Customer details by Role", notes = "", response = List.class, responseContainer = "")
 	public Response getAllCustomersByRole() {
@@ -90,7 +90,7 @@ public class UserReportsController extends AbstractBaseController {
 	@GET
 	@Path("/customers/organization")
 	@Produces({ MediaType.APPLICATION_JSON })
-	@ApiOperation(value = "Service for getting all Customer details by Role", notes = "", response = List.class, responseContainer = "")
+	@ApiOperation(value = "Service for getting all Customer details under an organization", notes = "", response = List.class, responseContainer = "")
 	public Response getAllCustomersUnderOrganisation() {
 
 		User user = getLoggedInUser();
@@ -109,7 +109,7 @@ public class UserReportsController extends AbstractBaseController {
 	}
 	
 	@GET
-	@Path("/getAllVolunteers")
+	@Path("/volunteers/all")
 	@Produces({ MediaType.APPLICATION_JSON })
 
 	public Response getAllVolunteers() {
@@ -125,7 +125,7 @@ public class UserReportsController extends AbstractBaseController {
 					json.put("email", volunteer.getEmail());
 					dataList.add(json);
 			}
-			response.put("header", HNIUtils.getHeader(Constants.USER_TYPES.get("volunteer")));
+			response.put("headers", HNIUtils.getHeader(Constants.USER_TYPES.get("volunteer")));
 			response.put("data", dataList);
 			response.put(Constants.RESPONSE, Constants.SUCCESS);
 		} catch (Exception e) {
@@ -139,7 +139,7 @@ public class UserReportsController extends AbstractBaseController {
 	@GET
 	@Path("/customers/ngo")
 	@Produces({ MediaType.APPLICATION_JSON })
-	@ApiOperation(value = "Service for getting all Customer details by Role", notes = "", response = List.class, responseContainer = "")
+	@ApiOperation(value = "Service for getting all the details of customers created by NGO", notes = "", response = List.class, responseContainer = "")
 	public Response getAllCustomersEnrolledByNgo() {
 
 		User user = getLoggedInUser();
