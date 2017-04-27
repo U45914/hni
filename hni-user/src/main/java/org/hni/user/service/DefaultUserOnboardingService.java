@@ -82,7 +82,7 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 	@Override
 	public String buildInvitationAndSave(Long orgId, Long invitedBy, String email) {
 		User user = userDao.byEmailAddress(email);
-		if (user != null) {
+		if (user == null) {
 			String UUID = HNIUtils.getUUID();
 			Invitation invitation = new Invitation();
 			invitation.setOrganizationId(orgId.toString());
@@ -90,6 +90,7 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 			invitation.setInvitedBy(invitedBy);
 			invitation.setEmail(email);
 			invitation.setCreatedDate(new Date());
+			invitation.setActivated(0);
 			Calendar cal = Calendar.getInstance();
 			cal.add(Calendar.DAY_OF_MONTH, 5);
 			invitation.setExpirationDate(cal.getTime());

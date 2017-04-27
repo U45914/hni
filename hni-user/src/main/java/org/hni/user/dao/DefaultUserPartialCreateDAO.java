@@ -14,7 +14,7 @@ public class DefaultUserPartialCreateDAO extends AbstractDAO<UserPartialData> im
 	}
 
 	@Override
-	public UserPartialData getUserPartialDataByUserId(int userId) {
+	public UserPartialData getUserPartialDataByUserId(Long userId) {
 		List<UserPartialData> userPartialDatas = em.createQuery("select x from UserPartialData x where x.userId=:userId").setParameter("userId", userId).getResultList();
 		if(!userPartialDatas.isEmpty()){
 			return userPartialDatas.get(0);

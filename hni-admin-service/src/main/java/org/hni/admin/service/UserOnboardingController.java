@@ -152,7 +152,7 @@ public class UserOnboardingController extends AbstractBaseController {
 		Map<String,String> response = new HashMap<>();
 		response.put(RESPONSE, ERROR);
 		if(userType!=null && json != null){
-			UserPartialData userPartialDataUpdate = userPartialCreateService.getUserPartialDataByUserId(getLoggedInUser().getId().intValue());
+			UserPartialData userPartialDataUpdate = userPartialCreateService.getUserPartialDataByUserId(getLoggedInUser().getId());
 			if(userPartialDataUpdate==null){
 				UserPartialData userPartialData = new UserPartialData();
 				userPartialData.setType(userType);
