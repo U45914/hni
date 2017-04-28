@@ -6,10 +6,17 @@ import java.util.List;
 import org.hni.admin.service.dto.NgoBasicDto;
 import org.hni.common.dao.DefaultGenericDAO;
 import org.hni.common.om.Persistable;
+import org.hni.provider.om.Provider;
 import org.hni.type.HNIRoles;
+import org.hni.user.om.User;
 import org.hni.user.om.UserPartialData;
 import org.hni.user.om.Volunteer;
 import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+
 @Component
 public class NGOGenericDAO extends DefaultGenericDAO {
 public NGOGenericDAO()
@@ -90,5 +97,22 @@ public void updateStatus(int userId) {
 	user.setStatus("Y");
 	save(UserPartialData.class,user);
 	}
+}
+
+public List<ObjectNode> getAllProviders(User user) {
+	List<ObjectNode> providers= new ArrayList<>();
+	Long userId=user.getId();
+	List<Object[]> result=em.createNativeQuery("select p.name as provider_name,p.website_url,p.created,u.first_name,a.name from providers p INNER JOIN users u  ON p.created_by =u.id INNER JOIN addresses a ON p.address_id=a.id and p.created_by=:uId").setParameter("uId",userId).getResultList();
+	for(Object[] prov:result){
+		ObjectNode provider=new ObjectMapper().createObjectNode();
+		provider.put("name", prov[0].toString());
+		provider.put("website",prov[1].toString());
+		provider.put("createdOn",prov[2].toString());
+		provider.put("createdBy",prov[3].toString());
+		provider.put("address",prov[4].toString());
+		providers.add(provider);
+		
+	}
+	return providers;
 }
 }
