@@ -53,7 +53,6 @@ public List<NgoBasicDto> getAllNgo()
 		 ngoBasicDto.setPhone((String) u[3]);
 		 ngoBasicDto.setWebsite(u[4]!=null?(String) u[4]:"");
 		 ngoBasicDto.setCreatedUsers((Long) em.createQuery("select count(id) from Client where createdBy=:userId").setParameter("userId", userId).getSingleResult());
-		 //TO DO the changes when Client TABLE is alive instd of Ngo
 		 ngos.add(ngoBasicDto);
 	}
 	return ngos;
@@ -82,7 +81,7 @@ public List<Volunteer> getAllVolunteers(Long loggedInUserId) {
 			Volunteer volunteer = new Volunteer();		
 			volunteer.setId(Long.valueOf(user[0].toString()));
 			volunteer.setFirstName(user[1].toString());
-			volunteer.setLastName(user[2].toString());
+			volunteer.setLastName(String.valueOf(user[2]));
 			volunteer.setSex(user[3].toString());
 			volunteer.setEmail(user[4].toString());
 			volunteerList.add(volunteer);

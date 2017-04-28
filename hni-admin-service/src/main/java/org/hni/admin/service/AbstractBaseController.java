@@ -3,6 +3,7 @@ package org.hni.admin.service;
 import java.util.HashSet;
 import java.util.Set;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
@@ -71,6 +72,7 @@ public class AbstractBaseController {
 
 	protected User setPassword(User user) {
 		if (user != null) {
+			user.setCreated(new Date());
 			user.setSalt(HNISecurityUtils.getSalt());
 			user.setHashedSecret(HNISecurityUtils.getHash(user.getPassword(), user.getSalt()));
 		}

@@ -44,6 +44,7 @@ public class DefaultUserOnboardingDAO extends AbstractDAO<Invitation> implements
 		}
 	}
 
+
 	@Override
 	public Invitation updateInvitationStatus(String activationCode) {
 		try {
@@ -59,4 +60,5 @@ public class DefaultUserOnboardingDAO extends AbstractDAO<Invitation> implements
 			return null;
 		}
 	}
+
 }

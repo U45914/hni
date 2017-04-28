@@ -87,4 +87,5 @@ public class DefaultUserOrganizationRoleDAO extends AbstractDAO<UserOrganization
 		return true;
 	}
 
+
 }

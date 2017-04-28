@@ -37,7 +37,9 @@ public class CustomerDao extends DefaultGenericDAO {
 	public List<User> getAllCustomersUnderOrganisation(User u) {
 		List<User> customers = new ArrayList<>();
 		Long role =HNIRoles.CLIENT.getRole();
-		Long userId = u.getId();
+		Long userId = null;
+		if(u!=null){
+		userId = u.getId();
 		List<Object[]> user =  em.createNativeQuery("select distinct u.first_name,u.last_name,u.gender_code,u.mobile_phone,u.email from users u INNER JOIN user_organization_role x ON u.id=x.user_id where x.role_id=:role  and x.organization_id=(select x.organization_id from user_organization_role where user_id=:userId);")
 				.setParameter("role",role)
 				.setParameter("userId",userId).getResultList();
@@ -49,13 +51,17 @@ public class CustomerDao extends DefaultGenericDAO {
 			us.setMobilePhone(usr[3].toString());
 			us.setEmail(usr[4].toString());
 			customers.add(us);
-		}		return customers;
+		}
+		}	
+		return customers;
 	}
 
 	public List<User> getAllCustomersEnrolledByNgo(User user) {
 		List<User> customers = new ArrayList<>();
 		Long role = HNIRoles.NGO.getRole();
-		Long userId = user.getId();
+		Long userId = null;
+		if(user!=null){
+		userId = user.getId();
 
 		Query q = em
 				.createQuery("select  x from UserOrganizationRole x where x.id.roleId=:roleId and x.id.userId=:userId")
@@ -73,6 +79,7 @@ public class CustomerDao extends DefaultGenericDAO {
 				us.setEmail(usr[4].toString());
 				customers.add(us);
 			}
+		}
 		}
 		return customers;
 	}

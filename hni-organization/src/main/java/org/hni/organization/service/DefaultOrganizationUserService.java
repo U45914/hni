@@ -16,6 +16,7 @@ import org.hni.organization.om.UserOrganizationRole;
 import org.hni.organization.om.UserOrganizationRolePK;
 import org.hni.type.HNIRoles;
 import org.hni.user.dao.UserDAO;
+import org.hni.user.dao.UserOnboardingDAO;
 import org.hni.user.om.User;
 import org.hni.user.service.DefaultUserService;
 import org.springframework.stereotype.Component;
@@ -27,7 +28,7 @@ public class DefaultOrganizationUserService extends DefaultUserService implement
 
 	private OrganizationService orgService;
 	private UserOrganizationRoleDAO uorDao;
-
+	
 	@Inject
 	public DefaultOrganizationUserService(UserDAO userDao, OrganizationService orgService, UserOrganizationRoleDAO uorDao) {
 		super(userDao);
@@ -147,6 +148,17 @@ public class DefaultOrganizationUserService extends DefaultUserService implement
 			} else {
 				return Role.get(HNIRoles.NGO.getRole());
 			}
+		}else if(userType.equals(HNIRoles.VOLUNTEERS.getRole())){
+			return Role.get(HNIRoles.VOLUNTEERS.getRole());
+		}
+		else if(userType.equals(HNIRoles.CLIENT.getRole())){
+			return Role.get(HNIRoles.CLIENT.getRole());
+		}
+		else if(userType.equals(HNIRoles.ORGANIZATION.getRole())){
+			return Role.get(HNIRoles.ORGANIZATION.getRole());
+		}
+		else if(userType.equals(HNIRoles.ADMINISTRATOR.getRole())){
+			return Role.get(HNIRoles.ADMINISTRATOR.getRole());
 		}
 		return Role.get(HNIRoles.USER.getRole());
 	}
