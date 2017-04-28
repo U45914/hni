@@ -2,7 +2,7 @@ package org.hni.admin.service;
 
 import java.util.HashSet;
 import java.util.Set;
-
+import java.text.SimpleDateFormat;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
@@ -30,7 +30,7 @@ public class AbstractBaseController {
 	protected static final String ERROR = "error";
 	protected static final String RESPONSE = "response";
 	protected static final String USER_NAME = "userName";
-	
+	protected final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 	@Inject
 	protected OrganizationUserService organizationUserService;
 
