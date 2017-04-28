@@ -92,4 +92,20 @@ public class AbstractBaseController {
 		
 		return addresses;
 	}
+	
+	protected String getRoleName(Long roleId) {
+		if (roleId.equals(HNIRoles.SUPER_ADMIN.getRole())) {
+			return "Super Admin";
+		} else if (roleId.equals(HNIRoles.NGO_ADMIN.getRole())) {
+			return "NGOAdmin";
+		} else if (roleId.equals(HNIRoles.NGO.getRole())) {
+			return "NGO";
+		} else if (roleId.equals(HNIRoles.VOLUNTEERS.getRole())) {
+			return "Volunteer";
+		} else if (roleId.equals(HNIRoles.CLIENT.getRole())) {
+			return "Client";
+		} else {
+			return "User";
+		}
+	}
 }

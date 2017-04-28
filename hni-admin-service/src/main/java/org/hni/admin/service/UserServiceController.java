@@ -36,6 +36,7 @@ import org.hni.organization.om.UserOrganizationRole;
 import org.hni.organization.service.OrganizationUserService;
 import org.hni.passwordvalidater.CheckPassword;
 import org.hni.security.dao.RoleDAO;
+import org.hni.type.HNIRoles;
 import org.hni.user.om.Client;
 import org.hni.user.om.Ngo;
 import org.hni.user.om.Report;
@@ -201,10 +202,12 @@ public class UserServiceController extends AbstractBaseController {
 			User user = getLoggedInUser();
 			if (null != user) {
 				_LOGGER.info("User details fetch successfull");
-				Collection<UserOrganizationRole> userOrganisationRoles = orgUserService.getUserOrganizationRoles(user);
+				List<UserOrganizationRole> userOrganisationRoles = (List<UserOrganizationRole>) orgUserService.getUserOrganizationRoles(user);
 				Collection<HniServices> hniServices = orgUserService.getHniServices(userOrganisationRoles);
 				userResponse.put("data", HNIConverter.convertToServiceDtos(hniServices));
 				userResponse.put("profileStatus", orgUserService.getProfileStatus(user));
+				userResponse.put("role", getRoleName(userOrganisationRoles.get(0).getId().getRoleId()));
+				
 				return Response.ok(userResponse).build();
 			}
 		}
