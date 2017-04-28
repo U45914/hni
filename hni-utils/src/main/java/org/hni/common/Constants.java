@@ -33,6 +33,15 @@ public class Constants {
 	public static final String C = "C";
 	public static final String N = "N";
 	
+	
+	public static final Integer REPORT_ALL_PROVIDER = 20;
+	public static final Integer REPORT_ALL_ORDER = 30;
+	public static final Integer REPORT_ALL_NGO = 40;
+	public static final Integer REPORT_ALL_VOLUNTEER = 50;
+	public static final Integer REPORT_ALL_CUSTOMER = 60;
+	
+	
+	
 	public static final Map<String, Integer> USER_TYPES = new HashMap<>();
 	
 	static{
