@@ -27,6 +27,7 @@ public class Client implements Persistable, Serializable {
 	private Long userId;
 	private Long createdBy;
 	private Long race;
+	private User user;
 	@Transient
 	private Address address;
 	private Integer bday;
@@ -764,5 +765,15 @@ public class Client implements Persistable, Serializable {
 	public void setLastVisitDentist(Integer lastVisitDentist) {
 		this.lastVisitDentist = lastVisitDentist;
 	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+	
+	
 
 }
