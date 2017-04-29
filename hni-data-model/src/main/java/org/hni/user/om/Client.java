@@ -27,6 +27,7 @@ public class Client implements Persistable, Serializable {
 	private Long userId;
 	private Long createdBy;
 	private Long race;
+	@Transient
 	private User user;
 	@Transient
 	private Address address;
