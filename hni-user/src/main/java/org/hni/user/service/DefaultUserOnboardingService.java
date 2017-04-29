@@ -256,6 +256,12 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 	public Invitation finalizeRegistration(String activationCode) {
 		return invitationDAO.updateInvitationStatus(activationCode);
 	}
+
+	@Override
+	public Map<String, String> saveVolunteerAvailability(ObjectNode availableJSON) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	 
 	 
 }

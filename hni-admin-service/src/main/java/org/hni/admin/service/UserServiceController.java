@@ -52,8 +52,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import net.minidev.json.JSONObject;
 
 @Api(value = "/users", description = "Operations on Users and to manage Users relationships to organiations")
 @Component
@@ -315,6 +318,21 @@ public class UserServiceController extends AbstractBaseController {
 			}
 		}catch(Exception e){
 			_LOGGER.error("Volunteer save failed!");
+		}
+		return Response.ok(response).build();
+	}
+	
+	@POST
+	@Path("/volunteer/availability")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Produces({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = "Service for saving details of Volunteer", notes = "", response = Map.class, responseContainer = "")
+	public Response saveVolunteerAvailability(ObjectNode availabilityJSON){
+		Map<String,String> response = new HashMap<>();
+		try {
+			userOnBoardingService.saveVolunteerAvailability(availabilityJSON);
+		} catch (Exception e) {
+			_LOGGER.error("Save VolunteerAvailability Failed");
 		}
 		return Response.ok(response).build();
 	}
