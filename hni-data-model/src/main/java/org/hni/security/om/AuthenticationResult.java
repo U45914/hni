@@ -8,18 +8,20 @@ public class AuthenticationResult {
 	private User user;
 	private String token;
 	private String message;
+	private String roleName;
 	
 	public AuthenticationResult() {}
 	public AuthenticationResult(int status, String message) {
 		this.status = status;
 		this.message = message;
 	}
-	public AuthenticationResult(int status, User user, String token, String message) {
+	public AuthenticationResult(int status, User user, String token, String message, String roleName) {
 		this.status = status;
 		this.message = message;
 		this.user = user;
 		this.token = token;
 		this.message = message;
+		this.roleName = roleName;
 	}
 	
 	public int getStatus() {
@@ -45,6 +47,13 @@ public class AuthenticationResult {
 	}
 	public void setMessage(String message) {
 		this.message = message;
+	}
+	
+	public String getRoleName() {
+		return roleName;
+	}
+	public void setRoleName(String roleName) {
+		this.roleName = roleName;
 	}
 	
 	

@@ -2,7 +2,8 @@ package org.hni.admin.service;
 
 import java.util.HashSet;
 import java.util.Set;
-
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
@@ -30,7 +31,7 @@ public class AbstractBaseController {
 	protected static final String ERROR = "error";
 	protected static final String RESPONSE = "response";
 	protected static final String USER_NAME = "userName";
-	
+	protected final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 	@Inject
 	protected OrganizationUserService organizationUserService;
 
@@ -71,6 +72,7 @@ public class AbstractBaseController {
 
 	protected User setPassword(User user) {
 		if (user != null) {
+			user.setCreated(new Date());
 			user.setSalt(HNISecurityUtils.getSalt());
 			user.setHashedSecret(HNISecurityUtils.getHash(user.getPassword(), user.getSalt()));
 		}
@@ -91,5 +93,21 @@ public class AbstractBaseController {
 		addresses.add(address);
 		
 		return addresses;
+	}
+	
+	protected String getRoleName(Long roleId) {
+		if (roleId.equals(HNIRoles.SUPER_ADMIN.getRole())) {
+			return "Super Admin";
+		} else if (roleId.equals(HNIRoles.NGO_ADMIN.getRole())) {
+			return "NGOAdmin";
+		} else if (roleId.equals(HNIRoles.NGO.getRole())) {
+			return "NGO";
+		} else if (roleId.equals(HNIRoles.VOLUNTEERS.getRole())) {
+			return "Volunteer";
+		} else if (roleId.equals(HNIRoles.CLIENT.getRole())) {
+			return "Client";
+		} else {
+			return "User";
+		}
 	}
 }

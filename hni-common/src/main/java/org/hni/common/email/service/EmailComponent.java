@@ -43,7 +43,9 @@ public class EmailComponent {
 	private String emailSubTemplate;
 	@Value("#{hniProperties['mail.template.body']}")
 	private String emailBodyTemplate;
-
+	@Value("#{hniProperties['mail.template.footer']}")
+	private String emailFooterTemplate;
+	
 	public boolean sendEmail(String receiverEmail, String UUID, String userType, String invitationMessage)
 			throws AddressException, MessagingException, UnsupportedEncodingException {
 		Properties props = new Properties();
@@ -62,19 +64,21 @@ public class EmailComponent {
 		Message message = new MimeMessage(session);
 		message.setFrom(new InternetAddress(fromAddress, fromName));
 		message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(receiverEmail));
-		message.setSubject(emailSubTemplate);
+		message.setSubject(capitalize(userType)+" "+emailSubTemplate);
 		
-		message.setText(getEmailText(userType, UUID) + invitationMessage);
+		message.setText(getEmailText(userType, UUID,invitationMessage));
 
 		Transport.send(message);
 		return true;
 	}
 	
-	private String getEmailText(String userType, String code) {
+	private String getEmailText(String userType, String code,String invitationMessage) {
 		StringBuilder emailTextBuilder = new StringBuilder(50);
 		emailTextBuilder.append(getInviteName(userType));
 		emailTextBuilder.append(emailBodyTemplate);
-		emailTextBuilder.append("\n\n\n\n");
+		emailTextBuilder.append("\n\n"+invitationMessage);
+		emailTextBuilder.append("\n\n");
+		emailTextBuilder.append(emailFooterTemplate);
 		return String.format(emailTextBuilder.toString(), activateURL + userType + "/" + code);
 	}
 	
@@ -88,4 +92,7 @@ public class EmailComponent {
 		}
 		
 	}
+	private String capitalize(final String line) {
+		   return Character.toUpperCase(line.charAt(0)) + line.substring(1);
+		}
 }
