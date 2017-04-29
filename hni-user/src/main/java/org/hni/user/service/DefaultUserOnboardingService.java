@@ -218,6 +218,10 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 	public Map<String,String> clientSave(Client client, User user) {
 		client.setUserId(user.getId());
 		Map<String, String> error = new HashMap<>();
+		Invitation invitedBy = invitationDAO.getInvitedBy(user.getEmail());
+		if (invitedBy != null) {
+			client.setCreatedBy(invitedBy.getInvitedBy());
+		}
 		HNIValidator.validateClient(client, error);
 		if(error!=null && error.isEmpty()) {
 			clientDAO.save(client);
