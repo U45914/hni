@@ -334,6 +334,11 @@ public class UserServiceController extends AbstractBaseController {
 			} else {
 				return Response.serverError().build();
 			}
+			if(!orgUserService.getProfileStatus(user)){
+				response= new HashMap<>();
+				response.put(Constants.RESPONSE, userPartialCreateService.getUserPartialDataByUserId(user.getId()).getData());
+				return Response.ok(response).build();
+			}
 			response = userOnBoardingService.getUserProfiles(type, userId);
 			if (response != null && !response.isEmpty()) {
 				return Response.ok(response).build();
