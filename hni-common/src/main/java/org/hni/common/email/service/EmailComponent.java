@@ -46,7 +46,7 @@ public class EmailComponent {
 	@Value("#{hniProperties['mail.template.footer']}")
 	private String emailFooterTemplate;
 	
-	public boolean sendEmail(String receiverEmail, String UUID, String userType, String invitationMessage)
+	public boolean sendEmail(String receiverEmail, String UUID, String userType, String invitationMessage, String activationCode)
 			throws AddressException, MessagingException, UnsupportedEncodingException {
 		Properties props = new Properties();
 		props.put("mail.smtp.host", smtpHost);
@@ -66,17 +66,22 @@ public class EmailComponent {
 		message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(receiverEmail));
 		message.setSubject(capitalize(userType)+" "+emailSubTemplate);
 		
-		message.setText(getEmailText(userType, UUID,invitationMessage));
+		message.setText(getEmailText(userType, UUID, invitationMessage, activationCode));
 
 		Transport.send(message);
 		return true;
 	}
 	
-	private String getEmailText(String userType, String code,String invitationMessage) {
+	private String getEmailText(String userType, String code,String invitationMessage, String activationCode) {
 		StringBuilder emailTextBuilder = new StringBuilder(50);
 		emailTextBuilder.append(getInviteName(userType));
 		emailTextBuilder.append(emailBodyTemplate);
-		emailTextBuilder.append("\n\n"+invitationMessage);
+		if (invitationMessage != null && !invitationMessage.isEmpty()) {
+			emailTextBuilder.append("\n\n"+invitationMessage);
+		}
+		if (activationCode != null && !activationCode.isEmpty()) {
+			emailTextBuilder.append("\n\n Activation Code : "+ activationCode);
+		}
 		emailTextBuilder.append("\n\n");
 		emailTextBuilder.append(emailFooterTemplate);
 		return String.format(emailTextBuilder.toString(), activateURL + userType + "/" + code);

@@ -69,8 +69,8 @@ public class DefaultUserDAO extends AbstractDAO<User> implements UserDAO {
 	 {
 		Map<String,String> tableType = new HashMap<>();
 		tableType.put("ngo", "ngo");
-		tableType.put("Volunteer", "volunteer");
-		tableType.put("Customer", "client");
+		tableType.put("volunteer", "volunteer");
+		tableType.put("client", "client");
 		return tableType.get(type);
 		 
 	 }
