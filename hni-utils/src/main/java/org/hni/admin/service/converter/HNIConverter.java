@@ -383,7 +383,7 @@ public class HNIConverter {
 	 * @return
 	 */
 	public static ObjectNode convertNGOToJSON(Ngo ngo, ObjectNode parentJSON) {
-		ObjectNode overview = mapper.createObjectNode();
+		ObjectNode overview = (ObjectNode) parentJSON.get(OVERVIEW);
 		overview.put(WEBSITE, ngo.getWebsite());
 		overview.put(OVERVIEW, ngo.getOverview());
 		overview.put(MISSION, ngo.getMission());
