@@ -67,7 +67,7 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 	private ClientDAO clientDAO;
 	
 	@Inject
-	private UserDAO userDAO;
+	private UserDAO userDao;
 
 	public DefaultUserOnboardingService(BaseDAO<Invitation> dao) {
 		super(dao);
@@ -115,18 +115,18 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 	}
 	
 	private void validateNGO(ObjectNode onboardData, Map<String, String> errors) {
-		HNIValidator.validateNgo(HNIConverter.getNGOFromJson(onboardData,null),errors);
-		HNIValidator.validateBoardMembers(HNIConverter.getBoardMembersFromJson(onboardData,null,null),errors);
-		HNIValidator.validateBrandPartners(HNIConverter.getBrandPartnersFromJson(onboardData,null,null),errors);
-		HNIValidator.validateLocalPartners(HNIConverter.getLocalPartnersFromJson(onboardData,null,null),errors);
-		HNIValidator.validateFoodBank(HNIConverter.getFoodBankFromJson(onboardData,null,null),errors);
-		HNIValidator.validateFoodServices(HNIConverter.getFoodServicesFromJson(onboardData,null,null),errors);
-		HNIValidator.validateMealDonationSources( HNIConverter.getMealDonationSourceFromJson(onboardData,null,null),errors);
-		HNIValidator.validateMealFundingSources(HNIConverter.getMealFundingSourcesFromJson(onboardData,null,null),errors);
-		HNIValidator.validateNgoFundingSources(HNIConverter.getNgoFundingSourcesFromJson(onboardData,null,null),errors);
+		HNIValidator.validateNgo(HNIConverter.getNGOFromJson(onboardData),errors);
+		HNIValidator.validateBoardMembers(HNIConverter.getBoardMembersFromJson(onboardData,null),errors);
+		HNIValidator.validateBrandPartners(HNIConverter.getBrandPartnersFromJson(onboardData,null),errors);
+		HNIValidator.validateLocalPartners(HNIConverter.getLocalPartnersFromJson(onboardData,null),errors);
+		HNIValidator.validateFoodBank(HNIConverter.getFoodBankFromJson(onboardData,null),errors);
+		//HNIValidator.validateFoodServices(HNIConverter.getFoodServicesFromJson(onboardData,null),errors);
+		HNIValidator.validateMealDonationSources( HNIConverter.getMealDonationSourceFromJson(onboardData,null),errors);
+		HNIValidator.validateMealFundingSources(HNIConverter.getMealFundingSourcesFromJson(onboardData,null),errors);
+		HNIValidator.validateNgoFundingSources(HNIConverter.getNgoFundingSourcesFromJson(onboardData,null),errors);
 	}
 	
-	private String saveNGOData(ObjectNode onboardData){
+	private String saveNGOData(ObjectNode onboardData, User user){
 		
 		Ngo ngo = ngoGenericDAO.save(Ngo.class ,HNIConverter.getNGOFromJson(onboardData));
 		Invitation invitation = invitationDAO.getInvitedBy(user.getEmail());
@@ -148,8 +148,7 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 		ngoGenericDAO.updateStatus(ngo.getUserId());
 		return SUCCESS;
 		
-			ngoGenericDAO.updateStatus(ngo.getUserId());
-}
+	}
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class )
 	public Map<String,String> buildVolunteerAndSave(Volunteer volunteer, User user) {
