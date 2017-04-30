@@ -10,9 +10,11 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.apache.shiro.util.ThreadContext;
 import org.hni.admin.service.converter.HNIConverter;
 import org.hni.admin.service.converter.HNIValidator;
 import org.hni.admin.service.dto.NgoBasicDto;
+import org.hni.common.Constants;
 import org.hni.common.HNIUtils;
 import org.hni.common.dao.BaseDAO;
 import org.hni.common.om.FoodBank;
@@ -26,6 +28,7 @@ import org.hni.user.dao.ClientDAO;
 import org.hni.user.dao.NGOGenericDAO;
 import org.hni.user.dao.UserDAO;
 import org.hni.user.dao.UserOnboardingDAO;
+import org.hni.user.dao.VolunteerAvailabilityDAO;
 import org.hni.user.dao.VolunteerDao;
 import org.hni.user.om.Address;
 import org.hni.user.om.BoardMember;
@@ -36,11 +39,14 @@ import org.hni.user.om.LocalPartner;
 import org.hni.user.om.Ngo;
 import org.hni.user.om.User;
 import org.hni.user.om.Volunteer;
+import org.hni.user.om.VolunteerAvailability;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Component
@@ -68,6 +74,9 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 	
 	@Inject
 	private UserDAO userDao;
+	
+	@Inject
+	private VolunteerAvailabilityDAO volunteerAvailabilityDAO;
 
 	public DefaultUserOnboardingService(BaseDAO<Invitation> dao) {
 		super(dao);
@@ -270,9 +279,56 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 
 	@Override
 	public Map<String, String> saveVolunteerAvailability(ObjectNode availableJSON) {
-		// TODO Auto-generated method stub
-		return null;
+		Map<String, String> response = new HashMap<>();
+		VolunteerAvailability volunteerAvailability;
+		for (int i = 0; i < availableJSON.size(); i++) {
+			volunteerAvailability = new VolunteerAvailability();
+			if(availableJSON.has("shiftOne")){
+				volunteerAvailability.setTimeline(1);
+				volunteerAvailability.setWeekday(jsonArrayToCommaSeperatedString((ArrayNode) availableJSON.get("shiftOne")));
+			}
+			else if(availableJSON.has("shiftTwo")){
+				volunteerAvailability.setTimeline(2);
+				volunteerAvailability.setWeekday(jsonArrayToCommaSeperatedString((ArrayNode) availableJSON.get("shiftTwo")));
+			}
+			else if(availableJSON.has("shiftThree")){
+				volunteerAvailability.setTimeline(3);
+				volunteerAvailability.setWeekday(jsonArrayToCommaSeperatedString((ArrayNode) availableJSON.get("shiftThree")));
+			}
+			else if(availableJSON.has("shiftFour")){
+				volunteerAvailability.setTimeline(4);
+				volunteerAvailability.setWeekday(jsonArrayToCommaSeperatedString((ArrayNode) availableJSON.get("shiftFour")));
+			}
+			else if(availableJSON.has("shiftFive")){
+				volunteerAvailability.setTimeline(5);
+				volunteerAvailability.setWeekday(jsonArrayToCommaSeperatedString((ArrayNode) availableJSON.get("shiftFive")));
+			}
+			else if(availableJSON.has("shiftSix")){
+				volunteerAvailability.setTimeline(6);
+				volunteerAvailability.setWeekday(jsonArrayToCommaSeperatedString((ArrayNode) availableJSON.get("shiftSix")));
+			}
+			else if(availableJSON.has("shiftSeven")){
+				volunteerAvailability.setTimeline(7);
+				volunteerAvailability.setWeekday(jsonArrayToCommaSeperatedString((ArrayNode) availableJSON.get("shiftSeven")));
+			}
+			volunteerAvailability.setVolunteerId(findIdByType(((Long)ThreadContext.get(Constants.USERID)), "volunteer").intValue());
+			volunteerAvailability.setCreatedBy(((Long)ThreadContext.get(Constants.USERID)).intValue());
+			volunteerAvailability.setCreated(new Date());
+			volunteerAvailabilityDAO.save(volunteerAvailability);
+		}
+		response.put("response", "success");
+		return response;
 	}
 	 
-	 
+	 private String jsonArrayToCommaSeperatedString(ArrayNode jsonArray){
+		 StringBuilder value = new StringBuilder("");
+		 if(jsonArray != null && jsonArray.size()>0){
+			for (JsonNode jsonNode : jsonArray) {
+				value.append(jsonNode.asText());
+				value.append(",");
+			}
+			return value.substring(0, value.length()-1);
+		 }
+		 return value.toString();
+	 }
 }

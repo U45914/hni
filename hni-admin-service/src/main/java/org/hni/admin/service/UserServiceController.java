@@ -55,6 +55,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import io.swagger.annotations.Api;
@@ -334,16 +335,33 @@ public class UserServiceController extends AbstractBaseController {
 	}
 	
 	@POST
-	@Path("/volunteer/availability")
+	@Path("/volunteer/availability/save")
 	@Consumes({MediaType.APPLICATION_JSON})
 	@Produces({MediaType.APPLICATION_JSON})
 	@ApiOperation(value = "Service for saving details of Volunteer", notes = "", response = Map.class, responseContainer = "")
-	public Response saveVolunteerAvailability(ObjectNode availabilityJSON){
+	public Response saveVolunteerAvailability(String availabilityJSON){
 		Map<String,String> response = new HashMap<>();
 		try {
-			userOnBoardingService.saveVolunteerAvailability(availabilityJSON);
+			ObjectNode objectNode = new ObjectMapper().readValue(availabilityJSON, ObjectNode.class);
+			response = userOnBoardingService.saveVolunteerAvailability(objectNode);
 		} catch (Exception e) {
 			_LOGGER.error("Save VolunteerAvailability Failed");
+			response.put(ERROR, "Save VolunteerAvailability Failed");
+		}
+		return Response.ok(response).build();
+	}
+	
+	@GET
+	@Path("/volunteer/availability")
+	@Produces({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = "Service for saving details of Volunteer", notes = "", response = Map.class, responseContainer = "")
+	public Response saveVolunteerAvailability(){
+		Map<String,String> response = new HashMap<>();
+		try {
+			
+		} catch (Exception e) {
+			_LOGGER.error("Save VolunteerAvailability Failed");
+			response.put(ERROR, "Save VolunteerAvailability Failed");
 		}
 		return Response.ok(response).build();
 	}
