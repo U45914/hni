@@ -6,14 +6,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.apache.shiro.util.ThreadContext;
 import org.hni.admin.service.converter.HNIConverter;
 import org.hni.admin.service.converter.HNIValidator;
 import org.hni.admin.service.dto.NgoBasicDto;
-import org.hni.common.Constants;
 import org.hni.common.HNIUtils;
 import org.hni.common.dao.BaseDAO;
 import org.hni.common.om.FoodBank;
@@ -50,7 +49,7 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 	
 	private static final String SUCCESS = "Success";
 
-
+	ObjectMapper mapper = new ObjectMapper();
 	@Inject
 	private UserOnboardingDAO invitationDAO;
 
@@ -82,30 +81,35 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 
 	@Override
 	public String buildInvitationAndSave(Long orgId, Long invitedBy, String email) {
-		String UUID = HNIUtils.getUUID();
-		Invitation invitation = new Invitation();
-		invitation.setOrganizationId(orgId.toString());
-		invitation.setInvitationCode(UUID);
-		invitation.setInvitedBy(invitedBy);
-		invitation.setEmail(email);
-		invitation.setCreatedDate(new Date());
-		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.DAY_OF_MONTH, 5);
-		invitation.setExpirationDate(cal.getTime());
-		invitationDAO.save(invitation);
-		return UUID;
+		User user = userDao.byEmailAddress(email);
+		if (user == null) {
+			String UUID = HNIUtils.getUUID();
+			Invitation invitation = new Invitation();
+			invitation.setOrganizationId(orgId.toString());
+			invitation.setInvitationCode(UUID);
+			invitation.setInvitedBy(invitedBy);
+			invitation.setEmail(email);
+			invitation.setCreatedDate(new Date());
+			invitation.setActivated(0);
+			Calendar cal = Calendar.getInstance();
+			cal.add(Calendar.DAY_OF_MONTH, 5);
+			invitation.setExpirationDate(cal.getTime());
+			invitationDAO.save(invitation);
+			return UUID;
+		} else {
+			return null;
+		}
 	}
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class )
-	public Map<String, String> ngoSave(ObjectNode onboardData) {
-		Map<String,String> messages = new HashMap<>();
+	public Map<String, String> ngoSave(ObjectNode onboardData, User user) {
+		Map<String, String> messages = new HashMap<>();
 		validateNGO(onboardData, messages);
-		if(messages!=null && messages.isEmpty()){
-		saveNGOData(onboardData);
-		}
-		else{
-		return messages;
+		if (messages != null && messages.isEmpty()) {
+			saveNGOData(onboardData, user);
+		} else {
+			return messages;
 		}
 		return messages;
 	}
@@ -123,23 +127,29 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 	}
 	
 	private String saveNGOData(ObjectNode onboardData){
-		Long userId = (Long) ThreadContext.get(Constants.USERID);
-		User user = userDAO.get(userId);
-		Invitation invitation = invitationDAO.getInvitedBy(user.getEmail());
 		
-		Ngo ngo = ngoGenericDAO.save(Ngo.class ,HNIConverter.getNGOFromJson(onboardData, invitation.getInvitedBy()));
-		ngoGenericDAO.saveBatch(BoardMember.class ,HNIConverter.getBoardMembersFromJson(onboardData, ngo.getId(), invitation.getInvitedBy()));
-		ngoGenericDAO.saveBatch(BrandPartner.class ,HNIConverter.getBrandPartnersFromJson(onboardData, ngo.getId(), invitation.getInvitedBy()));
-		ngoGenericDAO.saveBatch(LocalPartner.class ,HNIConverter.getLocalPartnersFromJson(onboardData, ngo.getId(), invitation.getInvitedBy()));
-		ngoGenericDAO.saveBatch(FoodBank.class ,HNIConverter.getFoodBankFromJson(onboardData, ngo.getId(), invitation.getInvitedBy()));
-		ngoGenericDAO.saveBatch(FoodService.class ,HNIConverter.getFoodServicesFromJson(onboardData, ngo.getId(), invitation.getInvitedBy()));
-		ngoGenericDAO.saveBatch(MealDonationSource.class ,HNIConverter.getMealDonationSourceFromJson(onboardData, ngo.getId(), invitation.getInvitedBy()));
-		ngoGenericDAO.saveBatch(MealFundingSource.class ,HNIConverter.getMealFundingSourcesFromJson(onboardData, ngo.getId(), invitation.getInvitedBy()));
-		ngoGenericDAO.saveBatch(NgoFundingSource.class ,HNIConverter.getNgoFundingSourcesFromJson(onboardData, ngo.getId(), invitation.getInvitedBy()));
-		ngoGenericDAO.updateStatus(ngo.getUserId().intValue());
+		Ngo ngo = ngoGenericDAO.save(Ngo.class ,HNIConverter.getNGOFromJson(onboardData));
+		Invitation invitation = invitationDAO.getInvitedBy(user.getEmail());
+		ngo.setCreatedBy(invitation.getInvitedBy());
+		
+		ngoGenericDAO.update(Ngo.class, ngo);
+		
+		user.setAddresses(HNIConverter.getAddressSet(onboardData));
+		userDao.update(user);
+		
+		ngoGenericDAO.saveBatch(BoardMember.class ,(HNIConverter.getBoardMembersFromJson(onboardData,ngo.getId())));
+		ngoGenericDAO.saveBatch(BrandPartner.class ,HNIConverter.getBrandPartnersFromJson(onboardData,ngo.getId()));
+		ngoGenericDAO.saveBatch(LocalPartner.class ,HNIConverter.getLocalPartnersFromJson(onboardData,ngo.getId()));
+		ngoGenericDAO.saveBatch(FoodBank.class ,HNIConverter.getFoodBankFromJson(onboardData,ngo.getId()));
+		//ngoGenericDAO.saveBatch(FoodService.class ,HNIConverter.getFoodServicesFromJson(onboardData,ngo.getId()));
+		ngoGenericDAO.saveBatch(MealDonationSource.class ,HNIConverter.getMealDonationSourceFromJson(onboardData,ngo.getId()));
+		ngoGenericDAO.saveBatch( MealFundingSource.class,HNIConverter.getMealFundingSourcesFromJson(onboardData,ngo.getId()));
+		ngoGenericDAO.saveBatch(NgoFundingSource.class ,HNIConverter.getNgoFundingSourcesFromJson(onboardData,ngo.getId()));
+		ngoGenericDAO.updateStatus(ngo.getUserId());
 		return SUCCESS;
 		
-	}
+			ngoGenericDAO.updateStatus(ngo.getUserId());
+}
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class )
 	public Map<String,String> buildVolunteerAndSave(Volunteer volunteer, User user) {
@@ -147,11 +157,12 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 		HNIValidator.validateVolunteer(volunteer, error);
 		if(error!=null && error.isEmpty()){
 			Address address = addressDAO.save(volunteer.getAddress());
+			user.getAddresses().add(address);
+			userDao.update(user);
 			Long createdBy = getInvitedBy(volunteer);
 			if(createdBy==null){
 				createdBy = user.getId();
 			}
-			volunteer.setAddressId(address.getId());
 			volunteer.setCreated(new Date());
 			volunteer.setCreatedBy(createdBy);
 			volunteer.setUserId(user.getId());
@@ -166,15 +177,25 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 	} 
 
 	
+	@SuppressWarnings("deprecation")
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class )
-	public ObjectNode getNGODetail(Long ngoId) {
-		ObjectNode parentJSON = new ObjectMapper().createObjectNode();
-		parentJSON.set("overview", new ObjectMapper().createObjectNode());
-		parentJSON.set("stakeHolder", new ObjectMapper().createObjectNode());
-		parentJSON.set("service", new ObjectMapper().createObjectNode());
-		parentJSON.set("funding", new ObjectMapper().createObjectNode());
-		parentJSON.set("client", new ObjectMapper().createObjectNode());
+	public ObjectNode getNGODetail(Long ngoId, User user) {
+		ObjectNode parentJSON = mapper.createObjectNode();
+		ObjectNode overViewNode = mapper.createObjectNode();
+		// set Address to overview
+		// TODO if user is null try to get from user table using the user_id of NGO table
+		if (user != null) {
+			overViewNode.put("address", HNIConverter.getAddress(mapper.createObjectNode(), user.getAddresses()));
+			overViewNode.put("name", user.getFirstName() + " " + user.getLastName());
+			overViewNode.put("phone", user.getMobilePhone());
+		}
+
+		parentJSON.set("overview", overViewNode);
+		parentJSON.set("stakeHolder", mapper.createObjectNode());
+		parentJSON.set("service", mapper.createObjectNode());
+		parentJSON.set("funding", mapper.createObjectNode());
+		parentJSON.set("client", mapper.createObjectNode());
 		
 		HNIConverter.convertNGOToJSON((Ngo) ngoGenericDAO.get(Ngo.class, ngoId), parentJSON);
 		HNIConverter.convertBoardMembersToJSON(ngoGenericDAO.find(BoardMember.class, "select x from BoardMember x where x.ngo_id=?1 ", ngoId), parentJSON);
@@ -198,11 +219,55 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 	public Map<String,String> clientSave(Client client, User user) {
 		client.setUserId(user.getId());
 		Map<String, String> error = new HashMap<>();
+		Invitation invitedBy = invitationDAO.getInvitedBy(user.getEmail());
+		if (invitedBy != null) {
+			client.setCreatedBy(invitedBy.getInvitedBy());
+		}
 		HNIValidator.validateClient(client, error);
-		if(error!=null && error.isEmpty()){
+		if(error!=null && error.isEmpty()) {
 			clientDAO.save(client);
 		}
 		return error;
 	}
+
+	@Override
+	public Map<String, Object> getUserProfiles(String type, Long userId) {
+		Long id = findIdByType(userId,type);
+		User user = userDao.get(userId);
+		
+		Map<String,Object> response = new HashMap<>();
+		
+		if(type!=null && type.equalsIgnoreCase("ngo")){
+			ObjectNode ngoInfo = this.getNGODetail(id, user);
+			response.put("response", ngoInfo);
+		} else if(type.equalsIgnoreCase("Volunteer")){
+			Volunteer volunteer = volunteerDao.get(id);
+			volunteer.setAddress(getAddress(user.getAddresses()));
+			response.put("response", volunteer);
+		} else if(type.equalsIgnoreCase("Customer")){
+			Client client = ngoGenericDAO.get(Client.class,id);
+			client.setAddress(getAddress(user.getAddresses()));
+			response.put("response", ngoGenericDAO.get(Client.class,id));
+		}
+		
+		return response;
+	}
+	 private  Long findIdByType(Long userId,String type) {
+		 return userDao.findTypeIdByUser(userId, type);
+	 }
+	 
+	 private Address getAddress(Set<Address> userAddresses) {
+		 if (userAddresses != null && !userAddresses.isEmpty()) {
+			 return userAddresses.iterator().next();
+		 } else {
+			 return new Address();
+		 }
+	 }
+
+	@Override
+	public Invitation finalizeRegistration(String activationCode) {
+		return invitationDAO.updateInvitationStatus(activationCode);
+	}
+	 
 	 
 }

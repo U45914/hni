@@ -21,9 +21,9 @@ public class UserPartialData implements Persistable, Serializable{
 	@Column(name="id")
 	private Long id;
 	@Column(name="type")
-	private int type;
+	private String type;
 	@Column(name="user_id")
-	private int userId;
+	private Long userId;
 	@Column(name="data")
 	private String data;
 	@Column(name="created")
@@ -39,16 +39,16 @@ public class UserPartialData implements Persistable, Serializable{
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public int getType() {
+	public String getType() {
 		return type;
 	}
-	public void setType(int type) {
+	public void setType(String type) {
 		this.type = type;
 	}
-	public int getUserId() {
+	public Long getUserId() {
 		return userId;
 	}
-	public void setUserId(int userId) {
+	public void setUserId(Long userId) {
 		this.userId = userId;
 	}
 	public String getData() {

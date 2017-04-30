@@ -43,8 +43,10 @@ public class EmailComponent {
 	private String emailSubTemplate;
 	@Value("#{hniProperties['mail.template.body']}")
 	private String emailBodyTemplate;
-
-	public boolean sendEmail(String receiverEmail, String UUID, String userType, String invitationMessage)
+	@Value("#{hniProperties['mail.template.footer']}")
+	private String emailFooterTemplate;
+	
+	public boolean sendEmail(String receiverEmail, String UUID, String userType, String invitationMessage, String activationCode)
 			throws AddressException, MessagingException, UnsupportedEncodingException {
 		Properties props = new Properties();
 		props.put("mail.smtp.host", smtpHost);
@@ -62,20 +64,27 @@ public class EmailComponent {
 		Message message = new MimeMessage(session);
 		message.setFrom(new InternetAddress(fromAddress, fromName));
 		message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(receiverEmail));
-		message.setSubject(emailSubTemplate);
+		message.setSubject(capitalize(userType)+" "+emailSubTemplate);
 		
-		message.setText(getEmailText(userType, UUID) + invitationMessage);
+		message.setText(getEmailText(userType, UUID, invitationMessage, activationCode));
 
 		Transport.send(message);
 		return true;
 	}
 	
-	private String getEmailText(String userType, String code) {
+	private String getEmailText(String userType, String code,String invitationMessage, String activationCode) {
 		StringBuilder emailTextBuilder = new StringBuilder(50);
 		emailTextBuilder.append(getInviteName(userType));
 		emailTextBuilder.append(emailBodyTemplate);
-		emailTextBuilder.append("\n\n\n\n");
-		return String.format(emailTextBuilder.toString(), activateURL + "/" + userType + code);
+		if (invitationMessage != null && !invitationMessage.isEmpty()) {
+			emailTextBuilder.append("\n\n"+invitationMessage);
+		}
+		if (activationCode != null && !activationCode.isEmpty()) {
+			emailTextBuilder.append("\n\n Activation Code : "+ activationCode);
+		}
+		emailTextBuilder.append("\n\n");
+		emailTextBuilder.append(emailFooterTemplate);
+		return String.format(emailTextBuilder.toString(), activateURL + userType + "/" + code);
 	}
 	
 	private String getInviteName(String type) {
@@ -88,4 +97,7 @@ public class EmailComponent {
 		}
 		
 	}
+	private String capitalize(final String line) {
+		   return Character.toUpperCase(line.charAt(0)) + line.substring(1);
+		}
 }

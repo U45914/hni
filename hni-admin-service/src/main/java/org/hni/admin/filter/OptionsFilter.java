@@ -38,7 +38,7 @@ public class OptionsFilter implements Filter {
 			httpResponse.addHeader("Access-Control-Allow-Origin", "*");
 			httpResponse.addHeader("Access-Control-Max-Age", "180"); // cache preflight request for 180 seconds
 			httpResponse.addHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS");
-			httpResponse.addHeader("Access-Control-Allow-Headers", "X-Requested-With, Content-Type, X-Codingpedia, X-hni-token, origin, content-type, accept, user-type");
+			httpResponse.addHeader("Access-Control-Allow-Headers", "X-Requested-With, Content-Type, X-Codingpedia, X-hni-token, origin, content-type, accept, user-type, act-code, invite-code");
 
 		} else {
 			chain.doFilter(request, response);

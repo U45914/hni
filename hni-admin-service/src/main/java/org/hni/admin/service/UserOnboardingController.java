@@ -81,7 +81,7 @@ public class UserOnboardingController extends AbstractBaseController {
 			if (!ors) {
 				Organization organization = organizationService.save(org);
 				String UUID = userOnBoardingService.buildInvitationAndSave(organization.getId(), getLoggedInUser().getId(), organization.getEmail());
-				emailComponent.sendEmail(organization.getEmail(), UUID, "ngo" , "");
+				emailComponent.sendEmail(organization.getEmail(), UUID, "ngo" , null, null);
 				map.put(RESPONSE, SUCCESS);
 				return map;
 			} else {
@@ -98,12 +98,13 @@ public class UserOnboardingController extends AbstractBaseController {
 	@Produces({ MediaType.APPLICATION_JSON }) 
 	@Consumes({ MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "", notes = "", response = Map.class, responseContainer = "")
-	public Map<String, String> sendNGOActivationLinkToUsser(@PathParam("userType") String  userType, Map<String, String> userInfo) {
+	public Map<String, String> sendNGOActivationLinkToUser(@PathParam("userType") String  userType, Map<String, String> userInfo) {
 		Map<String, String> map = new HashMap<>();
 		map.put(RESPONSE, ERROR);
 		try {
 			String orgId = userInfo.get("orgId");
 			String message = userInfo.get("invitationMessage");
+			String activationCode = userInfo.get("activationCode");
 			Long organizationId;
 			if (StringUtils.isNotEmpty(orgId)) {
 				organizationId = Long.valueOf(orgId);
@@ -111,7 +112,12 @@ public class UserOnboardingController extends AbstractBaseController {
 				organizationId = getLoggedInUser().getOrganizationId() != null ? getLoggedInUser().getOrganizationId() : 1;
 			}
 			String UUID = userOnBoardingService.buildInvitationAndSave(organizationId, getLoggedInUser().getId(), userInfo.get("email"));
-			emailComponent.sendEmail(userInfo.get("email"), UUID, userType, message);
+			if (UUID != null) {
+				emailComponent.sendEmail(userInfo.get("email"), UUID, userType, message, activationCode);
+			} else {
+				map.put(RESPONSE, ERROR);
+				map.put("message", "A user with " + userInfo.get("email") + " already exists");
+			}
 			map.put(RESPONSE, SUCCESS);
 			return map;	
 		} catch (Exception e) {
@@ -131,6 +137,7 @@ public class UserOnboardingController extends AbstractBaseController {
 		if (!invitations.isEmpty()) {
 			map.put(RESPONSE, SUCCESS);
 			map.put(ORG_ID, invitations.get(0).getOrganizationId());
+			map.put(USER_NAME, invitations.get(0).getEmail());
 			return map;
 		}
 		return map;
@@ -146,11 +153,11 @@ public class UserOnboardingController extends AbstractBaseController {
 		Map<String,String> response = new HashMap<>();
 		response.put(RESPONSE, ERROR);
 		if(userType!=null && json != null){
-			UserPartialData userPartialDataUpdate = userPartialCreateService.getUserPartialDataByUserId(getLoggedInUser().getId().intValue());
+			UserPartialData userPartialDataUpdate = userPartialCreateService.getUserPartialDataByUserId(getLoggedInUser().getId());
 			if(userPartialDataUpdate==null){
 				UserPartialData userPartialData = new UserPartialData();
-				userPartialData.setType(Constants.USER_TYPES.get(userType).intValue());
-				userPartialData.setUserId(getLoggedInUser().getId().intValue());
+				userPartialData.setType(userType);
+				userPartialData.setUserId(getLoggedInUser().getId());
 				userPartialData.setData(json.toString());
 				userPartialData.setCreated(new Date());
 				userPartialData.setLastUpdated(new Date());
@@ -183,7 +190,7 @@ public class UserOnboardingController extends AbstractBaseController {
 		map.put(RESPONSE, ERROR);
 		try {
 			 
-			Map<String, String> errors = userOnBoardingService.ngoSave((ObjectNode) objectNode);
+			Map<String, String> errors = userOnBoardingService.ngoSave((ObjectNode) objectNode, getLoggedInUser());
 			 if(errors!=null && errors.isEmpty()){
 			map.put(RESPONSE, SUCCESS);
 			 }
@@ -231,7 +238,7 @@ public class UserOnboardingController extends AbstractBaseController {
 		Map<String, String> response = new HashMap<>();
 		response.put(RESPONSE, ERROR);
 		try {
-			ObjectNode ngoDetailJSON = userOnBoardingService.getNGODetail(ngoId);
+			ObjectNode ngoDetailJSON = userOnBoardingService.getNGODetail(ngoId, null);
 			return Response.ok(ngoDetailJSON).build();
 		} catch (Exception e) {
 			response.put(ERROR, SOMETHING_WENT_WRONG_PLEASE_TRY_AGAIN);

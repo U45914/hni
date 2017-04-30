@@ -506,6 +506,7 @@ CREATE TABLE IF NOT EXISTS `invitation` (
   `invited_by` int(11) NOT NULL,
   `token_expire_date` date NOT NULL,
   `created_date` date NOT NULL,
+  `activated` int(2) NOT NULL,
   PRIMARY KEY (`id`),
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT ;
 
@@ -683,3 +684,14 @@ CREATE TABLE IF NOT EXISTS `volunteer_availability` (
   `weekday` varchar(50) NOT NULL COMMENT 'sunday, monday, etc',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT ;
+
+-- -----------------------------------------------------
+-- Table `reports`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `reports` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `report_path` varchar(50) NOT NULL,
+  `label` varchar(50) NOT NULL,
+  `role` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT ;

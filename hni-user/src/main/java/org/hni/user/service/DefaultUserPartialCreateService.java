@@ -21,7 +21,7 @@ public class DefaultUserPartialCreateService extends AbstractService<UserPartial
 	}
 
 	@Override
-	public UserPartialData getUserPartialDataByUserId(int userId) {
+	public UserPartialData getUserPartialDataByUserId(Long userId) {
 		return userPartialCreateDAO.getUserPartialDataByUserId(userId);
 	}
 

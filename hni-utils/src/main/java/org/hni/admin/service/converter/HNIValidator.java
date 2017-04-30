@@ -306,9 +306,6 @@ public class HNIValidator {
 		if(client.getRace()==null){
 			error.put("Client race", "Cannot be null");
 		}
-		if(client.getAddressId()==null){
-			error.put("Client addressId", "Cannot be null");
-		}
 		
 		return error;
 	}
