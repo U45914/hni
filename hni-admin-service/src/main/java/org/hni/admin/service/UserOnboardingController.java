@@ -81,7 +81,7 @@ public class UserOnboardingController extends AbstractBaseController {
 			if (!ors) {
 				Organization organization = organizationService.save(org);
 				String UUID = userOnBoardingService.buildInvitationAndSave(organization.getId(), getLoggedInUser().getId(), organization.getEmail());
-				emailComponent.sendEmail(organization.getEmail(), UUID, "ngo" , "");
+				emailComponent.sendEmail(organization.getEmail(), UUID, "ngo" , null, null);
 				map.put(RESPONSE, SUCCESS);
 				return map;
 			} else {
@@ -104,6 +104,7 @@ public class UserOnboardingController extends AbstractBaseController {
 		try {
 			String orgId = userInfo.get("orgId");
 			String message = userInfo.get("invitationMessage");
+			String activationCode = userInfo.get("activationCode");
 			Long organizationId;
 			if (StringUtils.isNotEmpty(orgId)) {
 				organizationId = Long.valueOf(orgId);
@@ -112,7 +113,7 @@ public class UserOnboardingController extends AbstractBaseController {
 			}
 			String UUID = userOnBoardingService.buildInvitationAndSave(organizationId, getLoggedInUser().getId(), userInfo.get("email"));
 			if (UUID != null) {
-				emailComponent.sendEmail(userInfo.get("email"), UUID, userType, message);
+				emailComponent.sendEmail(userInfo.get("email"), UUID, userType, message, activationCode);
 			} else {
 				map.put(RESPONSE, ERROR);
 				map.put("message", "A user with " + userInfo.get("email") + " already exists");

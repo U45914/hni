@@ -127,7 +127,12 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 	}
 	
 	private String saveNGOData(ObjectNode onboardData, User user){
+		
 		Ngo ngo = ngoGenericDAO.save(Ngo.class ,HNIConverter.getNGOFromJson(onboardData));
+		Invitation invitation = invitationDAO.getInvitedBy(user.getEmail());
+		ngo.setCreatedBy(invitation.getInvitedBy());
+		
+		ngoGenericDAO.update(Ngo.class, ngo);
 		
 		user.setAddresses(HNIConverter.getAddressSet(onboardData));
 		userDao.update(user);
@@ -140,7 +145,7 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 		ngoGenericDAO.saveBatch(MealDonationSource.class ,HNIConverter.getMealDonationSourceFromJson(onboardData,ngo.getId()));
 		ngoGenericDAO.saveBatch( MealFundingSource.class,HNIConverter.getMealFundingSourcesFromJson(onboardData,ngo.getId()));
 		ngoGenericDAO.saveBatch(NgoFundingSource.class ,HNIConverter.getNgoFundingSourcesFromJson(onboardData,ngo.getId()));
-		ngoGenericDAO.updateStatus(ngo.getUserId().intValue());
+		ngoGenericDAO.updateStatus(ngo.getUserId());
 		return SUCCESS;
 		
 	}
@@ -181,6 +186,8 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 		// TODO if user is null try to get from user table using the user_id of NGO table
 		if (user != null) {
 			overViewNode.put("address", HNIConverter.getAddress(mapper.createObjectNode(), user.getAddresses()));
+			overViewNode.put("name", user.getFirstName() + " " + user.getLastName());
+			overViewNode.put("phone", user.getMobilePhone());
 		}
 
 		parentJSON.set("overview", overViewNode);
@@ -211,6 +218,10 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 	public Map<String,String> clientSave(Client client, User user) {
 		client.setUserId(user.getId());
 		Map<String, String> error = new HashMap<>();
+		Invitation invitedBy = invitationDAO.getInvitedBy(user.getEmail());
+		if (invitedBy != null) {
+			client.setCreatedBy(invitedBy.getInvitedBy());
+		}
 		HNIValidator.validateClient(client, error);
 		if(error!=null && error.isEmpty()) {
 			clientDAO.save(client);

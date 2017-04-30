@@ -90,7 +90,7 @@ public List<Volunteer> getAllVolunteers(Long loggedInUserId) {
 	
 	return volunteerList;
 }
-public void updateStatus(int userId) {
+public void updateStatus(Long userId) {
 	Long id = (Long) em.createQuery("select x.id from UserPartialData x where x.userId =:userId").setParameter("userId", userId).getSingleResult();
 	if(id!=null){
 	UserPartialData user = get(UserPartialData.class,id);

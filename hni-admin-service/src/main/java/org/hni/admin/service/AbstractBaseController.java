@@ -84,6 +84,8 @@ public class AbstractBaseController {
 			return HNIRoles.NGO.getRole();
 		} else if (type.equalsIgnoreCase("volunteer")) {
 			return HNIRoles.VOLUNTEERS.getRole();
+		} else if (type.equalsIgnoreCase("client")) {
+			return HNIRoles.CLIENT.getRole();
 		}
 		return HNIRoles.USER.getRole();
 	}

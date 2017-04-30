@@ -23,6 +23,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.util.ThreadContext;
 import org.hni.admin.service.converter.HNIConverter;
@@ -36,6 +37,8 @@ import org.hni.organization.om.UserOrganizationRole;
 import org.hni.organization.service.OrganizationUserService;
 import org.hni.passwordvalidater.CheckPassword;
 import org.hni.security.dao.RoleDAO;
+import org.hni.security.om.ActivationCode;
+import org.hni.security.service.ActivationCodeService;
 import org.hni.type.HNIRoles;
 import org.hni.user.om.Client;
 import org.hni.user.om.Ngo;
@@ -88,6 +91,9 @@ public class UserServiceController extends AbstractBaseController {
 
 	@Inject
 	private ReportServices reportServices;
+	
+	@Inject
+	private ActivationCodeService activationCodeService;
 
 	@GET
 	@Path("/{id}")
@@ -233,14 +239,14 @@ public class UserServiceController extends AbstractBaseController {
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Path("/register")
 	@ApiOperation(value = "register a customer", notes = "An update occurs if the ID field is specified", response = User.class, responseContainer = "")
-	public Response registerUser(User user, @HeaderParam("user-type") String type, @HeaderParam("act-code") String activationCode) {
+	public Response registerUser(User user, @HeaderParam("user-type") String type, @HeaderParam("invite-code") String invitaionCode, 
+			@HeaderParam("act-code") String activationCode) {
 		Map<String, String> userResponse = new HashMap<>();
 		boolean validPassword = false;
 		validPassword = CheckPassword.passwordCheck(user);
 		if (validPassword == true) {
 			User u = orgUserService.register(setPassword(user), convertUserTypeToRole(type));
 			if (u != null) {
-				
 				UserPartialData userProfileTempInfo = new UserPartialData();
 				userProfileTempInfo.setUserId(u.getId());
 				userProfileTempInfo.setLastUpdated(new Date());
@@ -250,7 +256,12 @@ public class UserServiceController extends AbstractBaseController {
 				userProfileTempInfo.setData("{}");
 				// Saving user data to userProfileTable for user profile redirection
 				userPartialCreateService.save(userProfileTempInfo);
-				userOnBoardingService.finalizeRegistration(activationCode);
+				if(type.equalsIgnoreCase("client") && StringUtils.isNotEmpty(activationCode) && activationCodeService.validate(activationCode)) {
+					ActivationCode activationCodeEnity = activationCodeService.getByActivationCode(activationCode);
+					activationCodeEnity.setUser(u);
+					activationCodeService.update(activationCodeEnity);
+				}
+				userOnBoardingService.finalizeRegistration(invitaionCode);
 				userResponse.put(SUCCESS, "Account has been created successfully");
 			} else {
 				userResponse.put(SUCCESS, SOMETHING_WENT_WRONG_PLEASE_TRY_AGAIN);
@@ -264,7 +275,7 @@ public class UserServiceController extends AbstractBaseController {
 	}
 	
 	@GET
-	@Path("/volunteer/{id}")
+	@Path("/volunteer")
 	@Produces({ MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "Returns the volunteer details of specified id.", notes = "", response = Volunteer.class, responseContainer = "")
 	public Volunteer getVolunteerById(@QueryParam("id") Long volunteerId) {
@@ -351,6 +362,14 @@ public class UserServiceController extends AbstractBaseController {
 				userId = user.getId();
 			} else {
 				return Response.serverError().build();
+			}
+			if(!orgUserService.getProfileStatus(user)){
+				response= new HashMap<>();
+				String profileData = userPartialCreateService.getUserPartialDataByUserId(user.getId()).getData();
+				
+				ObjectNode profile = mapper.readValue(profileData, ObjectNode.class);
+				response.put(Constants.RESPONSE, profile);
+				return Response.ok(response).build();
 			}
 			response = userOnBoardingService.getUserProfiles(type, userId);
 			if (response != null && !response.isEmpty()) {

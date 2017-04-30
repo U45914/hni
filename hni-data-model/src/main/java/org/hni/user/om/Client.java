@@ -2,6 +2,7 @@ package org.hni.user.om;
 
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,70 +24,137 @@ public class Client implements Persistable, Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	@Id
+	@GeneratedValue(strategy = IDENTITY)
+	@Column(name = "id", unique = true, nullable = false)
 	private Integer id;
+	
+	@Column(name = "user_id", nullable = false)
 	private Long userId;
+	
+	@Column(name = "created_by", nullable = false)
 	private Long createdBy;
+	@Column(name = "race", nullable = false)
 	private Long race;
-	@Transient
-	private Address address;
-	private Integer bday;
-	private Character beenArrested;
-	private Character beenConvicted;
-	private Character hasSmartPhone;
+	transient private User user;
+	transient private Address address;
+	@Column(name = "bday")
+	private Date bday;
+	@Column(name = "been_arrested", length = 1)
+	private boolean beenArrested;
+	@Column(name = "been_convicted", length = 1)
+	private boolean beenConvicted;
+	@Column(name = "has_smart_phone", length = 1)
+	private boolean hasSmartPhone;
+	@Column(name = "service_provider", length = 50)
 	private String serviceProvider;
+	@Column(name = "model", length = 50)
 	private String model;
-	private Character haveMonthlyPlan;
+	@Column(name = "have_monthly_plan", length = 1)
+	private boolean haveMonthlyPlan;
+	@Column(name = "monthly_plan_minute", length = 50)
 	private String monthlyPlanMinute;
+	@Column(name = "monthly_plan_data", length = 50)
 	private String monthlyPlanData;
+	@Column(name = "monthly_plan_cost", length = 50)
 	private String monthlyPlanCost;
+	@Column(name = "alt_monthly_plan")
 	private Integer altMonthlyPlan;
+	@Column(name = "alt_monthly_plan_together", length = 50)
 	private String altMonthlyPlanTogether;
+	@Column(name = "sliblings")
 	private Integer sliblings;
+	@Column(name = "kids")
 	private Integer kids;
-	private Character liveAtHome;
+	@Column(name = "live_at_home", length = 1)
+	private boolean liveAtHome;
+	@Column(name = "sheltered")
 	private Integer sheltered;
+	@Column(name = "parent_education")
 	private Integer parentEducation;
+	@Column(name = "education")
 	private Integer education;
+	@Column(name = "enrollment_status")
 	private Integer enrollmentStatus;
+	@Column(name = "enrollment_location", length = 50)
 	private String enrollmentLocation;
+	@Column(name = "work_status")
 	private Integer workStatus;
+	@Column(name = "time_to_workplace")
 	private Integer timeToWorkplace;
+	@Column(name = "no_of_job")
 	private Integer noOfJob;
+	@Column(name = "employer", length = 50)
 	private String employer;
+	@Column(name = "job_title", length = 50)
 	private String jobTitle;
+	@Column(name = "duration_of_employement")
 	private Integer durationOfEmployement;
-	private Character unemploymentBenfits;
+	@Column(name = "unemployment_benfits", length = 1)
+	private boolean unemploymentBenfits;
+	@Column(name = "reason_unemployment_benefits", length = 100)
 	private String reasonUnemploymentBenefits;
+	@Column(name = "total_income", precision = 22, scale = 0)
 	private Double totalIncome;
+	@Column(name = "rate_amount")
 	private Integer rateAmount;
+	@Column(name = "rate_type")
 	private Integer rateType;
+	@Column(name = "avg_hours_per_week")
 	private String avgHoursPerWeek;
+	@Column(name = "resident_status")
 	private Integer residentStatus;
+	@Column(name = "dollar_spend_food")
 	private Integer dollarSpendFood;
+	@Column(name = "dollar_spend_clothes")
 	private Integer dollarSpendClothes;
+	@Column(name = "dollar_spend_entertainment")
 	private Integer dollarSpendEntertainment;
+	@Column(name = "dollar_spend_transport")
 	private Integer dollarSpendTransport;
+	@Column(name = "dollar_spend_savings")
 	private Integer dollarSpendSavings;
+	@Column(name = "meals_per_day")
 	private Integer mealsPerDay;
+	@Column(name = "food_preference")
 	private Integer foodPreference;
+	@Column(name = "food_source", length = 50)
 	private String foodSource;
-	private Character cook;
+	@Column(name = "cook", length = 1)
+	private boolean cook;
+	@Column(name = "travel_for_food_distance")
 	private Integer travelForFoodDistance;
+	@Column(name = "traval_for_food_time")
 	private Integer travalForFoodTime;
-	private Character subFoodProgram;
+	@Column(name = "sub_food_program", length = 1)
+	private boolean subFoodProgram;
+	@Column(name = "sub_food_program_entity", length = 50)
 	private String subFoodProgramEntity;
+	@Column(name = "sub_food_program_duration")
 	private Integer subFoodProgramDuration;
+	@Column(name = "sub_food_program_renew")
 	private Integer subFoodProgramRenew;
+	@Column(name = "sub_food_program_exp", length = 256)
 	private String subFoodProgramExp;
+	@Column(name = "allergies", length = 256)
 	private String allergies;
-	private Character addiction;
+	@Column(name = "addiction", length = 1)
+	private boolean addiction;
+	@Column(name = "addiction_type", length = 50)
 	private String addictionType;
-	private Character mentalHealthIssue;
+	@Column(name = "mental_health_issue", length = 1)
+	private String mentalHealthIssue;
+	@Column(name = "mental_health_issue_history", length = 256)
 	private String mentalHealthIssueHistory;
+	@Column(name = "height", length = 50)
 	private String height;
+	@Column(name = "weight", length = 50)
 	private String weight;
+	@Column(name = "exercise_per_week")
 	private Integer exercisePerWeek;
+	@Column(name = "last_visit_doctor")
 	private Integer lastVisitDoctor;
+	@Column(name = "last_visit_dentist")
 	private Integer lastVisitDentist;
 
 	public Client() {
@@ -99,28 +167,28 @@ public class Client implements Persistable, Serializable {
 	}
 
 	public Client(Long userId, Long createdBy, Long race,
-			Integer bday, Character beenArrested, Character beenConvicted,
-			Character hasSmartPhone, String serviceProvider, String model,
-			Character haveMonthlyPlan, String monthlyPlanMinute,
+			Date bday, boolean beenArrested, boolean beenConvicted,
+			boolean hasSmartPhone, String serviceProvider, String model,
+			boolean haveMonthlyPlan, String monthlyPlanMinute,
 			String monthlyPlanData, String monthlyPlanCost,
 			Integer altMonthlyPlan, String altMonthlyPlanTogether,
-			Integer sliblings, Integer kids, Character liveAtHome,
+			Integer sliblings, Integer kids, boolean liveAtHome,
 			Integer sheltered, Integer parentEducation, Integer education,
 			Integer enrollmentStatus, String enrollmentLocation,
 			Integer workStatus, Integer timeToWorkplace, Integer noOfJob,
 			String employer, String jobTitle, Integer durationOfEmployement,
-			Character unemploymentBenfits, String reasonUnemploymentBenefits,
+			boolean unemploymentBenfits, String reasonUnemploymentBenefits,
 			Double totalIncome, Integer rateAmount, Integer rateType,
 			String avgHoursPerWeek, Integer residentStatus,
 			Integer dollarSpendFood, Integer dollarSpendClothes,
 			Integer dollarSpendEntertainment, Integer dollarSpendTransport,
 			Integer dollarSpendSavings, Integer mealsPerDay,
-			Integer foodPreference, String foodSource, Character cook,
+			Integer foodPreference, String foodSource, boolean cook,
 			Integer travelForFoodDistance, Integer travalForFoodTime,
-			Character subFoodProgram, String subFoodProgramEntity,
+			boolean subFoodProgram, String subFoodProgramEntity,
 			Integer subFoodProgramDuration, Integer subFoodProgramRenew,
-			String subFoodProgramExp, String allergies, Character addiction,
-			String addictionType, Character mentalHealthIssue,
+			String subFoodProgramExp, String allergies, boolean addiction,
+			String addictionType, String mentalHealthIssue,
 			String mentalHealthIssueHistory, String height, String weight,
 			Integer exercisePerWeek, Integer lastVisitDoctor,
 			Integer lastVisitDentist) {
@@ -235,38 +303,38 @@ public class Client implements Persistable, Serializable {
 	}
 
 	@Column(name = "bday")
-	public Integer getBday() {
+	public Date getBday() {
 		return this.bday;
 	}
 
-	public void setBday(Integer bday) {
+	public void setBday(Date bday) {
 		this.bday = bday;
 	}
 
 	@Column(name = "been_arrested", length = 1)
-	public Character getBeenArrested() {
+	public boolean getBeenArrested() {
 		return this.beenArrested;
 	}
 
-	public void setBeenArrested(Character beenArrested) {
+	public void setBeenArrested(boolean beenArrested) {
 		this.beenArrested = beenArrested;
 	}
 
 	@Column(name = "been_convicted", length = 1)
-	public Character getBeenConvicted() {
+	public boolean getBeenConvicted() {
 		return this.beenConvicted;
 	}
 
-	public void setBeenConvicted(Character beenConvicted) {
+	public void setBeenConvicted(boolean beenConvicted) {
 		this.beenConvicted = beenConvicted;
 	}
 
 	@Column(name = "has_smart_phone", length = 1)
-	public Character getHasSmartPhone() {
+	public boolean getHasSmartPhone() {
 		return this.hasSmartPhone;
 	}
 
-	public void setHasSmartPhone(Character hasSmartPhone) {
+	public void setHasSmartPhone(boolean hasSmartPhone) {
 		this.hasSmartPhone = hasSmartPhone;
 	}
 
@@ -289,11 +357,11 @@ public class Client implements Persistable, Serializable {
 	}
 
 	@Column(name = "have_monthly_plan", length = 1)
-	public Character getHaveMonthlyPlan() {
+	public boolean getHaveMonthlyPlan() {
 		return this.haveMonthlyPlan;
 	}
 
-	public void setHaveMonthlyPlan(Character haveMonthlyPlan) {
+	public void setHaveMonthlyPlan(boolean haveMonthlyPlan) {
 		this.haveMonthlyPlan = haveMonthlyPlan;
 	}
 
@@ -361,11 +429,11 @@ public class Client implements Persistable, Serializable {
 	}
 
 	@Column(name = "live_at_home", length = 1)
-	public Character getLiveAtHome() {
+	public boolean getLiveAtHome() {
 		return this.liveAtHome;
 	}
 
-	public void setLiveAtHome(Character liveAtHome) {
+	public void setLiveAtHome(boolean liveAtHome) {
 		this.liveAtHome = liveAtHome;
 	}
 
@@ -469,11 +537,11 @@ public class Client implements Persistable, Serializable {
 	}
 
 	@Column(name = "unemployment_benfits", length = 1)
-	public Character getUnemploymentBenfits() {
+	public boolean getUnemploymentBenfits() {
 		return this.unemploymentBenfits;
 	}
 
-	public void setUnemploymentBenfits(Character unemploymentBenfits) {
+	public void setUnemploymentBenfits(boolean unemploymentBenfits) {
 		this.unemploymentBenfits = unemploymentBenfits;
 	}
 
@@ -604,11 +672,11 @@ public class Client implements Persistable, Serializable {
 	}
 
 	@Column(name = "cook", length = 1)
-	public Character getCook() {
+	public boolean getCook() {
 		return this.cook;
 	}
 
-	public void setCook(Character cook) {
+	public void setCook(boolean cook) {
 		this.cook = cook;
 	}
 
@@ -631,11 +699,11 @@ public class Client implements Persistable, Serializable {
 	}
 
 	@Column(name = "sub_food_program", length = 1)
-	public Character getSubFoodProgram() {
+	public boolean getSubFoodProgram() {
 		return this.subFoodProgram;
 	}
 
-	public void setSubFoodProgram(Character subFoodProgram) {
+	public void setSubFoodProgram(boolean subFoodProgram) {
 		this.subFoodProgram = subFoodProgram;
 	}
 
@@ -685,11 +753,11 @@ public class Client implements Persistable, Serializable {
 	}
 
 	@Column(name = "addiction", length = 1)
-	public Character getAddiction() {
+	public boolean getAddiction() {
 		return this.addiction;
 	}
 
-	public void setAddiction(Character addiction) {
+	public void setAddiction(boolean addiction) {
 		this.addiction = addiction;
 	}
 
@@ -703,11 +771,11 @@ public class Client implements Persistable, Serializable {
 	}
 
 	@Column(name = "mental_health_issue", length = 1)
-	public Character getMentalHealthIssue() {
+	public String getMentalHealthIssue() {
 		return this.mentalHealthIssue;
 	}
 
-	public void setMentalHealthIssue(Character mentalHealthIssue) {
+	public void setMentalHealthIssue(String mentalHealthIssue) {
 		this.mentalHealthIssue = mentalHealthIssue;
 	}
 
@@ -764,5 +832,15 @@ public class Client implements Persistable, Serializable {
 	public void setLastVisitDentist(Integer lastVisitDentist) {
 		this.lastVisitDentist = lastVisitDentist;
 	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+	
+	
 
 }
