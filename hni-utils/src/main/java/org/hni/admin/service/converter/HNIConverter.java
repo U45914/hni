@@ -642,11 +642,11 @@ public class HNIConverter {
 		JsonNode addressNode = jsonNode.get("address");
 		Address addr = new Address();
 		addr.setAddress1(addressNode.get("address1").asText());
-		addr.setAddress1(addressNode.get("address2").asText());
-		addr.setAddress1(addressNode.get("name").asText());
-		addr.setAddress1(addressNode.get("city").asText());
-		addr.setAddress1(addressNode.get("state").asText());
-		addr.setAddress1(addressNode.get("zip").asText());
+		addr.setAddress2(addressNode.get("address2").asText());
+		addr.setName(addressNode.get("name").asText());
+		addr.setCity(addressNode.get("city").asText());
+		addr.setState(addressNode.get("state").asText());
+		addr.setZip(addressNode.get("zip").asText());
 		
 		Set<Address> addresses = new HashSet<>();
 		addresses.add(addr);
