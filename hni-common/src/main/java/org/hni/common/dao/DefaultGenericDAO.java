@@ -101,5 +101,13 @@ public class DefaultGenericDAO implements GenericDAO {
 		}
 	}
 	
+	protected String getValue(Object field) {
+		if (field != null) {
+			return String.valueOf(field);
+		} else {
+			return "-";
+		}
+	}
+
 
 }

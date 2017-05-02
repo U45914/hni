@@ -46,11 +46,11 @@ public List<NgoBasicDto> getAllNgo()
 	for(Object[] u:userOrganizationRoles)
 	{
 		 NgoBasicDto ngoBasicDto = new NgoBasicDto();
-		 Long userId = Long.valueOf(u[0].toString());
+		 Long userId = Long.valueOf(getValue(u[0]));
 		
 		 ngoBasicDto.setUserId(userId);
-		 ngoBasicDto.setName(u[1]+" "+u[2]);
-		 ngoBasicDto.setPhone((String) u[3]);
+		 ngoBasicDto.setName(getValue(u[1])+" "+getValue(u[2]));
+		 ngoBasicDto.setPhone(getValue(u[3]));
 		 ngoBasicDto.setWebsite(u[4]!=null?(String) u[4]:"");
 		 ngoBasicDto.setCreatedUsers((Long) em.createQuery("select count(id) from Client where createdBy=:userId").setParameter("userId", userId).getSingleResult());
 		 ngos.add(ngoBasicDto);
@@ -79,11 +79,11 @@ public List<Volunteer> getAllVolunteers(Long loggedInUserId) {
 		
 		for (Object[] user : userDetails) {			
 			Volunteer volunteer = new Volunteer();		
-			volunteer.setId(Long.valueOf(user[0].toString()));
-			volunteer.setFirstName(user[1].toString());
-			volunteer.setLastName(String.valueOf(user[2]));
-			volunteer.setSex(user[3].toString());
-			volunteer.setEmail(user[4].toString());
+			volunteer.setId(Long.valueOf(getValue(user[0])));
+			volunteer.setFirstName(getValue(user[1]));
+			volunteer.setLastName(getValue(user[2]));
+			volunteer.setSex(getValue(user[3]));
+			volunteer.setEmail(getValue(user[4]));
 			volunteerList.add(volunteer);
 		}		
 	}
@@ -105,11 +105,11 @@ public List<ObjectNode> getAllProviders(User user) {
 	List<Object[]> result=em.createNativeQuery("select p.name as provider_name,p.website_url,p.created,u.first_name,a.name from providers p INNER JOIN users u  ON p.created_by =u.id INNER JOIN addresses a ON p.address_id=a.id and p.created_by=:uId").setParameter("uId",userId).getResultList();
 	for(Object[] prov:result){
 		ObjectNode provider=new ObjectMapper().createObjectNode();
-		provider.put("name", prov[0].toString());
-		provider.put("website",prov[1].toString());
-		provider.put("createdOn",prov[2].toString());
-		provider.put("createdBy",prov[3].toString());
-		provider.put("address",prov[4].toString());
+		provider.put("name", getValue(prov[0]));
+		provider.put("website",getValue(prov[1]));
+		provider.put("createdOn",getValue(prov[2]));
+		provider.put("createdBy",getValue(prov[3]));
+		provider.put("address",getValue(prov[4]));
 		providers.add(provider);
 		
 	}
