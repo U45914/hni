@@ -81,6 +81,15 @@ public class HNIConverter {
 	public static final String USERID = "userId";
 
 	private static ObjectMapper mapper = new ObjectMapper();
+	
+	public static String convertJSONArrayToString(ArrayNode jsonArray){
+		StringBuilder stringBuilder = new StringBuilder("");
+		jsonArray.forEach(b -> {
+			stringBuilder.append(b.asText());
+			stringBuilder.append(",");
+		});
+		return stringBuilder.substring(0, stringBuilder.length()-1).trim();
+	}
 
 	public static Collection<HniServicesDto> convertToServiceDtos(Collection<HniServices> hniServices) {
 		Collection<HniServicesDto> hniServicesDtoList = new ArrayList<>();
@@ -167,7 +176,7 @@ public class HNIConverter {
 				}
 			}
 		}
-				return boardMembers;
+		return boardMembers;
 	}
 
 	/**
@@ -198,7 +207,7 @@ public class HNIConverter {
 				}
 			}
 		}
-				return brandPartners;
+		return brandPartners;
 	}
 
 	/**
@@ -278,7 +287,7 @@ public class HNIConverter {
 			foodService.setNgoId(ngoId);
 			foodService.setServiceType(Constants.BREAKFAST_ID);
 			foodService.setTotalCount(serviceNode.get(BRKFST_QTY).asLong());
-			foodService.setWeekdays(serviceNode.get(BRKFST_AVAILABILTY).asText());
+			foodService.setWeekdays(convertJSONArrayToString((ArrayNode) serviceNode.get(BRKFST_AVAILABILTY)));
 				foodService.setOther("");
 			foodService.setCreated(new Date());
 			foodService.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
@@ -289,7 +298,7 @@ public class HNIConverter {
 			foodService.setNgoId(ngoId);
 			foodService.setServiceType(Constants.LUNCH_ID);
 			foodService.setTotalCount(serviceNode.get(LUNCH_QTY).asLong());
-			foodService.setWeekdays(serviceNode.get(LUNCH_AVAILABILTY).asText());
+			foodService.setWeekdays(convertJSONArrayToString((ArrayNode) serviceNode.get(LUNCH_AVAILABILTY)));
 				foodService.setOther("");
 			foodService.setCreated(new Date());
 			foodService.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
@@ -300,7 +309,7 @@ public class HNIConverter {
 			foodService.setNgoId(ngoId);
 			foodService.setServiceType(Constants.DINNER_ID);
 			foodService.setTotalCount(serviceNode.get(DINNER_QTY).asLong());
-			foodService.setWeekdays(serviceNode.get(DINNER_AVAILABILTY).asText());
+			foodService.setWeekdays(convertJSONArrayToString((ArrayNode) serviceNode.get(DINNER_AVAILABILTY)));
 				foodService.setOther("");
 			foodService.setCreated(new Date());
 			foodService.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
@@ -527,17 +536,17 @@ public class HNIConverter {
 	public static ObjectNode convertFoodServiceToJSON(List<FoodService> foodServices, ObjectNode parentJSON) {
 		ObjectNode serviceNode = (ObjectNode) parentJSON.get(SERVICE);
 		foodServices.forEach(fs -> {
-			if (fs.getServiceType().equals(1L)) {
+			if (fs.getServiceType().equals(Constants.BREAKFAST_ID)) {
 				serviceNode.put(BRKFST_CHK, true);
 				serviceNode.put(BRKFST_QTY, fs.getTotalCount());
 				serviceNode.put(BRKFST_AVAILABILTY, fs.getWeekdays());
 			}
-			if (fs.getServiceType().equals(2L)) {
+			if (fs.getServiceType().equals(Constants.LUNCH_ID)) {
 				serviceNode.put(LUNCH_CHK, true);
 				serviceNode.put(LUNCH_QTY, fs.getTotalCount());
 				serviceNode.put(LUNCH_AVAILABILTY, fs.getWeekdays());
 			}
-			if (fs.getServiceType().equals(3L)) {
+			if (fs.getServiceType().equals(Constants.DINNER_ID)) {
 				serviceNode.put(DINNER_CHK, true);
 				serviceNode.put(DINNER_QTY, fs.getTotalCount());
 				serviceNode.put(DINNER_AVAILABILTY, fs.getWeekdays());
