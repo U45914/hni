@@ -58,9 +58,9 @@ public class UserReportsController extends AbstractBaseController {
 	@Inject
 	private UserReportService userReportService;
 
-	@Inject 
+	@Inject
 	private OrderService orderService;
-	
+
 	@GET
 	@Path("/ngo/all")
 	@Produces({ MediaType.APPLICATION_JSON })
@@ -72,11 +72,11 @@ public class UserReportsController extends AbstractBaseController {
 			List<NgoBasicDto> ngo = userReportService.getAllNgo();
 			response.put("headers", HNIUtils.getReportHeaders(40));
 			response.put("data", ngo);
+			response.put(Constants.RESPONSE, Constants.SUCCESS);
 		} catch (Exception e) {
 			_LOGGER.error("Error in get Ngo Service:" + e.getMessage(), e);
 			response.put(Constants.RESPONSE, Constants.ERROR);
 		}
-		response.put(Constants.RESPONSE, Constants.SUCCESS);
 		return Response.ok(response).build();
 
 	}
@@ -92,11 +92,11 @@ public class UserReportsController extends AbstractBaseController {
 			List<User> customers = userReportService.getAllCustomersByRole();
 			response.put("headers", HNIUtils.getReportHeaders(60));
 			response.put("data", customers);
+			response.put(Constants.RESPONSE, Constants.SUCCESS);
 		} catch (Exception e) {
 			_LOGGER.error("Error in get Customers By role Service:" + e.getMessage(), e);
 			response.put(Constants.RESPONSE, Constants.ERROR);
 		}
-		response.put(Constants.RESPONSE, Constants.SUCCESS);
 		return Response.ok(response).build();
 
 	}
@@ -113,31 +113,31 @@ public class UserReportsController extends AbstractBaseController {
 			List<User> customers = userReportService.getAllCustomersUnderOrganisation(user);
 			response.put("headers", HNIUtils.getReportHeaders(60));
 			response.put("data", customers);
+			response.put(Constants.RESPONSE, Constants.SUCCESS);
 		} catch (Exception e) {
 			_LOGGER.error("Error in get Customers under an organization Service:" + e.getMessage(), e);
 			response.put(Constants.RESPONSE, Constants.ERROR);
 		}
-		response.put(Constants.RESPONSE, Constants.SUCCESS);
 		return Response.ok(response).build();
 
 	}
-	
+
 	@GET
 	@Path("/volunteers/all")
 	@Produces({ MediaType.APPLICATION_JSON })
 
 	public Response getAllVolunteers() {
 		Map<String, Object> response = new HashMap<>();
-		Long userId = (Long) ThreadContext.get(Constants.USERID);		
+		Long userId = (Long) ThreadContext.get(Constants.USERID);
 		List<JSONObject> dataList = new ArrayList<>();
 		try {
-				List<Volunteer> volunteers = userReportService.getAllVolunteers(userId);
-				for(Volunteer volunteer : volunteers){
-					JSONObject json = new JSONObject();
-					json.put("name", volunteer.getFirstName() + " " + volunteer.getLastName());
-					json.put("gender", volunteer.getSex());
-					json.put("email", volunteer.getEmail());
-					dataList.add(json);
+			List<Volunteer> volunteers = userReportService.getAllVolunteers(userId);
+			for (Volunteer volunteer : volunteers) {
+				JSONObject json = new JSONObject();
+				json.put("name", volunteer.getFirstName() + " " + volunteer.getLastName());
+				json.put("gender", volunteer.getSex());
+				json.put("email", volunteer.getEmail());
+				dataList.add(json);
 			}
 			response.put("headers", HNIUtils.getReportHeaders(50));
 			response.put("data", dataList);
@@ -150,6 +150,7 @@ public class UserReportsController extends AbstractBaseController {
 		return Response.ok(response).build();
 
 	}
+
 	@GET
 	@Path("/customers/ngo")
 	@Produces({ MediaType.APPLICATION_JSON })
@@ -160,67 +161,68 @@ public class UserReportsController extends AbstractBaseController {
 		Map<String, Object> response = new HashMap<>();
 		try {
 			List<User> customers = userReportService.getAllCustomersEnrolledByNgo(user);
-			response.put("headers",HNIUtils.getReportHeaders(60));
+			response.put("headers", HNIUtils.getReportHeaders(60));
 			response.put("data", customers);
+			response.put(Constants.RESPONSE, Constants.SUCCESS);
 		} catch (Exception e) {
 			_LOGGER.error("Error in get Customers created by an Ngo Service:" + e.getMessage(), e);
 			response.put(Constants.RESPONSE, Constants.ERROR);
 		}
-		response.put(Constants.RESPONSE, Constants.SUCCESS);
 		return Response.ok(response).build();
 
 	}
+
 	@GET
 	@Path("/orders/all")
-	@Produces({MediaType.APPLICATION_JSON})
-	@ApiOperation(value = "Returns a collection of orders for the given user between the given dates.  If the endDate is not supplied it will default to current date"
-	, notes = "accepted date formats yyyy-mm-dd, yyyy/mm/dd, mm-dd-yyyy, mm/dd/yyyy"
-	, response = Order.class
-	, responseContainer = "")
-	public Response getUserOrdersBetweenDates(@QueryParam("id") Long id, @QueryParam("startDate") String startDate , @QueryParam("endDate") String endDate) {
+	@Produces({ MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Returns a collection of orders for the given user between the given dates.  If the endDate is not supplied it will default to current date", notes = "accepted date formats yyyy-mm-dd, yyyy/mm/dd, mm-dd-yyyy, mm/dd/yyyy", response = Order.class, responseContainer = "")
+	public Response getUserOrdersBetweenDates(@QueryParam("id") Long id, @QueryParam("startDate") String startDate,
+			@QueryParam("endDate") String endDate) {
 		Map<String, Object> response = new HashMap<>();
-		
+
 		List<JSONObject> dataList = new ArrayList<>();
-		LocalDate start ;
-		Collection<Order>OrderList =new ArrayList<>();
-		if(startDate==null){
-			start=LocalDate.now();
-			start=start.minusDays(30L);
+		LocalDate start;
+		Collection<Order> OrderList = new ArrayList<>();
+		if (startDate == null) {
+			start = LocalDate.now();
+			start = start.minusDays(30L);
 		} else {
 			start = DateUtils.parseDate(startDate);
 		}
 		LocalDate end = LocalDate.now();
-		if ( !StringUtils.isEmpty(endDate) ) {
+		if (!StringUtils.isEmpty(endDate)) {
 			end = DateUtils.parseDate(endDate);
 		}
-		if(id==null){
-			User u=getLoggedInUser();
-			id=u.getId();
+		if (id == null) {
+			User u = getLoggedInUser();
+			id = u.getId();
 		}
-		
-		try{
-			OrderList= orderService.get(new User(id), start, end);
-			for(Order order:OrderList){
-				
-				JSONObject or=new JSONObject();
-				
-				or.put("orderDate",dateFormat.format(order.getOrderDate()));
-				or.put("readyDate",dateFormat.format(order.getReadyDate()));
-				or.put("name",order.getUser().getFirstName()+" "+order.getUser().getLastName());
+
+		try {
+			OrderList = orderService.get(new User(id), start, end);
+			for (Order order : OrderList) {
+
+				JSONObject or = new JSONObject();
+
+				or.put("orderDate", dateFormat.format(order.getOrderDate()));
+				or.put("readyDate", dateFormat.format(order.getReadyDate()));
+				or.put("name", order.getUser().getFirstName() + " " + order.getUser().getLastName());
 				or.put("orderstatus", order.getOrderStatus().getName());
 				or.put("total", order.getTotal());
-				//or.put("orderItems", order.getOrderItems());
+				// or.put("orderItems", order.getOrderItems());
 				dataList.add(or);
 			}
-		response.put("headers", HNIUtils.getReportHeaders(30));
-		response.put("data", dataList);
-		}catch (Exception e) {
+			response.put("headers", HNIUtils.getReportHeaders(30));
+			response.put("data", dataList);
+			response.put(Constants.RESPONSE, Constants.SUCCESS);
+		} catch (Exception e) {
 			_LOGGER.error("Error in get Order details :" + e.getMessage(), e);
 			response.put(Constants.RESPONSE, Constants.ERROR);
 		}
-		response.put(Constants.RESPONSE, Constants.SUCCESS);
+
 		return Response.ok(response).build();
 	}
+
 	@GET
 	@Path("/provider/all")
 	@Produces({ MediaType.APPLICATION_JSON })
@@ -233,11 +235,12 @@ public class UserReportsController extends AbstractBaseController {
 			List<ObjectNode> providers = userReportService.getAllProviders(user);
 			response.put("headers", HNIUtils.getReportHeaders(20));
 			response.put("data", providers);
+			response.put(Constants.RESPONSE, Constants.SUCCESS);
 		} catch (Exception e) {
 			_LOGGER.error("Error in get Provider Service:" + e.getMessage(), e);
 			response.put(Constants.RESPONSE, Constants.ERROR);
 		}
-		response.put(Constants.RESPONSE, Constants.SUCCESS);
+
 		return Response.ok(response).build();
 
 	}
