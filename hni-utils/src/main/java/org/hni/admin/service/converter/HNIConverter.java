@@ -146,24 +146,28 @@ public class HNIConverter {
 	 */
 	public static List<BoardMember> getBoardMembersFromJson(ObjectNode objectNode, Long ngoId) {
 		List<BoardMember> boardMembers = new ArrayList<>();
-		JsonNode boardMemberArray = objectNode.get(STAKE_HOLDER).get(BOARD_MEMBERS);
-		if (boardMemberArray.isArray()) {
-			Iterator<JsonNode> boardMemberItr = boardMemberArray.iterator();
-			while (boardMemberItr.hasNext()) {
-				JsonNode boardMemberJSON = boardMemberItr.next();
-
-				BoardMember boardMember = new BoardMember();
-				boardMember.setNgo_id(ngoId);
-				boardMember.setFirstName(boardMemberJSON.get(NAME).asText());
-					boardMember.setLastName("");
-				boardMember.setCompany(boardMemberJSON.get(COMPANY).asText());
-				boardMember.setCreated(new Date());
-				boardMember.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
-				boardMember.setNgo_id(ngoId);
-				boardMembers.add(boardMember);
+		if(objectNode.has(STAKE_HOLDER)){
+			if(objectNode.get(STAKE_HOLDER).has(BOARD_MEMBERS)){
+				JsonNode boardMemberArray = objectNode.get(STAKE_HOLDER).get(BOARD_MEMBERS);
+				if (boardMemberArray.isArray()) {
+					Iterator<JsonNode> boardMemberItr = boardMemberArray.iterator();
+					while (boardMemberItr.hasNext()) {
+						JsonNode boardMemberJSON = boardMemberItr.next();
+		
+						BoardMember boardMember = new BoardMember();
+						boardMember.setNgo_id(ngoId);
+						boardMember.setFirstName(boardMemberJSON.get(NAME).asText());
+							boardMember.setLastName("");
+						boardMember.setCompany(boardMemberJSON.get(COMPANY).asText());
+						boardMember.setCreated(new Date());
+						boardMember.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
+						boardMember.setNgo_id(ngoId);
+						boardMembers.add(boardMember);
+					}
+				}
 			}
 		}
-		return boardMembers;
+				return boardMembers;
 	}
 
 	/**
@@ -175,22 +179,26 @@ public class HNIConverter {
 	 */
 	public static List<BrandPartner> getBrandPartnersFromJson(ObjectNode objectNode, Long ngo_id) {
 		List<BrandPartner> brandPartners = new ArrayList<>();
-		JsonNode brandPartnerArray = objectNode.get(STAKE_HOLDER).get(BRAND_PARTNERS);
-		if (brandPartnerArray.isArray()) {
-			Iterator<JsonNode> brandPartnerItr = brandPartnerArray.iterator();
-			while (brandPartnerItr.hasNext()) {
-				JsonNode brandPartnerJSON = brandPartnerItr.next();
-
-				BrandPartner brandPartner = new BrandPartner();
-				brandPartner.setNgo_id(ngo_id);
-				brandPartner.setPhone(String.valueOf(brandPartnerJSON.get(PHONE_NUMBER).asInt()));
-				brandPartner.setCompany(brandPartnerJSON.get(COMPANY).asText());
-				brandPartner.setCreated(new Date());
-				brandPartner.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
-				brandPartners.add(brandPartner);
+		if(objectNode.has(STAKE_HOLDER)){
+			if(objectNode.get(STAKE_HOLDER).has(BRAND_PARTNERS)){
+				JsonNode brandPartnerArray = objectNode.get(STAKE_HOLDER).get(BRAND_PARTNERS);
+				if (brandPartnerArray.isArray()) {
+					Iterator<JsonNode> brandPartnerItr = brandPartnerArray.iterator();
+					while (brandPartnerItr.hasNext()) {
+						JsonNode brandPartnerJSON = brandPartnerItr.next();
+		
+						BrandPartner brandPartner = new BrandPartner();
+						brandPartner.setNgo_id(ngo_id);
+						brandPartner.setPhone(String.valueOf(brandPartnerJSON.get(PHONE_NUMBER).asInt()));
+						brandPartner.setCompany(brandPartnerJSON.get(COMPANY).asText());
+						brandPartner.setCreated(new Date());
+						brandPartner.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
+						brandPartners.add(brandPartner);
+					}
+				}
 			}
 		}
-		return brandPartners;
+				return brandPartners;
 	}
 
 	/**
@@ -203,6 +211,7 @@ public class HNIConverter {
 	 */
 	public static List<LocalPartner> getLocalPartnersFromJson(ObjectNode objectNode, Long ngoId) {
 		List<LocalPartner> localPartners = new ArrayList<>();
+		if(objectNode.has(STAKE_HOLDER)){
 		JsonNode localPartnerArray = objectNode.get(STAKE_HOLDER).get(LOCAL_PARTNERS);
 		if (localPartnerArray.isArray()) {
 			Iterator<JsonNode> localPartnerItr = localPartnerArray.iterator();
@@ -218,7 +227,9 @@ public class HNIConverter {
 				localPartners.add(localPartner);
 			}
 		}
+		}
 		return localPartners;
+		
 	}
 
 	/**
@@ -230,19 +241,21 @@ public class HNIConverter {
 	 */
 	public static List<FoodBank> getFoodBankFromJson(ObjectNode objectNode, Long ngoId) {
 		List<FoodBank> foodBanks = new ArrayList<>();
-		JsonNode serviceNode = objectNode.get(SERVICE);
-
-		if (serviceNode.get(FOOD_BANK_SELECT).asBoolean()) {
-			JsonNode foodBankArray = serviceNode.get(FOOD_BANK_VALUE);
-			if (foodBankArray.isArray()) {
-				Iterator<JsonNode> foodBankItr = foodBankArray.iterator();
-				while (foodBankItr.hasNext()) {
-					FoodBank foodBank = new FoodBank();
-					foodBank.setNgoId(ngoId);
-					foodBank.setFoodBankName(foodBankItr.next().asText());
-					foodBank.setCreated(new Date());
-					foodBank.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
-					foodBanks.add(foodBank);
+		if(objectNode.has(SERVICE)){
+			JsonNode serviceNode = objectNode.get(SERVICE);
+	
+			if (serviceNode.has(FOOD_BANK_SELECT)) {
+				JsonNode foodBankArray = serviceNode.get(FOOD_BANK_VALUE);
+				if (foodBankArray.isArray()) {
+					Iterator<JsonNode> foodBankItr = foodBankArray.iterator();
+					while (foodBankItr.hasNext()) {
+						FoodBank foodBank = new FoodBank();
+						foodBank.setNgoId(ngoId);
+						foodBank.setFoodBankName(foodBankItr.next().asText());
+						foodBank.setCreated(new Date());
+						foodBank.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
+						foodBanks.add(foodBank);
+					}
 				}
 			}
 		}
@@ -260,7 +273,7 @@ public class HNIConverter {
 		List<FoodService> foodServices = new ArrayList<>();
 		JsonNode serviceNode = objectNode.get(SERVICE);
 
-		if (serviceNode.get(BRKFST_CHK).asBoolean()) {
+		if (serviceNode.has(BRKFST_CHK)) {
 			FoodService foodService = new FoodService();
 			foodService.setNgoId(ngoId);
 			foodService.setServiceType(Constants.BREAKFAST_ID);
@@ -271,7 +284,7 @@ public class HNIConverter {
 			foodService.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
 			foodServices.add(foodService);
 		}
-		if (serviceNode.get(LUNCH_CHK).asBoolean()) {
+		if (serviceNode.has(LUNCH_CHK)) {
 			FoodService foodService = new FoodService();
 			foodService.setNgoId(ngoId);
 			foodService.setServiceType(Constants.LUNCH_ID);
@@ -282,7 +295,7 @@ public class HNIConverter {
 			foodService.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
 			foodServices.add(foodService);
 		}
-		if (serviceNode.get(DINNER_CHK).asBoolean()) {
+		if (serviceNode.has(DINNER_CHK)) {
 			FoodService foodService = new FoodService();
 			foodService.setNgoId(ngoId);
 			foodService.setServiceType(Constants.DINNER_ID);
@@ -306,18 +319,22 @@ public class HNIConverter {
 	 */
 	public static List<MealDonationSource> getMealDonationSourceFromJson(ObjectNode objectNode, Long ngoId) {
 		List<MealDonationSource> mealDonationSources = new ArrayList<>();
-		JsonNode mealDonationSourceArray = objectNode.get(FUNDING).get(MEAL_DONATION);
-		if (mealDonationSourceArray.isArray()) {
-			Iterator<JsonNode> mealDonationSourceItr = mealDonationSourceArray.iterator();
-			while (mealDonationSourceItr.hasNext()) {
-				JsonNode mealDonationSourceJSON = mealDonationSourceItr.next();
-				MealDonationSource mealDonationSource = new MealDonationSource();
-				mealDonationSource.setNgoId(ngoId);
-				mealDonationSource.setSource(mealDonationSourceJSON.get(SOURCE).asText());
-				mealDonationSource.setFrequency(mealDonationSourceJSON.get(FREQUENCY).asText());
-				mealDonationSource.setCreated(new Date());
-				mealDonationSource.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
-				mealDonationSources.add(mealDonationSource);
+		if(objectNode.has(FUNDING)){
+			if(objectNode.get(FUNDING).has(MEAL_DONATION)){
+			JsonNode mealDonationSourceArray = objectNode.get(FUNDING).get(MEAL_DONATION);
+			if (mealDonationSourceArray.isArray()) {
+				Iterator<JsonNode> mealDonationSourceItr = mealDonationSourceArray.iterator();
+				while (mealDonationSourceItr.hasNext()) {
+					JsonNode mealDonationSourceJSON = mealDonationSourceItr.next();
+					MealDonationSource mealDonationSource = new MealDonationSource();
+					mealDonationSource.setNgoId(ngoId);
+					mealDonationSource.setSource(mealDonationSourceJSON.get(SOURCE).asText());
+					mealDonationSource.setFrequency(mealDonationSourceJSON.get(FREQUENCY).asText());
+					mealDonationSource.setCreated(new Date());
+					mealDonationSource.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
+					mealDonationSources.add(mealDonationSource);
+				}
+			}
 			}
 		}
 		return mealDonationSources;
@@ -332,18 +349,22 @@ public class HNIConverter {
 	 */
 	public static List<MealFundingSource> getMealFundingSourcesFromJson(ObjectNode objectNode, Long ngoId) {
 		List<MealFundingSource> mealFundingSources = new ArrayList<>();
-		JsonNode mealFundingSourceArray = objectNode.get(FUNDING).get(MEAL_FUNDING);
-		if (mealFundingSourceArray.isArray()) {
-			Iterator<JsonNode> mealFundingSourceItr = mealFundingSourceArray.iterator();
-			while (mealFundingSourceItr.hasNext()) {
-				JsonNode mealFundingSourceJSON = mealFundingSourceItr.next();
-				MealFundingSource mealFundingSource = new MealFundingSource();
-				mealFundingSource.setNgoId(ngoId);
-				mealFundingSource.setAmount(mealFundingSourceJSON.get(AMOUNT).asDouble());
-				mealFundingSource.setSource(mealFundingSourceJSON.get(SOURCE).asText());
-				mealFundingSource.setCreated(new Date());
-				mealFundingSource.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
-				mealFundingSources.add(mealFundingSource);
+		if(objectNode.has(FUNDING)){
+			if(objectNode.get(FUNDING).has(MEAL_FUNDING)){
+				JsonNode mealFundingSourceArray = objectNode.get(FUNDING).get(MEAL_FUNDING);
+				if (mealFundingSourceArray.isArray()) {
+					Iterator<JsonNode> mealFundingSourceItr = mealFundingSourceArray.iterator();
+					while (mealFundingSourceItr.hasNext()) {
+						JsonNode mealFundingSourceJSON = mealFundingSourceItr.next();
+						MealFundingSource mealFundingSource = new MealFundingSource();
+						mealFundingSource.setNgoId(ngoId);
+						mealFundingSource.setAmount(mealFundingSourceJSON.get(AMOUNT).asDouble());
+						mealFundingSource.setSource(mealFundingSourceJSON.get(SOURCE).asText());
+						mealFundingSource.setCreated(new Date());
+						mealFundingSource.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
+						mealFundingSources.add(mealFundingSource);
+					}
+				}
 			}
 		}
 		return mealFundingSources;
@@ -358,18 +379,22 @@ public class HNIConverter {
 	 */
 	public static List<NgoFundingSource> getNgoFundingSourcesFromJson(ObjectNode objectNode, Long ngoId) {
 		List<NgoFundingSource> ngoFundingSources = new ArrayList<>();
-		JsonNode ngoFundingSourceArray = objectNode.get(FUNDING).get(FUNDING_SOURCE);
-		if (ngoFundingSourceArray.isArray()) {
-			Iterator<JsonNode> ngoFundingSourceItr = ngoFundingSourceArray.iterator();
-			while (ngoFundingSourceItr.hasNext()) {
-				JsonNode ngoFundingSourceJSON = ngoFundingSourceItr.next();
-				NgoFundingSource ngoFundingSource = new NgoFundingSource();
-				ngoFundingSource.setNgoId(ngoId);
-				ngoFundingSource.setAmount(ngoFundingSourceJSON.get(AMOUNT).asDouble());
-				ngoFundingSource.setSource(ngoFundingSourceJSON.get(SOURCE).asText());
-				ngoFundingSource.setCreated(new Date());
-				ngoFundingSource.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
-				ngoFundingSources.add(ngoFundingSource);
+		if(objectNode.has(FUNDING)){
+			if(objectNode.get(FUNDING).has(FUNDING_SOURCE)){
+				JsonNode ngoFundingSourceArray = objectNode.get(FUNDING).get(FUNDING_SOURCE);
+				if (ngoFundingSourceArray.isArray()) {
+					Iterator<JsonNode> ngoFundingSourceItr = ngoFundingSourceArray.iterator();
+					while (ngoFundingSourceItr.hasNext()) {
+						JsonNode ngoFundingSourceJSON = ngoFundingSourceItr.next();
+						NgoFundingSource ngoFundingSource = new NgoFundingSource();
+						ngoFundingSource.setNgoId(ngoId);
+						ngoFundingSource.setAmount(ngoFundingSourceJSON.get(AMOUNT).asDouble());
+						ngoFundingSource.setSource(ngoFundingSourceJSON.get(SOURCE).asText());
+						ngoFundingSource.setCreated(new Date());
+						ngoFundingSource.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
+						ngoFundingSources.add(ngoFundingSource);
+					}
+				}
 			}
 		}
 		return ngoFundingSources;
