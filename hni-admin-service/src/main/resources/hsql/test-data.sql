@@ -99,6 +99,8 @@ insert into security_role_permissions values(1,1,1);
 insert into security_role_permissions values(6,1,1);
 insert into security_role_permissions values(7,1,1);
 insert into security_role_permissions values(3,1,1);
+insert into security_role_permissions values(4,1,1);
+
 
 insert into security_role_permissions values(2,15,0);
 insert into security_role_permissions values(2,25,1);
@@ -106,17 +108,12 @@ insert into security_role_permissions values(2,45,1);
 insert into security_role_permissions values(2,65,1);
 insert into security_role_permissions values(2,85,1);
 
-insert into security_role_permissions values(7,1,1);
-
-insert into security_role_permissions values(6,1,1);
-
 /* volunteer */
-insert into security_role_permissions values(3,1,1);
+
 insert into security_role_permissions values(3,12,0);
 insert into security_role_permissions values(3,67,1);
 
 /* client/user */
-insert into security_role_permissions values(4,1,1);
 
 insert into security_role_permissions values(4,12,0);
 insert into security_role_permissions values(5,12,0);
