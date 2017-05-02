@@ -291,7 +291,7 @@ public class UserServiceController extends AbstractBaseController {
 		Map<String,String> response = new HashMap<>();
 		try{
 			User user = getLoggedInUser();
-			user.setAddresses(getAddressSet((List<Address>) user.getAddresses(), client.getAddress()));
+			user.setAddresses(getAddressSet(user.getAddresses(), client.getAddress()));
 			userService.update(user);
 			Map<String,String> errors = userOnBoardingService.clientSave(client, user);
 			if(errors!=null && errors.isEmpty()){
@@ -317,7 +317,7 @@ public class UserServiceController extends AbstractBaseController {
 		User user = getLoggedInUser();
 		Map<String,String> response = new HashMap<>();
 		try{
-			user.setAddresses(getAddressSet((List<Address>) user.getAddresses(), volunteer.getAddress()));
+			user.setAddresses(getAddressSet(user.getAddresses(), volunteer.getAddress()));
 			
 			Map<String,String> errors =   userOnBoardingService.buildVolunteerAndSave(volunteer, user);
 			if(errors!=null && errors.isEmpty()){

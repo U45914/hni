@@ -91,10 +91,10 @@ public class AbstractBaseController {
 		return HNIRoles.USER.getRole();
 	}
 
-	protected Set<Address> getAddressSet(List<Address> userAddress, Address address) {
+	protected Set<Address> getAddressSet(Set<Address> userAddress, Address address) {
 		Long id = null;
 		if (userAddress != null && !userAddress.isEmpty()) {
-			id = userAddress.get(0).getId();
+			id = userAddress.iterator().next().getId();
 		}
 		address.setId(id);
 		Set<Address> addresses = new HashSet<>(1);

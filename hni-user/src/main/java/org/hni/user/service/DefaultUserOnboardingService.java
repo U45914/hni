@@ -154,27 +154,31 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 	public Map<String,String> buildVolunteerAndSave(Volunteer volunteer, User user) {
 		Map<String, String> error = new HashMap<>();
 		
-		HNIValidator.validateVolunteer(volunteer, error);
 		
-		if(error!=null && error.isEmpty()){
-			Volunteer extVolunteer = volunteerDao.getByUserId(user.getId());
-			Long volunteerId = extVolunteer != null ? extVolunteer.getId() : null;
-			if (volunteerId != null) {
-				
-			}
+		Volunteer extVolunteer = volunteerDao.getByUserId(user.getId());
+		Long volunteerId = extVolunteer != null ? extVolunteer.getId() : null;
+		if (volunteerId != null) {
+			volunteer.setId(extVolunteer.getId());
+			volunteer.setCreatedBy(extVolunteer.getCreatedBy());
+		} else {
 			Long createdBy = getInvitedBy(volunteer);
 			if(createdBy==null){
 				createdBy = user.getId();
 				volunteer.setCreated(new Date());
 				volunteer.setCreatedBy(createdBy);
 			}
-
-			volunteer.setUserId(user.getId());
-			
+		}
+		volunteer.setUserId(user.getId());
+		
+		HNIValidator.validateVolunteer(volunteer, error);
+		if (error != null && !error.isEmpty()) {
+			return error;
+		} else {
 			volunteer = volunteerDao.save(volunteer);
-			if (volunteer.getId() != null) {
-				ngoGenericDAO.updateStatus(volunteer.getUserId());
-			}
+		}
+		
+		if (volunteer.getId() != null) {
+			ngoGenericDAO.updateStatus(volunteer.getUserId());
 		}
 		return error;
 	}
@@ -229,7 +233,7 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class )
 	public Map<String,String> clientSave(Client client, User user) {
 		Client extClient = clientDAO.getByUserId(user.getId());
-		
+		client.setUserId(user.getId());
 		Map<String, String> error = new HashMap<>();
 		
 		if (extClient == null) {
@@ -240,6 +244,7 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 			}
 		} else {
 			client.setId(extClient.getId());
+			client.setCreatedBy(extClient.getCreatedBy());
 		}
 		
 		HNIValidator.validateClient(client, error);
