@@ -274,10 +274,10 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 			volunteer.setAddress(getAddress(user.getAddresses()));
 			response.put("response", volunteer);
 		} else if(type.equalsIgnoreCase("Client")){
-			Client client = ngoGenericDAO.get(Client.class,id);
+			Client client = clientDAO.get((Object)id.intValue());
 			client.setAddress(getAddress(user.getAddresses()));
 			client.setUser(user);
-			response.put("response", ngoGenericDAO.get(Client.class,id));
+			response.put("response", client);
 		}
 		
 		return response;
