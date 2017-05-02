@@ -153,18 +153,24 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class )
 	public Map<String,String> buildVolunteerAndSave(Volunteer volunteer, User user) {
 		Map<String, String> error = new HashMap<>();
+		
 		HNIValidator.validateVolunteer(volunteer, error);
+		
 		if(error!=null && error.isEmpty()){
-			Address address = addressDAO.save(volunteer.getAddress());
-			user.getAddresses().add(address);
-			userDao.update(user);
+			Volunteer extVolunteer = volunteerDao.getByUserId(user.getId());
+			Long volunteerId = extVolunteer != null ? extVolunteer.getId() : null;
+			if (volunteerId != null) {
+				
+			}
 			Long createdBy = getInvitedBy(volunteer);
 			if(createdBy==null){
 				createdBy = user.getId();
+				volunteer.setCreated(new Date());
+				volunteer.setCreatedBy(createdBy);
 			}
-			volunteer.setCreated(new Date());
-			volunteer.setCreatedBy(createdBy);
+
 			volunteer.setUserId(user.getId());
+			
 			volunteer = volunteerDao.save(volunteer);
 			if (volunteer.getId() != null) {
 				ngoGenericDAO.updateStatus(volunteer.getUserId());
@@ -222,12 +228,20 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class )
 	public Map<String,String> clientSave(Client client, User user) {
-		client.setUserId(user.getId());
+		Client extClient = clientDAO.getByUserId(user.getId());
+		
 		Map<String, String> error = new HashMap<>();
-		Invitation invitedBy = invitationDAO.getInvitedBy(user.getEmail());
-		if (invitedBy != null) {
-			client.setCreatedBy(invitedBy.getInvitedBy());
+		
+		if (extClient == null) {
+			client.setUserId(user.getId());
+			Invitation invitedBy = invitationDAO.getInvitedBy(user.getEmail());
+			if (invitedBy != null) {
+				client.setCreatedBy(invitedBy.getInvitedBy());
+			}
+		} else {
+			client.setId(extClient.getId());
 		}
+		
 		HNIValidator.validateClient(client, error);
 		if(error!=null && error.isEmpty()) {
 			clientDAO.save(client);

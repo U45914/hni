@@ -39,6 +39,7 @@ import org.hni.passwordvalidater.CheckPassword;
 import org.hni.security.dao.RoleDAO;
 import org.hni.security.om.ActivationCode;
 import org.hni.security.service.ActivationCodeService;
+import org.hni.user.om.Address;
 import org.hni.user.om.Client;
 import org.hni.user.om.Ngo;
 import org.hni.user.om.Report;
@@ -290,7 +291,7 @@ public class UserServiceController extends AbstractBaseController {
 		Map<String,String> response = new HashMap<>();
 		try{
 			User user = getLoggedInUser();
-			user.setAddresses(getAddressSet(client.getAddress()));
+			user.setAddresses(getAddressSet((List<Address>) user.getAddresses(), client.getAddress()));
 			userService.update(user);
 			Map<String,String> errors = userOnBoardingService.clientSave(client, user);
 			if(errors!=null && errors.isEmpty()){
@@ -316,6 +317,8 @@ public class UserServiceController extends AbstractBaseController {
 		User user = getLoggedInUser();
 		Map<String,String> response = new HashMap<>();
 		try{
+			user.setAddresses(getAddressSet((List<Address>) user.getAddresses(), volunteer.getAddress()));
+			
 			Map<String,String> errors =   userOnBoardingService.buildVolunteerAndSave(volunteer, user);
 			if(errors!=null && errors.isEmpty()){
 				response.put(RESPONSE, SUCCESS);

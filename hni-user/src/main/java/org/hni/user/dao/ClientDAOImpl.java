@@ -1,7 +1,11 @@
 package org.hni.user.dao;
 
+import java.util.List;
+
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+
 import org.hni.common.dao.AbstractDAO;
-import org.hni.user.om.Address;
 import org.hni.user.om.Client;
 import org.springframework.stereotype.Component;
 
@@ -10,6 +14,21 @@ public class ClientDAOImpl extends AbstractDAO<Client> implements ClientDAO  {
 
 	protected ClientDAOImpl() {
 		super(Client.class);
+	}
+
+	@Override
+	public Client getByUserId(Long userId) {
+		try {
+			Query q = em.createQuery("SELECT x FROM Client x WHERE x.userId = :userId").setParameter("userId", userId);
+			List<Client> clients = q.getResultList();
+			if (clients.isEmpty()) {
+				return null;
+			} else {
+				return clients.get(0);
+			}
+		} catch (NoResultException e) {
+			return null;
+		}
 	}
 
 }

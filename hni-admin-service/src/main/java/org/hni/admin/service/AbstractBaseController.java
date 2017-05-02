@@ -1,6 +1,7 @@
 package org.hni.admin.service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -90,7 +91,12 @@ public class AbstractBaseController {
 		return HNIRoles.USER.getRole();
 	}
 
-	protected Set<Address> getAddressSet(Address address) {
+	protected Set<Address> getAddressSet(List<Address> userAddress, Address address) {
+		Long id = null;
+		if (userAddress != null && !userAddress.isEmpty()) {
+			id = userAddress.get(0).getId();
+		}
+		address.setId(id);
 		Set<Address> addresses = new HashSet<>(1);
 		addresses.add(address);
 		
