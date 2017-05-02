@@ -55,10 +55,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import net.minidev.json.JSONObject;
 
 @Api(value = "/users", description = "Operations on Users and to manage Users relationships to organiations")
 @Component
@@ -332,6 +334,39 @@ public class UserServiceController extends AbstractBaseController {
 			_LOGGER.error("Volunteer save failed!");
 		}
 		return Response.ok(response).build();
+	}
+	
+	@POST
+	@Path("/volunteer/availability/save")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Produces({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = "Service for saving details of Volunteer", notes = "", response = Map.class, responseContainer = "")
+	public Response saveVolunteerAvailability(String availabilityJSON){
+		Map<String,String> response = new HashMap<>();
+		try {
+			ObjectNode objectNode = new ObjectMapper().readValue(availabilityJSON, ObjectNode.class);
+			response = userOnBoardingService.saveVolunteerAvailability(objectNode);
+		} catch (Exception e) {
+			_LOGGER.error("Save VolunteerAvailability Failed");
+			response.put(ERROR, "Save VolunteerAvailability Failed");
+		}
+		return Response.ok(response).build();
+	}
+	
+	@GET
+	@Path("/volunteer/availability")
+	@Produces({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = "Service for saving details of Volunteer", notes = "", response = Map.class, responseContainer = "")
+	public Response saveVolunteerAvailability(){
+		try {
+			ObjectNode objectNode = userOnBoardingService.getVolunteerAvailability(getLoggedInUser().getId());
+			return Response.ok(objectNode).build();
+		} catch (Exception e) {
+			_LOGGER.error("Save VolunteerAvailability Failed");
+			Map<String,String> response = new HashMap<>();
+			response.put(ERROR, "Save VolunteerAvailability Failed");
+			return Response.ok(response).build();
+		}
 	}
 	
 
