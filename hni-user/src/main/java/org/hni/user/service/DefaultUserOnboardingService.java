@@ -171,7 +171,7 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 			volunteer.setCreatedBy(extVolunteer.getCreatedBy());
 		} else {
 			Long createdBy = getInvitedBy(volunteer);
-			if(createdBy==null){
+			if(createdBy!=null){
 				createdBy = user.getId();
 				volunteer.setCreated(new Date());
 				volunteer.setCreatedBy(createdBy);
