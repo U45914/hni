@@ -280,44 +280,77 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 	@Override
 	public Map<String, String> saveVolunteerAvailability(ObjectNode availableJSON) {
 		Map<String, String> response = new HashMap<>();
-		VolunteerAvailability volunteerAvailability;
-		for (int i = 0; i < availableJSON.size(); i++) {
-			volunteerAvailability = new VolunteerAvailability();
-			if(availableJSON.has("shiftOne")){
-				volunteerAvailability.setTimeline(1);
-				volunteerAvailability.setWeekday(jsonArrayToCommaSeperatedString((ArrayNode) availableJSON.get("shiftOne")));
+		
+		int volunteerId = findIdByType(((Long)ThreadContext.get(Constants.USERID)), "volunteer").intValue();
+		List<VolunteerAvailability> volunteerAvailabilities = volunteerAvailabilityDAO.getVolunteerAvailabilityByVolunteerId(volunteerId);
+		if(!volunteerAvailabilities.isEmpty()){
+			for (VolunteerAvailability volunteerAvailability : volunteerAvailabilities) {
+				if(volunteerAvailability.getTimeline()==1 && availableJSON.has("shiftOne")){
+					volunteerAvailability.setWeekday(jsonArrayToCommaSeperatedString((ArrayNode) availableJSON.get("shiftOne")));
+					volunteerAvailabilityDAO.update(volunteerAvailability);
+				}
+				else if(volunteerAvailability.getTimeline()==2 && availableJSON.has("shiftTwo")){
+					volunteerAvailability.setWeekday(jsonArrayToCommaSeperatedString((ArrayNode) availableJSON.get("shiftTwo")));
+					volunteerAvailabilityDAO.update(volunteerAvailability);
+				}
+				else if(volunteerAvailability.getTimeline()==3 && availableJSON.has("shiftThree")){
+					volunteerAvailability.setWeekday(jsonArrayToCommaSeperatedString((ArrayNode) availableJSON.get("shiftThree")));
+					volunteerAvailabilityDAO.update(volunteerAvailability);
+				}
+				else if(volunteerAvailability.getTimeline()==4 && availableJSON.has("shiftFour")){
+					volunteerAvailability.setWeekday(jsonArrayToCommaSeperatedString((ArrayNode) availableJSON.get("shiftFour")));
+					volunteerAvailabilityDAO.update(volunteerAvailability);
+				}
+				else if(volunteerAvailability.getTimeline()==5 && availableJSON.has("shiftFour")){
+					volunteerAvailability.setWeekday(jsonArrayToCommaSeperatedString((ArrayNode) availableJSON.get("shiftFive")));
+					volunteerAvailabilityDAO.update(volunteerAvailability);
+				}
+				else if(volunteerAvailability.getTimeline()==6 && availableJSON.has("shiftSix")){
+					volunteerAvailability.setWeekday(jsonArrayToCommaSeperatedString((ArrayNode) availableJSON.get("shiftSix")));
+					volunteerAvailabilityDAO.update(volunteerAvailability);
+				}
+				else if(volunteerAvailability.getTimeline()==7 && availableJSON.has("shiftSeven")){
+					volunteerAvailability.setWeekday(jsonArrayToCommaSeperatedString((ArrayNode) availableJSON.get("shiftSeven")));
+					volunteerAvailabilityDAO.update(volunteerAvailability);
+				}
 			}
-			else if(availableJSON.has("shiftTwo")){
-				volunteerAvailability.setTimeline(2);
-				volunteerAvailability.setWeekday(jsonArrayToCommaSeperatedString((ArrayNode) availableJSON.get("shiftTwo")));
-			}
-			else if(availableJSON.has("shiftThree")){
-				volunteerAvailability.setTimeline(3);
-				volunteerAvailability.setWeekday(jsonArrayToCommaSeperatedString((ArrayNode) availableJSON.get("shiftThree")));
-			}
-			else if(availableJSON.has("shiftFour")){
-				volunteerAvailability.setTimeline(4);
-				volunteerAvailability.setWeekday(jsonArrayToCommaSeperatedString((ArrayNode) availableJSON.get("shiftFour")));
-			}
-			else if(availableJSON.has("shiftFive")){
-				volunteerAvailability.setTimeline(5);
-				volunteerAvailability.setWeekday(jsonArrayToCommaSeperatedString((ArrayNode) availableJSON.get("shiftFive")));
-			}
-			else if(availableJSON.has("shiftSix")){
-				volunteerAvailability.setTimeline(6);
-				volunteerAvailability.setWeekday(jsonArrayToCommaSeperatedString((ArrayNode) availableJSON.get("shiftSix")));
-			}
-			else if(availableJSON.has("shiftSeven")){
-				volunteerAvailability.setTimeline(7);
-				volunteerAvailability.setWeekday(jsonArrayToCommaSeperatedString((ArrayNode) availableJSON.get("shiftSeven")));
-			}
-			volunteerAvailability.setVolunteerId(findIdByType(((Long)ThreadContext.get(Constants.USERID)), "volunteer").intValue());
-			volunteerAvailability.setCreatedBy(((Long)ThreadContext.get(Constants.USERID)).intValue());
-			volunteerAvailability.setCreated(new Date());
-			volunteerAvailabilityDAO.save(volunteerAvailability);
 		}
+		else{
+			if(availableJSON.has("shiftOne")){
+				saveVolunteerAvailability(1, jsonArrayToCommaSeperatedString((ArrayNode) availableJSON.get("shiftOne")));
+			}
+			if(availableJSON.has("shiftTwo")){
+				saveVolunteerAvailability(2, jsonArrayToCommaSeperatedString((ArrayNode) availableJSON.get("shiftTwo")));
+			}
+			if(availableJSON.has("shiftThree")){
+				saveVolunteerAvailability(3, jsonArrayToCommaSeperatedString((ArrayNode) availableJSON.get("shiftThree")));
+			}
+			if(availableJSON.has("shiftFour")){
+				saveVolunteerAvailability(4, jsonArrayToCommaSeperatedString((ArrayNode) availableJSON.get("shiftFour")));
+			}
+			if(availableJSON.has("shiftFive")){
+				saveVolunteerAvailability(5, jsonArrayToCommaSeperatedString((ArrayNode) availableJSON.get("shiftFive")));
+			}
+			if(availableJSON.has("shiftSix")){
+				saveVolunteerAvailability(6, jsonArrayToCommaSeperatedString((ArrayNode) availableJSON.get("shiftSix")));
+			}
+			if(availableJSON.has("shiftSeven")){
+				saveVolunteerAvailability(7, jsonArrayToCommaSeperatedString((ArrayNode) availableJSON.get("shiftSeven")));
+			}
+		}
+		
 		response.put("response", "success");
 		return response;
+	}
+	
+	private void saveVolunteerAvailability(int timeline, String availableDays) {
+		VolunteerAvailability volunteerAvailability = new VolunteerAvailability();
+		volunteerAvailability.setTimeline(timeline);
+		volunteerAvailability.setWeekday(availableDays);
+		volunteerAvailability.setVolunteerId(findIdByType(((Long)ThreadContext.get(Constants.USERID)), "volunteer").intValue());
+		volunteerAvailability.setCreatedBy(((Long)ThreadContext.get(Constants.USERID)).intValue());
+		volunteerAvailability.setCreated(new Date());
+		volunteerAvailabilityDAO.save(volunteerAvailability);
 	}
 	 
 	 private String jsonArrayToCommaSeperatedString(ArrayNode jsonArray){
@@ -331,4 +364,54 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 		 }
 		 return value.toString();
 	 }
+
+	@Override
+	public ObjectNode getVolunteerAvailability(Long userId) {
+		if(userId>0){
+			int volunteerId = findIdByType(((Long)ThreadContext.get(Constants.USERID)), "volunteer").intValue();
+			List<VolunteerAvailability> volunteerAvailabilities = volunteerAvailabilityDAO.getVolunteerAvailabilityByVolunteerId(volunteerId);
+			ObjectNode availableJSON = new ObjectMapper().createObjectNode();
+			for (VolunteerAvailability volunteerAvailability : volunteerAvailabilities) {
+				if(volunteerAvailability.getTimeline()==1){
+					availableJSON.set("shiftOne", commaSeperatedStringToJSONArray(volunteerAvailability.getWeekday()));
+				}
+				if(volunteerAvailability.getTimeline()==2){
+					availableJSON.set("shiftTwo", commaSeperatedStringToJSONArray(volunteerAvailability.getWeekday()));
+				}
+				if(volunteerAvailability.getTimeline()==3){
+					availableJSON.set("shiftThree", commaSeperatedStringToJSONArray(volunteerAvailability.getWeekday()));
+				}
+				if(volunteerAvailability.getTimeline()==4){
+					availableJSON.set("shiftFour", commaSeperatedStringToJSONArray(volunteerAvailability.getWeekday()));
+				}
+				if(volunteerAvailability.getTimeline()==5){
+					availableJSON.set("shiftFive", commaSeperatedStringToJSONArray(volunteerAvailability.getWeekday()));
+				}
+				if(volunteerAvailability.getTimeline()==6){
+					availableJSON.set("shiftSix", commaSeperatedStringToJSONArray(volunteerAvailability.getWeekday()));
+				}
+				if(volunteerAvailability.getTimeline()==7){
+					availableJSON.set("shiftSeven", commaSeperatedStringToJSONArray(volunteerAvailability.getWeekday()));
+				}
+			}
+			return availableJSON;
+		}
+		return null;
+	}
+	
+	private ArrayNode commaSeperatedStringToJSONArray(String value){
+		ArrayNode arrayNode = new ObjectMapper().createArrayNode();
+		if(!value.isEmpty()){
+			if(value.contains(",")){
+				String[] strArray = value.split(",");
+				for (int i = 0; i < strArray.length; i++) {
+					arrayNode.add(strArray[i]);
+				}
+			}
+			else{
+				arrayNode.add(value);
+			}
+		}
+		return arrayNode;
+	}
 }

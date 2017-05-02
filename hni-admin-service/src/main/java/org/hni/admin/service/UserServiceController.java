@@ -356,14 +356,15 @@ public class UserServiceController extends AbstractBaseController {
 	@Produces({MediaType.APPLICATION_JSON})
 	@ApiOperation(value = "Service for saving details of Volunteer", notes = "", response = Map.class, responseContainer = "")
 	public Response saveVolunteerAvailability(){
-		Map<String,String> response = new HashMap<>();
 		try {
-			
+			ObjectNode objectNode = userOnBoardingService.getVolunteerAvailability(getLoggedInUser().getId());
+			return Response.ok(objectNode).build();
 		} catch (Exception e) {
 			_LOGGER.error("Save VolunteerAvailability Failed");
+			Map<String,String> response = new HashMap<>();
 			response.put(ERROR, "Save VolunteerAvailability Failed");
+			return Response.ok(response).build();
 		}
-		return Response.ok(response).build();
 	}
 	
 
