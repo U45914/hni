@@ -190,7 +190,10 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 		if (user != null) {
 			overViewNode.put("address", HNIConverter.getAddress(mapper.createObjectNode(), user.getAddresses()));
 			overViewNode.put("name", user.getFirstName() + " " + user.getLastName());
-			overViewNode.put("phone", user.getMobilePhone());
+			overViewNode.put("mobilePhone", user.getMobilePhone());
+			overViewNode.put("genderCode", user.getGenderCode());
+			 
+			 
 		}
 
 		parentJSON.set("overview", overViewNode);
@@ -248,11 +251,13 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 			response.put("response", ngoInfo);
 		} else if(type.equalsIgnoreCase("Volunteer")){
 			Volunteer volunteer = volunteerDao.get(id);
+			volunteer.setUser(user);
 			volunteer.setAddress(getAddress(user.getAddresses()));
 			response.put("response", volunteer);
 		} else if(type.equalsIgnoreCase("Client")){
 			Client client = ngoGenericDAO.get(Client.class,id);
 			client.setAddress(getAddress(user.getAddresses()));
+			client.setUser(user);
 			response.put("response", ngoGenericDAO.get(Client.class,id));
 		}
 		
