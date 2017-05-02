@@ -156,7 +156,8 @@ public class Client implements Persistable, Serializable {
 	private Integer lastVisitDoctor;
 	@Column(name = "last_visit_dentist")
 	private Integer lastVisitDentist;
-
+	@Column(name = "live_with")
+	private Integer liveWith;
 	public Client() {
 	}
 
@@ -173,7 +174,7 @@ public class Client implements Persistable, Serializable {
 			String monthlyPlanData, String monthlyPlanCost,
 			Integer altMonthlyPlan, String altMonthlyPlanTogether,
 			Integer sliblings, Integer kids, boolean liveAtHome,
-			Integer sheltered, Integer parentEducation, Integer education,
+			Integer sheltered, Integer liveWith, Integer parentEducation, Integer education,
 			Integer enrollmentStatus, String enrollmentLocation,
 			Integer workStatus, Integer timeToWorkplace, Integer noOfJob,
 			String employer, String jobTitle, Integer durationOfEmployement,
@@ -211,6 +212,7 @@ public class Client implements Persistable, Serializable {
 		this.kids = kids;
 		this.liveAtHome = liveAtHome;
 		this.sheltered = sheltered;
+		this.liveWith = liveWith;
 		this.parentEducation = parentEducation;
 		this.education = education;
 		this.enrollmentStatus = enrollmentStatus;
@@ -364,7 +366,7 @@ public class Client implements Persistable, Serializable {
 		this.haveMonthlyPlan = haveMonthlyPlan;
 	}
 
-	
+
 	public String getMonthlyPlanMinute() {
 		return this.monthlyPlanMinute;
 	}
@@ -445,7 +447,13 @@ public class Client implements Persistable, Serializable {
 		this.sheltered = sheltered;
 	}
 
-	
+	public Integer getLiveWith() {
+		return liveWith;
+	}
+
+	public void setLiveWith(Integer liveWith) {
+		this.liveWith = liveWith;
+	}
 	public Integer getParentEducation() {
 		return this.parentEducation;
 	}
