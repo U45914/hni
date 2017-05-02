@@ -81,6 +81,10 @@ public class UserOnboardingController extends AbstractBaseController {
 			if (!ors) {
 				Organization organization = organizationService.save(org);
 				String UUID = userOnBoardingService.buildInvitationAndSave(organization.getId(), getLoggedInUser().getId(), organization.getEmail());
+				if(UUID == null){
+					map.put(ERROR_MSG, "A user with same email address already exist");
+					return map;
+				}
 				emailComponent.sendEmail(organization.getEmail(), UUID, "ngo" , null, null);
 				map.put(RESPONSE, SUCCESS);
 				return map;
