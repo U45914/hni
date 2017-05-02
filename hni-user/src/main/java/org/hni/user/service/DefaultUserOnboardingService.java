@@ -165,7 +165,10 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 			volunteer.setCreated(new Date());
 			volunteer.setCreatedBy(createdBy);
 			volunteer.setUserId(user.getId());
-			volunteerDao.save(volunteer);
+			volunteer = volunteerDao.save(volunteer);
+			if (volunteer.getId() != null) {
+				ngoGenericDAO.updateStatus(volunteer.getUserId());
+			}
 		}
 		return error;
 	}
@@ -225,6 +228,10 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 		HNIValidator.validateClient(client, error);
 		if(error!=null && error.isEmpty()) {
 			clientDAO.save(client);
+			if (client.getId() != null) {
+				ngoGenericDAO.updateStatus(client.getUserId());
+			}
+			
 		}
 		return error;
 	}
@@ -243,7 +250,7 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 			Volunteer volunteer = volunteerDao.get(id);
 			volunteer.setAddress(getAddress(user.getAddresses()));
 			response.put("response", volunteer);
-		} else if(type.equalsIgnoreCase("Customer")){
+		} else if(type.equalsIgnoreCase("Client")){
 			Client client = ngoGenericDAO.get(Client.class,id);
 			client.setAddress(getAddress(user.getAddresses()));
 			response.put("response", ngoGenericDAO.get(Client.class,id));
