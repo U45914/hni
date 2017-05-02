@@ -39,7 +39,6 @@ import org.hni.passwordvalidater.CheckPassword;
 import org.hni.security.dao.RoleDAO;
 import org.hni.security.om.ActivationCode;
 import org.hni.security.service.ActivationCodeService;
-import org.hni.type.HNIRoles;
 import org.hni.user.om.Client;
 import org.hni.user.om.Ngo;
 import org.hni.user.om.Report;

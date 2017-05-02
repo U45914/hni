@@ -168,35 +168,62 @@ insert into provider_location_hours values(3,3,'Mon',8,20);
 
 truncate table hni_services;
 -- Super Admin
-insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,1,'NGO Invitation','ngoInvitation','','Y',now());
-insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,1,'Customer Onboarding','custOnboard','','Y',now());
-insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,1,'Clients','clients','','Y',now());
-insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,1,'User Profile','user-profile','','Y',now());
-insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,1,'View Organizations','user-profile','','Y',now());
+INSERT INTO `hni_services` (`id`, `org_id`, `role_id`, `service_name`, `service_path`, `service_img`, `active`, `created`) VALUES
+	(1, 2, 1, 'NGO Invitation', 'ngoInvitation', '', 'Y', '2017-05-02 13:16:58'),
+	(2, 2, 1, 'Client Invitation', 'clientInvitation', '', 'Y', '2017-05-02 13:16:58'),
+	(3, 2, 1, 'Volunteer Invitation', 'inviteVolunteer', '', 'Y', '2017-05-02 13:16:59'),
+	(4, 2, 1, 'Reports', 'reports', '', 'Y', '2017-05-02 13:16:59'),
+	(5, 2, 1, 'Settings', 'settings', '', 'Y', '2017-05-02 13:16:59'),
+	(6, 2, 6, 'Add NGO', 'addNgo', '', 'Y', '2017-05-02 13:16:59'),
+	(7, 2, 6, 'Client Invitation', 'clientInvitation', '', 'Y', '2017-05-02 13:16:59'),
+	(8, 2, 6, 'Volunteer Invitaion', 'inviteVolunteer', '', 'Y', '2017-05-02 13:16:59'),
+	(9, 2, 6, 'View Profile', 'profile', '', 'Y', '2017-05-02 13:16:59'),
+	(10, 2, 6, 'Change Password', 'change-password', '', 'Y', '2017-05-02 13:16:59'),
+	(11, 2, 6, 'View Customers', 'view-customers', '', 'Y', '2017-05-02 13:16:59'),
+	(12, 2, 7, 'Client Invitation', 'clientInvitation', '', 'Y', '2017-05-02 13:16:59'),
+	(13, 2, 7, 'Clients', 'clients', '', 'Y', '2017-05-02 13:16:59'),
+	(14, 2, 7, 'Volunteer Invitaion', 'inviteVolunteer', '', 'Y', '2017-05-02 13:16:59'),
+	(15, 2, 7, 'View Profile', 'profile', '', 'Y', '2017-05-02 13:16:59'),
+	(16, 2, 7, 'Change Password', 'change-password', '', 'Y', '2017-05-02 13:16:59'),
+	(17, 2, 7, 'Add Resturants', 'add-resturants', '', 'Y', '2017-05-02 13:16:59'),
+	(18, 2, 3, 'Place Order', 'order', '', 'Y', '2017-05-02 13:16:59'),
+	(19, 2, 3, 'My Orders', 'my-orders', '', 'Y', '2017-05-02 13:16:59'),
+	(20, 2, 3, 'View Profile', 'profile', '', 'Y', '2017-05-02 13:16:59'),
+	(21, 2, 3, 'Change Password', 'change-password', '', 'Y', '2017-05-02 13:16:59'),
+	(22, 2, 4, 'Request Food', 'hungry', '', 'Y', '2017-05-02 13:16:59'),
+	(23, 2, 4, 'My Orders', 'my-orders', '', 'Y', '2017-05-02 13:16:59'),
+	(24, 2, 4, 'View Profile', 'user-profile', '', 'Y', '2017-05-02 13:16:59'),
+	(25, 2, 4, 'Change Password', 'change-password', '', 'Y', '2017-05-02 13:16:59');
+	
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,1,'NGO Invitation','ngoInvitation','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,1,'Customer Onboarding','custOnboard','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,1,'Clients','clients','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,1,'User Profile','user-profile','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,1,'View Organizations','user-profile','','Y',now());
 -- NGO Admin
-insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,6,'Add NGO','addNgo','','Y',now());
-insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,6,'Customer Onboarding','custOnboard','','Y',now());
-insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,6,'Clients','clients','','Y',now());
-insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,6,'User Profile','user-profile','','Y',now());
-insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,6,'Change Password','change-password','','Y',now());
-insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,6,'View Customers','view-customers','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,6,'Add NGO','addNgo','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,6,'Customer Onboarding','custOnboard','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,6,'Clients','clients','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,6,'User Profile','user-profile','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,6,'Change Password','change-password','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,6,'View Customers','view-customers','','Y',now());
 -- NGO
-insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,7,'Customer Onboarding','custOnboard','','Y',now());
-insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,7,'Clients','clients','','Y',now());
-insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,7,'User Profile','user-profile','','Y',now());
-insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,7,'Change Password','change-password','','Y',now());
-insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,7,'View Customers','view-customers','','Y',now());
-insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,7,'Add Resturants','add-resturants','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,7,'Customer Onboarding','custOnboard','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,7,'Clients','clients','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,7,'User Profile','user-profile','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,7,'Change Password','change-password','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,7,'View Customers','view-customers','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,7,'Add Resturants','add-resturants','','Y',now());
 -- Volunteers
-insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,3,'Place Order','order','','Y',now());
-insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,3,'My Orders','my-orders','','Y',now());
-insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,3,'User Profile','user-profile','','Y',now());
-insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,3,'Change Password','change-password','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,3,'Place Order','order','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,3,'My Orders','my-orders','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,3,'User Profile','user-profile','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,3,'Change Password','change-password','','Y',now());
 -- Customers
-insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,4,'Request Food','hungry','','Y',now());
-insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,4,'My Orders','my-orders','','Y',now());
-insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,4,'User Profile','user-profile','','Y',now());
-insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,4,'Change Password','change-password','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,4,'Request Food','hungry','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,4,'My Orders','my-orders','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,4,'User Profile','user-profile','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,4,'Change Password','change-password','','Y',now());
 
 
 -- Reports
