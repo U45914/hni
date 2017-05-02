@@ -256,9 +256,8 @@ public class Client implements Persistable, Serializable {
 		this.lastVisitDentist = lastVisitDentist;
 	}
 
-	@Id
-	@GeneratedValue(strategy = IDENTITY)
-	@Column(name = "id", unique = true, nullable = false)
+	
+	
 	public Integer getId() {
 		return this.id;
 	}
@@ -267,7 +266,7 @@ public class Client implements Persistable, Serializable {
 		this.id = id;
 	}
 
-	@Column(name = "user_id", nullable = false)
+	
 	public Long getUserId() {
 		return this.userId;
 	}
@@ -276,7 +275,7 @@ public class Client implements Persistable, Serializable {
 		this.userId = userId;
 	}
 
-	@Column(name = "created_by", nullable = false)
+	
 	public Long getCreatedBy() {
 		return this.createdBy;
 	}
@@ -285,7 +284,7 @@ public class Client implements Persistable, Serializable {
 		this.createdBy = createdBy;
 	}
 
-	@Column(name = "race", nullable = false)
+	
 	public Long getRace() {
 		return this.race;
 	}
@@ -302,7 +301,7 @@ public class Client implements Persistable, Serializable {
 		this.address = address;
 	}
 
-	@Column(name = "bday")
+	
 	public Date getBday() {
 		return this.bday;
 	}
@@ -311,7 +310,7 @@ public class Client implements Persistable, Serializable {
 		this.bday = bday;
 	}
 
-	@Column(name = "been_arrested", length = 1)
+	
 	public boolean getBeenArrested() {
 		return this.beenArrested;
 	}
@@ -320,7 +319,7 @@ public class Client implements Persistable, Serializable {
 		this.beenArrested = beenArrested;
 	}
 
-	@Column(name = "been_convicted", length = 1)
+	
 	public boolean getBeenConvicted() {
 		return this.beenConvicted;
 	}
@@ -329,7 +328,7 @@ public class Client implements Persistable, Serializable {
 		this.beenConvicted = beenConvicted;
 	}
 
-	@Column(name = "has_smart_phone", length = 1)
+	
 	public boolean getHasSmartPhone() {
 		return this.hasSmartPhone;
 	}
@@ -338,7 +337,7 @@ public class Client implements Persistable, Serializable {
 		this.hasSmartPhone = hasSmartPhone;
 	}
 
-	@Column(name = "service_provider", length = 50)
+	
 	public String getServiceProvider() {
 		return this.serviceProvider;
 	}
@@ -347,7 +346,7 @@ public class Client implements Persistable, Serializable {
 		this.serviceProvider = serviceProvider;
 	}
 
-	@Column(name = "model", length = 50)
+	
 	public String getModel() {
 		return this.model;
 	}
@@ -356,7 +355,7 @@ public class Client implements Persistable, Serializable {
 		this.model = model;
 	}
 
-	@Column(name = "have_monthly_plan", length = 1)
+	
 	public boolean getHaveMonthlyPlan() {
 		return this.haveMonthlyPlan;
 	}
@@ -365,7 +364,7 @@ public class Client implements Persistable, Serializable {
 		this.haveMonthlyPlan = haveMonthlyPlan;
 	}
 
-	@Column(name = "monthly_plan_minute", length = 50)
+	
 	public String getMonthlyPlanMinute() {
 		return this.monthlyPlanMinute;
 	}
@@ -374,7 +373,7 @@ public class Client implements Persistable, Serializable {
 		this.monthlyPlanMinute = monthlyPlanMinute;
 	}
 
-	@Column(name = "monthly_plan_data", length = 50)
+	
 	public String getMonthlyPlanData() {
 		return this.monthlyPlanData;
 	}
@@ -383,7 +382,7 @@ public class Client implements Persistable, Serializable {
 		this.monthlyPlanData = monthlyPlanData;
 	}
 
-	@Column(name = "monthly_plan_cost", length = 50)
+	
 	public String getMonthlyPlanCost() {
 		return this.monthlyPlanCost;
 	}
@@ -392,7 +391,7 @@ public class Client implements Persistable, Serializable {
 		this.monthlyPlanCost = monthlyPlanCost;
 	}
 
-	@Column(name = "alt_monthly_plan")
+	
 	public Integer getAltMonthlyPlan() {
 		return this.altMonthlyPlan;
 	}
@@ -401,7 +400,7 @@ public class Client implements Persistable, Serializable {
 		this.altMonthlyPlan = altMonthlyPlan;
 	}
 
-	@Column(name = "alt_monthly_plan_together", length = 50)
+	
 	public String getAltMonthlyPlanTogether() {
 		return this.altMonthlyPlanTogether;
 	}
@@ -410,7 +409,7 @@ public class Client implements Persistable, Serializable {
 		this.altMonthlyPlanTogether = altMonthlyPlanTogether;
 	}
 
-	@Column(name = "sliblings")
+	
 	public Integer getSliblings() {
 		return this.sliblings;
 	}
@@ -419,7 +418,7 @@ public class Client implements Persistable, Serializable {
 		this.sliblings = sliblings;
 	}
 
-	@Column(name = "kids")
+	
 	public Integer getKids() {
 		return this.kids;
 	}
@@ -428,7 +427,7 @@ public class Client implements Persistable, Serializable {
 		this.kids = kids;
 	}
 
-	@Column(name = "live_at_home", length = 1)
+	
 	public boolean getLiveAtHome() {
 		return this.liveAtHome;
 	}
@@ -437,7 +436,7 @@ public class Client implements Persistable, Serializable {
 		this.liveAtHome = liveAtHome;
 	}
 
-	@Column(name = "sheltered")
+	
 	public Integer getSheltered() {
 		return this.sheltered;
 	}
@@ -446,7 +445,7 @@ public class Client implements Persistable, Serializable {
 		this.sheltered = sheltered;
 	}
 
-	@Column(name = "parent_education")
+	
 	public Integer getParentEducation() {
 		return this.parentEducation;
 	}
@@ -455,7 +454,7 @@ public class Client implements Persistable, Serializable {
 		this.parentEducation = parentEducation;
 	}
 
-	@Column(name = "education")
+	
 	public Integer getEducation() {
 		return this.education;
 	}
@@ -464,7 +463,7 @@ public class Client implements Persistable, Serializable {
 		this.education = education;
 	}
 
-	@Column(name = "enrollment_status")
+	
 	public Integer getEnrollmentStatus() {
 		return this.enrollmentStatus;
 	}
@@ -473,7 +472,7 @@ public class Client implements Persistable, Serializable {
 		this.enrollmentStatus = enrollmentStatus;
 	}
 
-	@Column(name = "enrollment_location", length = 50)
+	
 	public String getEnrollmentLocation() {
 		return this.enrollmentLocation;
 	}
@@ -482,7 +481,7 @@ public class Client implements Persistable, Serializable {
 		this.enrollmentLocation = enrollmentLocation;
 	}
 
-	@Column(name = "work_status")
+	
 	public Integer getWorkStatus() {
 		return this.workStatus;
 	}
@@ -491,7 +490,7 @@ public class Client implements Persistable, Serializable {
 		this.workStatus = workStatus;
 	}
 
-	@Column(name = "time_to_workplace")
+	
 	public Integer getTimeToWorkplace() {
 		return this.timeToWorkplace;
 	}
@@ -500,7 +499,7 @@ public class Client implements Persistable, Serializable {
 		this.timeToWorkplace = timeToWorkplace;
 	}
 
-	@Column(name = "no_of_job")
+	
 	public Integer getNoOfJob() {
 		return this.noOfJob;
 	}
@@ -509,7 +508,7 @@ public class Client implements Persistable, Serializable {
 		this.noOfJob = noOfJob;
 	}
 
-	@Column(name = "employer", length = 50)
+	
 	public String getEmployer() {
 		return this.employer;
 	}
@@ -518,7 +517,7 @@ public class Client implements Persistable, Serializable {
 		this.employer = employer;
 	}
 
-	@Column(name = "job_title", length = 50)
+	
 	public String getJobTitle() {
 		return this.jobTitle;
 	}
@@ -527,7 +526,7 @@ public class Client implements Persistable, Serializable {
 		this.jobTitle = jobTitle;
 	}
 
-	@Column(name = "duration_of_employement")
+	
 	public Integer getDurationOfEmployement() {
 		return this.durationOfEmployement;
 	}
@@ -536,7 +535,7 @@ public class Client implements Persistable, Serializable {
 		this.durationOfEmployement = durationOfEmployement;
 	}
 
-	@Column(name = "unemployment_benfits", length = 1)
+	
 	public boolean getUnemploymentBenfits() {
 		return this.unemploymentBenfits;
 	}
@@ -545,7 +544,7 @@ public class Client implements Persistable, Serializable {
 		this.unemploymentBenfits = unemploymentBenfits;
 	}
 
-	@Column(name = "reason_unemployment_benefits", length = 100)
+	
 	public String getReasonUnemploymentBenefits() {
 		return this.reasonUnemploymentBenefits;
 	}
@@ -554,7 +553,7 @@ public class Client implements Persistable, Serializable {
 		this.reasonUnemploymentBenefits = reasonUnemploymentBenefits;
 	}
 
-	@Column(name = "total_income", precision = 22, scale = 0)
+	
 	public Double getTotalIncome() {
 		return this.totalIncome;
 	}
@@ -563,7 +562,7 @@ public class Client implements Persistable, Serializable {
 		this.totalIncome = totalIncome;
 	}
 
-	@Column(name = "rate_amount")
+	
 	public Integer getRateAmount() {
 		return this.rateAmount;
 	}
@@ -572,7 +571,7 @@ public class Client implements Persistable, Serializable {
 		this.rateAmount = rateAmount;
 	}
 
-	@Column(name = "rate_type")
+	
 	public Integer getRateType() {
 		return this.rateType;
 	}
@@ -581,7 +580,7 @@ public class Client implements Persistable, Serializable {
 		this.rateType = rateType;
 	}
 
-	@Column(name = "avg_hours_per_week")
+	
 	public String getAvgHoursPerWeek() {
 		return this.avgHoursPerWeek;
 	}
@@ -590,7 +589,7 @@ public class Client implements Persistable, Serializable {
 		this.avgHoursPerWeek = avgHoursPerWeek;
 	}
 
-	@Column(name = "resident_status")
+	
 	public Integer getResidentStatus() {
 		return this.residentStatus;
 	}
@@ -599,7 +598,7 @@ public class Client implements Persistable, Serializable {
 		this.residentStatus = residentStatus;
 	}
 
-	@Column(name = "dollar_spend_food")
+	
 	public Integer getDollarSpendFood() {
 		return this.dollarSpendFood;
 	}
@@ -608,7 +607,7 @@ public class Client implements Persistable, Serializable {
 		this.dollarSpendFood = dollarSpendFood;
 	}
 
-	@Column(name = "dollar_spend_clothes")
+	
 	public Integer getDollarSpendClothes() {
 		return this.dollarSpendClothes;
 	}
@@ -617,7 +616,7 @@ public class Client implements Persistable, Serializable {
 		this.dollarSpendClothes = dollarSpendClothes;
 	}
 
-	@Column(name = "dollar_spend_entertainment")
+	
 	public Integer getDollarSpendEntertainment() {
 		return this.dollarSpendEntertainment;
 	}
@@ -626,7 +625,7 @@ public class Client implements Persistable, Serializable {
 		this.dollarSpendEntertainment = dollarSpendEntertainment;
 	}
 
-	@Column(name = "dollar_spend_transport")
+	
 	public Integer getDollarSpendTransport() {
 		return this.dollarSpendTransport;
 	}
@@ -635,7 +634,7 @@ public class Client implements Persistable, Serializable {
 		this.dollarSpendTransport = dollarSpendTransport;
 	}
 
-	@Column(name = "dollar_spend_savings")
+	
 	public Integer getDollarSpendSavings() {
 		return this.dollarSpendSavings;
 	}
@@ -644,7 +643,7 @@ public class Client implements Persistable, Serializable {
 		this.dollarSpendSavings = dollarSpendSavings;
 	}
 
-	@Column(name = "meals_per_day")
+	
 	public Integer getMealsPerDay() {
 		return this.mealsPerDay;
 	}
@@ -653,7 +652,7 @@ public class Client implements Persistable, Serializable {
 		this.mealsPerDay = mealsPerDay;
 	}
 
-	@Column(name = "food_preference")
+	
 	public Integer getFoodPreference() {
 		return this.foodPreference;
 	}
@@ -662,7 +661,7 @@ public class Client implements Persistable, Serializable {
 		this.foodPreference = foodPreference;
 	}
 
-	@Column(name = "food_source", length = 50)
+	
 	public String getFoodSource() {
 		return this.foodSource;
 	}
@@ -671,7 +670,7 @@ public class Client implements Persistable, Serializable {
 		this.foodSource = foodSource;
 	}
 
-	@Column(name = "cook", length = 1)
+	
 	public boolean getCook() {
 		return this.cook;
 	}
@@ -680,7 +679,7 @@ public class Client implements Persistable, Serializable {
 		this.cook = cook;
 	}
 
-	@Column(name = "travel_for_food_distance")
+	
 	public Integer getTravelForFoodDistance() {
 		return this.travelForFoodDistance;
 	}
@@ -689,7 +688,7 @@ public class Client implements Persistable, Serializable {
 		this.travelForFoodDistance = travelForFoodDistance;
 	}
 
-	@Column(name = "traval_for_food_time")
+	
 	public Integer getTravalForFoodTime() {
 		return this.travalForFoodTime;
 	}
@@ -698,7 +697,7 @@ public class Client implements Persistable, Serializable {
 		this.travalForFoodTime = travalForFoodTime;
 	}
 
-	@Column(name = "sub_food_program", length = 1)
+	
 	public boolean getSubFoodProgram() {
 		return this.subFoodProgram;
 	}
@@ -707,7 +706,7 @@ public class Client implements Persistable, Serializable {
 		this.subFoodProgram = subFoodProgram;
 	}
 
-	@Column(name = "sub_food_program_entity", length = 50)
+	
 	public String getSubFoodProgramEntity() {
 		return this.subFoodProgramEntity;
 	}
@@ -716,7 +715,7 @@ public class Client implements Persistable, Serializable {
 		this.subFoodProgramEntity = subFoodProgramEntity;
 	}
 
-	@Column(name = "sub_food_program_duration")
+	
 	public Integer getSubFoodProgramDuration() {
 		return this.subFoodProgramDuration;
 	}
@@ -725,7 +724,7 @@ public class Client implements Persistable, Serializable {
 		this.subFoodProgramDuration = subFoodProgramDuration;
 	}
 
-	@Column(name = "sub_food_program_renew")
+	
 	public Integer getSubFoodProgramRenew() {
 		return this.subFoodProgramRenew;
 	}
@@ -734,7 +733,7 @@ public class Client implements Persistable, Serializable {
 		this.subFoodProgramRenew = subFoodProgramRenew;
 	}
 
-	@Column(name = "sub_food_program_exp", length = 256)
+	
 	public String getSubFoodProgramExp() {
 		return this.subFoodProgramExp;
 	}
@@ -743,7 +742,7 @@ public class Client implements Persistable, Serializable {
 		this.subFoodProgramExp = subFoodProgramExp;
 	}
 
-	@Column(name = "allergies", length = 256)
+	
 	public String getAllergies() {
 		return this.allergies;
 	}
@@ -752,7 +751,7 @@ public class Client implements Persistable, Serializable {
 		this.allergies = allergies;
 	}
 
-	@Column(name = "addiction", length = 1)
+	
 	public boolean getAddiction() {
 		return this.addiction;
 	}
@@ -761,7 +760,7 @@ public class Client implements Persistable, Serializable {
 		this.addiction = addiction;
 	}
 
-	@Column(name = "addiction_type", length = 50)
+	
 	public String getAddictionType() {
 		return this.addictionType;
 	}
@@ -770,7 +769,7 @@ public class Client implements Persistable, Serializable {
 		this.addictionType = addictionType;
 	}
 
-	@Column(name = "mental_health_issue", length = 1)
+	
 	public String getMentalHealthIssue() {
 		return this.mentalHealthIssue;
 	}
@@ -779,7 +778,7 @@ public class Client implements Persistable, Serializable {
 		this.mentalHealthIssue = mentalHealthIssue;
 	}
 
-	@Column(name = "mental_health_issue_history", length = 256)
+	
 	public String getMentalHealthIssueHistory() {
 		return this.mentalHealthIssueHistory;
 	}
@@ -788,7 +787,7 @@ public class Client implements Persistable, Serializable {
 		this.mentalHealthIssueHistory = mentalHealthIssueHistory;
 	}
 
-	@Column(name = "height", length = 50)
+	
 	public String getHeight() {
 		return this.height;
 	}
@@ -797,7 +796,7 @@ public class Client implements Persistable, Serializable {
 		this.height = height;
 	}
 
-	@Column(name = "weight", length = 50)
+	
 	public String getWeight() {
 		return this.weight;
 	}
@@ -806,7 +805,7 @@ public class Client implements Persistable, Serializable {
 		this.weight = weight;
 	}
 
-	@Column(name = "exercise_per_week")
+	
 	public Integer getExercisePerWeek() {
 		return this.exercisePerWeek;
 	}
@@ -815,7 +814,7 @@ public class Client implements Persistable, Serializable {
 		this.exercisePerWeek = exercisePerWeek;
 	}
 
-	@Column(name = "last_visit_doctor")
+	
 	public Integer getLastVisitDoctor() {
 		return this.lastVisitDoctor;
 	}
@@ -824,7 +823,7 @@ public class Client implements Persistable, Serializable {
 		this.lastVisitDoctor = lastVisitDoctor;
 	}
 
-	@Column(name = "last_visit_dentist")
+	
 	public Integer getLastVisitDentist() {
 		return this.lastVisitDentist;
 	}
