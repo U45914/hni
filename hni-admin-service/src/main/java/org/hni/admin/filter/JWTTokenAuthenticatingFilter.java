@@ -95,7 +95,6 @@ public class JWTTokenAuthenticatingFilter extends AuthenticatingFilter {
 	@Override
 	protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
 		// force the token auth on every request
-		//return false;
 		return false;
 	}
 
@@ -108,7 +107,6 @@ public class JWTTokenAuthenticatingFilter extends AuthenticatingFilter {
 			httpResponse.getOutputStream().write(String.format("{\"message\":\"%s\"}","Unable to authenticate using the token or credentials provided").getBytes());
 			httpResponse.setStatus(Response.Status.UNAUTHORIZED.getStatusCode());
 			}
-		//return loggedIn;
 		return loggedIn;
 	}
 

@@ -1,6 +1,8 @@
 package org.hni.common.email.service;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.mail.Message;
@@ -14,6 +16,12 @@ import javax.mail.internet.MimeMessage;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+
 
 @Component
 public class EmailComponent {
@@ -46,8 +54,8 @@ public class EmailComponent {
 	@Value("#{hniProperties['mail.template.footer']}")
 	private String emailFooterTemplate;
 	
-	public boolean sendEmail(String receiverEmail, String UUID, String userType, String invitationMessage, String activationCode)
-			throws AddressException, MessagingException, UnsupportedEncodingException {
+	public boolean sendEmail(String receiverEmail, String UUID, String userType, String invitationMessage, String activationCode,String data)
+			throws AddressException, MessagingException, JsonParseException, JsonMappingException, IOException {
 		Properties props = new Properties();
 		props.put("mail.smtp.host", smtpHost);
 		props.put("mail.smtp.socketFactory.port", smtpSocketFactoryPort);
@@ -66,15 +74,17 @@ public class EmailComponent {
 		message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(receiverEmail));
 		message.setSubject(capitalize(userType)+" "+emailSubTemplate);
 		
-		message.setText(getEmailText(userType, UUID, invitationMessage, activationCode));
+		message.setText(getEmailText(userType, UUID, invitationMessage, activationCode,data));
 
 		Transport.send(message);
 		return true;
 	}
 	
-	private String getEmailText(String userType, String code,String invitationMessage, String activationCode) {
+	private String getEmailText(String userType, String code,String invitationMessage, String activationCode,String data) throws JsonParseException, JsonMappingException, IOException {
 		StringBuilder emailTextBuilder = new StringBuilder(50);
-		emailTextBuilder.append(getInviteName(userType));
+		ObjectMapper mapper = new ObjectMapper();
+		Map<String,String> dataMap = (Map) mapper.readValue(data, Map.class);
+		emailTextBuilder.append("Dear "+dataMap.get("name"));
 		emailTextBuilder.append(emailBodyTemplate);
 		if (invitationMessage != null && !invitationMessage.isEmpty()) {
 			emailTextBuilder.append("\n\n"+invitationMessage);

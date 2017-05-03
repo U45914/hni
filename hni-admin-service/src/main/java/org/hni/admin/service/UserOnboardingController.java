@@ -51,6 +51,8 @@ public class UserOnboardingController extends AbstractBaseController {
 
 	private static final Logger _LOGGER = LoggerFactory.getLogger(UserOnboardingController.class);
 
+	private static final String FIRST_NAME = "firstName";
+
 	@Inject
 	private UserOnboardingService userOnBoardingService;
 
@@ -80,12 +82,12 @@ public class UserOnboardingController extends AbstractBaseController {
 			boolean ors = organizationService.isAlreadyExists(org);
 			if (!ors) {
 				Organization organization = organizationService.save(org);
-				String UUID = userOnBoardingService.buildInvitationAndSave(organization.getId(), getLoggedInUser().getId(), organization.getEmail());
+				String UUID = userOnBoardingService.buildInvitationAndSave(organization.getId(), getLoggedInUser().getId(), organization.getEmail(),null);
 				if(UUID == null){
 					map.put(ERROR_MSG, "A user with same email address already exist");
 					return map;
 				}
-				emailComponent.sendEmail(organization.getEmail(), UUID, "ngo" , null, null);
+				emailComponent.sendEmail(organization.getEmail(), UUID, "ngo" , null, null,null);
 				map.put(RESPONSE, SUCCESS);
 				return map;
 			} else {
@@ -115,9 +117,9 @@ public class UserOnboardingController extends AbstractBaseController {
 			} else {
 				organizationId = getLoggedInUser().getOrganizationId() != null ? getLoggedInUser().getOrganizationId() : 1;
 			}
-			String UUID = userOnBoardingService.buildInvitationAndSave(organizationId, getLoggedInUser().getId(), userInfo.get("email"));
+			String UUID = userOnBoardingService.buildInvitationAndSave(organizationId, getLoggedInUser().getId(), userInfo.get("email"), mapper.writeValueAsString(userInfo));
 			if (UUID != null) {
-				emailComponent.sendEmail(userInfo.get("email"), UUID, userType, message, activationCode);
+				emailComponent.sendEmail(userInfo.get("email"), UUID, userType, message, activationCode,mapper.writeValueAsString(userInfo));
 			} else {
 				map.put(RESPONSE, ERROR);
 				map.put("message", "A user with " + userInfo.get("email") + " already exists");
@@ -134,14 +136,16 @@ public class UserOnboardingController extends AbstractBaseController {
 	@Path("/activate/{ngo}/{invitationCode}")
 	@Produces({ MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "", notes = "", response = Map.class, responseContainer = "")
-	public Map<String, String> activateNGO(@PathParam("userType") String userType, @PathParam("invitationCode") String invitationCode) {
+	public Map<String, String> activateNGO(@PathParam("userType") String userType, @PathParam("invitationCode") String invitationCode) throws JsonParseException, JsonMappingException, IOException {
 		Map<String, String> map = new HashMap<>();
 		map.put(RESPONSE, ERROR);
 		List<Invitation> invitations = (List<Invitation>) userOnBoardingService.validateInvitationCode(invitationCode);
+		
 		if (!invitations.isEmpty()) {
 			map.put(RESPONSE, SUCCESS);
 			map.put(ORG_ID, invitations.get(0).getOrganizationId());
 			map.put(USER_NAME, invitations.get(0).getEmail());
+		 	map.put(FIRST_NAME, (String) mapper.readValue(invitations.get(0).getData(), Map.class).get("name"));
 			return map;
 		}
 		return map;
