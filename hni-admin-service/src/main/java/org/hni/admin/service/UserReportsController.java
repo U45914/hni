@@ -40,13 +40,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import net.minidev.json.JSONObject;
 
-/*'Super User'
-'Administrator'
-'Volunteer'
-'Client'
-'User'
-'NGOAdmin'
-'NGO'*/
 
 @Api(value = "/reports/view", description = "Reports for all user type")
 @Component

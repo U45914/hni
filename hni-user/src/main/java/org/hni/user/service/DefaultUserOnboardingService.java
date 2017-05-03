@@ -89,7 +89,7 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 
 
 	@Override
-	public String buildInvitationAndSave(Long orgId, Long invitedBy, String email) {
+	public String buildInvitationAndSave(Long orgId, Long invitedBy, String email,String data) {
 		User user = userDao.byEmailAddress(email);
 		if (user == null) {
 			String UUID = HNIUtils.getUUID();
@@ -100,6 +100,7 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 			invitation.setEmail(email);
 			invitation.setCreatedDate(new Date());
 			invitation.setActivated(0);
+			invitation.setData(data);
 			Calendar cal = Calendar.getInstance();
 			cal.add(Calendar.DAY_OF_MONTH, 5);
 			invitation.setExpirationDate(cal.getTime());
@@ -137,12 +138,17 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 	
 	private String saveNGOData(ObjectNode onboardData, User user){
 		
-		Ngo ngo = ngoGenericDAO.save(Ngo.class ,HNIConverter.getNGOFromJson(onboardData));
+		Ngo ngoExst = ngoGenericDAO.findUnique(Ngo.class,"select x from Ngo x where x.userId=?1 ", user.getId());
+		Ngo ngo =HNIConverter.getNGOFromJson(onboardData);
+		if(ngoExst!=null ){
+			ngo.setId(ngoExst.getId());
+			ngo = ngoGenericDAO.update(Ngo.class ,ngo);
+		}
+		else{
 		Invitation invitation = invitationDAO.getInvitedBy(user.getEmail());
 		ngo.setCreatedBy(invitation.getInvitedBy());
-		
-		ngoGenericDAO.update(Ngo.class, ngo);
-		
+		ngo = ngoGenericDAO.save(Ngo.class ,ngo);
+		}
 		user.setAddresses(HNIConverter.getAddressSet(onboardData));
 		userDao.update(user);
 		
@@ -170,12 +176,16 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 			volunteer.setId(extVolunteer.getId());
 			volunteer.setCreatedBy(extVolunteer.getCreatedBy());
 		} else {
-			Long createdBy = getInvitedBy(volunteer);
-			if(createdBy!=null){
+
+			
+			Long createdBy = getInvitedBy(user.getEmail());
+			if(createdBy==null){
+
 				createdBy = user.getId();
-				volunteer.setCreated(new Date());
-				volunteer.setCreatedBy(createdBy);
+				
 			}
+			volunteer.setCreatedBy(createdBy);
+			volunteer.setCreated(new Date());
 		}
 		volunteer.setUserId(user.getId());
 		
@@ -192,8 +202,8 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 		return error;
 	}
 	
-	private Long getInvitedBy(Volunteer volunteer) {
-		Invitation invitedBy = invitationDAO.getInvitedBy(volunteer.getEmail());
+	private Long getInvitedBy(String email) {
+		Invitation invitedBy = invitationDAO.getInvitedBy(email);
 		return invitedBy.getInvitedBy();
 	} 
 

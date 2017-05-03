@@ -37,7 +37,15 @@ public class Invitation implements Persistable, Serializable{
 	private Long invitedBy;
 	@Column(name ="activated")
 	private Integer activated;
+	@Column(name ="data")
+	private String data;
 	
+	public String getData() {
+		return data;
+	}
+	public void setData(String data) {
+		this.data = data;
+	}
 	public Long getId() {
 		return id;
 	}

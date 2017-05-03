@@ -2,7 +2,6 @@ package org.hni.user.dao;
 
 import java.util.List;
 
-import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.hni.common.dao.AbstractDAO;
@@ -18,7 +17,6 @@ public class ClientDAOImpl extends AbstractDAO<Client> implements ClientDAO  {
 
 	@Override
 	public Client getByUserId(Long userId) {
-		try {
 			Query q = em.createQuery("SELECT x FROM Client x WHERE x.userId = :userId").setParameter("userId", userId);
 			List<Client> clients = q.getResultList();
 			if (clients.isEmpty()) {
@@ -26,9 +24,6 @@ public class ClientDAOImpl extends AbstractDAO<Client> implements ClientDAO  {
 			} else {
 				return clients.get(0);
 			}
-		} catch (NoResultException e) {
-			return null;
-		}
 	}
 
 }

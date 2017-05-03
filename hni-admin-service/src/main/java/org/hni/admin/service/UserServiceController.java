@@ -305,7 +305,7 @@ public class UserServiceController extends AbstractBaseController {
 				}
 			}
 		}catch(Exception e){
-			_LOGGER.error("Client save failed!");
+			_LOGGER.error("Client save failed!"+ e.getMessage());
 		}
 		return Response.ok(response).build();
 	}
@@ -320,6 +320,7 @@ public class UserServiceController extends AbstractBaseController {
 		Map<String,String> response = new HashMap<>();
 		try{
 			user.setAddresses(getAddressSet(user.getAddresses(), volunteer.getAddress()));
+			userService.update(user);
 			
 			Map<String,String> errors =   userOnBoardingService.buildVolunteerAndSave(volunteer, user);
 			if(errors!=null && errors.isEmpty()){
