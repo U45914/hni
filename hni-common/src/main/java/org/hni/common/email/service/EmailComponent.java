@@ -83,8 +83,12 @@ public class EmailComponent {
 	private String getEmailText(String userType, String code,String invitationMessage, String activationCode,String data) throws JsonParseException, JsonMappingException, IOException {
 		StringBuilder emailTextBuilder = new StringBuilder(50);
 		ObjectMapper mapper = new ObjectMapper();
-		Map<String,String> dataMap = (Map) mapper.readValue(data, Map.class);
-		emailTextBuilder.append("Dear "+dataMap.get("name"));
+		if (data != null) {
+			Map<String,String> dataMap = (Map) mapper.readValue(data, Map.class);
+			emailTextBuilder.append("Dear "+dataMap.get("name"));
+		} else {
+			emailTextBuilder.append("Dear User");
+		}
 		emailTextBuilder.append(emailBodyTemplate);
 		if (invitationMessage != null && !invitationMessage.isEmpty()) {
 			emailTextBuilder.append("\n\n"+invitationMessage);
