@@ -2,7 +2,6 @@ package org.hni.user.dao;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -10,7 +9,6 @@ import javax.persistence.Query;
 
 import org.hni.common.dao.DefaultGenericDAO;
 import org.hni.type.HNIRoles;
-import org.hni.user.om.Address;
 import org.hni.user.om.User;
 import org.springframework.stereotype.Component;
 

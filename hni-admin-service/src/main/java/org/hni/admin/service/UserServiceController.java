@@ -39,7 +39,6 @@ import org.hni.passwordvalidater.CheckPassword;
 import org.hni.security.dao.RoleDAO;
 import org.hni.security.om.ActivationCode;
 import org.hni.security.service.ActivationCodeService;
-import org.hni.user.om.Address;
 import org.hni.user.om.Client;
 import org.hni.user.om.Ngo;
 import org.hni.user.om.Report;
@@ -60,7 +59,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import net.minidev.json.JSONObject;
 
 @Api(value = "/users", description = "Operations on Users and to manage Users relationships to organiations")
 @Component
