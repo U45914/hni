@@ -6,7 +6,6 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.hni.admin.service.dto.NgoBasicDto;
-import org.hni.provider.om.Provider;
 import org.hni.user.dao.CustomerDao;
 import org.hni.user.dao.NGOGenericDAO;
 import org.hni.user.om.User;

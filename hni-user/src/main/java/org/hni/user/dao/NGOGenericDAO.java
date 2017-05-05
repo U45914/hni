@@ -6,7 +6,6 @@ import java.util.List;
 import org.hni.admin.service.dto.NgoBasicDto;
 import org.hni.common.dao.DefaultGenericDAO;
 import org.hni.common.om.Persistable;
-import org.hni.provider.om.Provider;
 import org.hni.type.HNIRoles;
 import org.hni.user.om.Address;
 import org.hni.user.om.User;
