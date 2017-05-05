@@ -82,7 +82,7 @@ public class UserReportsController extends AbstractBaseController {
 
 		Map<String, Object> response = new HashMap<>();
 		try {
-			List<User> customers = userReportService.getAllCustomersByRole();
+			List<Map> customers = userReportService.getAllCustomersByRole();
 			response.put("headers", HNIUtils.getReportHeaders(60));
 			response.put("data", customers);
 			response.put(Constants.RESPONSE, Constants.SUCCESS);
@@ -103,7 +103,7 @@ public class UserReportsController extends AbstractBaseController {
 		User user = getLoggedInUser();
 		Map<String, Object> response = new HashMap<>();
 		try {
-			List<User> customers = userReportService.getAllCustomersUnderOrganisation(user);
+			List<Map> customers = userReportService.getAllCustomersUnderOrganisation(user);
 			response.put("headers", HNIUtils.getReportHeaders(60));
 			response.put("data", customers);
 			response.put(Constants.RESPONSE, Constants.SUCCESS);
@@ -127,9 +127,12 @@ public class UserReportsController extends AbstractBaseController {
 			List<Volunteer> volunteers = userReportService.getAllVolunteers(userId);
 			for (Volunteer volunteer : volunteers) {
 				JSONObject json = new JSONObject();
-				json.put("name", volunteer.getFirstName() + " " + volunteer.getLastName());
-				json.put("gender", volunteer.getSex());
+				json.put("firstName", volunteer.getFirstName());
+				json.put("lastName", volunteer.getLastName());
+				json.put("address", volunteer.getAddress().getAddress1()+","+volunteer.getAddress().getCity()+","+volunteer.getAddress().getState());
+				json.put("phone", volunteer.getPhoneNumber());
 				json.put("email", volunteer.getEmail());
+				
 				dataList.add(json);
 			}
 			response.put("headers", HNIUtils.getReportHeaders(50));
@@ -153,7 +156,7 @@ public class UserReportsController extends AbstractBaseController {
 		User user = getLoggedInUser();
 		Map<String, Object> response = new HashMap<>();
 		try {
-			List<User> customers = userReportService.getAllCustomersEnrolledByNgo(user);
+			List<Map> customers = userReportService.getAllCustomersEnrolledByNgo(user);
 			response.put("headers", HNIUtils.getReportHeaders(60));
 			response.put("data", customers);
 			response.put(Constants.RESPONSE, Constants.SUCCESS);

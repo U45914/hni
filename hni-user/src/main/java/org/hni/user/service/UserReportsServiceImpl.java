@@ -1,6 +1,7 @@
 package org.hni.user.service;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -34,18 +35,18 @@ public class UserReportsServiceImpl implements UserReportService {
 	private CustomerDao customerDao;
 
 	@Override
-	public List<User> getAllCustomersByRole() {
+	public List<Map> getAllCustomersByRole() {
 
 		return customerDao.getAllCustomersByRole();
 	}
 
 	@Override
-	public List<User> getAllCustomersUnderOrganisation(User user) {
+	public List<Map> getAllCustomersUnderOrganisation(User user) {
 		return customerDao.getAllCustomersUnderOrganisation(user);
 	}
 
 	@Override
-	public List<User> getAllCustomersEnrolledByNgo(User user) {
+	public List<Map> getAllCustomersEnrolledByNgo(User user) {
 		return customerDao.getAllCustomersEnrolledByNgo(user);
 	}
 

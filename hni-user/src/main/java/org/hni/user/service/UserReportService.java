@@ -1,6 +1,7 @@
 package org.hni.user.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.hni.admin.service.dto.NgoBasicDto;
 import org.hni.provider.om.Provider;
@@ -12,9 +13,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public interface UserReportService {
 
 	public List<NgoBasicDto> getAllNgo() ;
-	public List<User> getAllCustomersByRole();
-	public List<User> getAllCustomersUnderOrganisation(User user);
-	public List<User> getAllCustomersEnrolledByNgo(User user);
+	public List<Map> getAllCustomersByRole();
+	public List<Map> getAllCustomersUnderOrganisation(User user);
+	public List<Map> getAllCustomersEnrolledByNgo(User user);
 	public List<Volunteer> getAllVolunteers(Long userId);
 	public List<ObjectNode> getAllProviders(User user);
 	
