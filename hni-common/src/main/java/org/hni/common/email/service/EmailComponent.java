@@ -1,10 +1,13 @@
 package org.hni.common.email.service;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.URLDataSource;
+import javax.mail.BodyPart;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
@@ -12,9 +15,12 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.MailSender;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -74,8 +80,39 @@ public class EmailComponent {
 		message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(receiverEmail));
 		message.setSubject(capitalize(userType)+" "+emailSubTemplate);
 		
-		message.setText(getEmailText(userType, UUID, invitationMessage, activationCode,data));
+		//message.setText(getEmailText(userType, UUID, invitationMessage, activationCode,data));
+		String contentText =getEmailText(userType, UUID, invitationMessage, activationCode,data);
+		MimeMultipart multipart = new MimeMultipart("related");
 
+        // first part (the html)
+        BodyPart messageBodyPart = new MimeBodyPart();
+        String htmlText = "<img src=\"cid:header\"><p>"+contentText+"</p><br><img src=\"cid:footer\">";
+        messageBodyPart.setContent(htmlText, "text/html");
+        multipart.addBodyPart(messageBodyPart);
+
+        // second part (the image)
+        messageBodyPart = new MimeBodyPart();
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        if (classLoader == null) {
+            classLoader = EmailComponent.class.getClassLoader();
+        }
+        DataSource fds = new URLDataSource(classLoader.getResource("image/not_impossible_logo.png"));
+        
+        messageBodyPart.setDataHandler(new DataHandler(fds));
+        messageBodyPart.setHeader("Content-ID", "<header>");
+        
+        
+        // add image to the multipart
+        multipart.addBodyPart(messageBodyPart);
+        
+        messageBodyPart = new MimeBodyPart();
+        DataSource footerDs = new URLDataSource(classLoader.getResource("image/not_impossible_logo.png"));
+        
+        messageBodyPart.setDataHandler(new DataHandler(footerDs));
+        messageBodyPart.setHeader("Content-ID", "<footer>");
+        multipart.addBodyPart(messageBodyPart);
+        // put everything together
+        message.setContent(multipart);
 		Transport.send(message);
 		return true;
 	}
@@ -86,7 +123,7 @@ public class EmailComponent {
 		Map<String,String> dataMap = null;
 		if(data!=null){
 		dataMap = (Map) mapper.readValue(data, Map.class);
-		emailTextBuilder.append("Dear "+dataMap.get("name"));
+		emailTextBuilder.append("Dear "+dataMap.get("name")+",");
 		}
 		else{
 			emailTextBuilder.append(getInviteName(userType));
@@ -105,11 +142,11 @@ public class EmailComponent {
 	
 	private String getInviteName(String type) {
 		if ("ngo".equalsIgnoreCase(type)) {
-			return "Dear NGO";
+			return "Dear NGO,";
 		} else if ("volunteer".equalsIgnoreCase("type")) {
-			return "Dear Volunteer";
+			return "Dear Volunteer,";
 		} else {
-			return "Dear User";
+			return "Dear User,";
 		}
 		
 	}
