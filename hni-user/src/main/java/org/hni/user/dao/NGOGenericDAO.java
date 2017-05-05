@@ -8,6 +8,7 @@ import org.hni.common.dao.DefaultGenericDAO;
 import org.hni.common.om.Persistable;
 import org.hni.provider.om.Provider;
 import org.hni.type.HNIRoles;
+import org.hni.user.om.Address;
 import org.hni.user.om.User;
 import org.hni.user.om.UserPartialData;
 import org.hni.user.om.Volunteer;
@@ -42,7 +43,10 @@ public List<NgoBasicDto> getAllNgo()
 {
 	List<NgoBasicDto> ngos = new ArrayList<>();
 	Long ngoRoleId =  HNIRoles.NGO.getRole();
-	List<Object[]> userOrganizationRoles=em.createNativeQuery("select u.id,u.first_name,u.last_name,u.mobile_phone,n.website from user_organization_role x INNER JOIN users u ON u.id = x.user_id LEFT OUTER JOIN ngo n ON n.id=u.id where x.role_id=:roleId").setParameter("roleId", ngoRoleId).getResultList();
+	List<Object[]> userOrganizationRoles=em.createNativeQuery("select u.id,u.first_name,u.last_name,u.mobile_phone,n.website,ad.address_line1,ad.city,ad.state"
+			+ " from user_organization_role x INNER JOIN users u ON u.id = x.user_id "
+			+ "LEFT OUTER join user_address ua on ua.user_id= x.user_id  LEFT OUTER join addresses ad on ad.id=ua.address_id "
+			+ "LEFT OUTER JOIN ngo n ON n.id=u.id where x.role_id=:roleId").setParameter("roleId", ngoRoleId).getResultList();
 	for(Object[] u:userOrganizationRoles)
 	{
 		 NgoBasicDto ngoBasicDto = new NgoBasicDto();
@@ -52,6 +56,7 @@ public List<NgoBasicDto> getAllNgo()
 		 ngoBasicDto.setName(getValue(u[1])+" "+getValue(u[2]));
 		 ngoBasicDto.setPhone(getValue(u[3]));
 		 ngoBasicDto.setWebsite(u[4]!=null?(String) u[4]:"");
+		 ngoBasicDto.setAddress(getValue(u[5])+","+getValue(u[6])+","+getValue(u[7]));
 		 ngoBasicDto.setCreatedUsers((Long) em.createQuery("select count(id) from Client where createdBy=:userId").setParameter("userId", userId).getSingleResult());
 		 ngos.add(ngoBasicDto);
 	}
@@ -63,30 +68,28 @@ public List<NgoBasicDto> getAllNgo()
 public List<Volunteer> getAllVolunteers(Long loggedInUserId) {
 
 	List<Volunteer> volunteerList = new ArrayList<>();
-	List<Long> orgIds = em.createQuery("select x.id.orgId from UserOrganizationRole x where x.id.userId=:userId ")
-				  		  .setParameter("userId", loggedInUserId)
-				  		  .getResultList();
-	if(orgIds.size() > 0){
-		Long orgId = orgIds.get(0);		
-		List<Long> volunteerRoleIds = em.createQuery("select id from Role x where x.name='Volunteer'")
-										.getResultList();
-		
-		Long volunteerRoleId = volunteerRoleIds.get(0);		
-		List<Object[]> userDetails = em.createNativeQuery("SELECT u.id, u.first_name, u.last_name, u.gender_code, u.email FROM users u INNER JOIN user_organization_role uo WHERE uo.role_id=:roleId AND uo.organization_id=:orgId AND u.id = uo.user_id")
-									   .setParameter("roleId", volunteerRoleId)
-									   .setParameter("orgId", orgId)
-									   .getResultList();
+	Long volunteerRoleId =  HNIRoles.VOLUNTEERS.getRole();	
+		List<Object[]> userDetails = em.createNativeQuery("SELECT "
+				+ "u.id, u.first_name, u.last_name, u.gender_code, u.email,u.mobile_phone, ad.address_line1,ad.city,ad.state "
+				+ "FROM user_organization_role uo INNER JOIN users u   on   u.id = uo.user_id "
+				+ "INNER JOIN user_address uad on uad.user_id=uo.user_id inner join addresses ad on ad.id = uad.address_id "
+				+ "WHERE uo.role_id=:roleId").setParameter("roleId", volunteerRoleId).getResultList();
 		
 		for (Object[] user : userDetails) {			
-			Volunteer volunteer = new Volunteer();		
+			Volunteer volunteer = new Volunteer();	
+			Address address = new Address();
 			volunteer.setId(Long.valueOf(getValue(user[0])));
 			volunteer.setFirstName(getValue(user[1]));
 			volunteer.setLastName(getValue(user[2]));
 			volunteer.setSex(getValue(user[3]));
 			volunteer.setEmail(getValue(user[4]));
+			volunteer.setPhoneNumber(getValue(user[5]));
+			address.setAddress1(getValue(user[6]));
+			address.setCity(getValue(user[7]));
+			address.setState(getValue(user[8]));
+			volunteer.setAddress(address);
 			volunteerList.add(volunteer);
 		}		
-	}
 	
 	return volunteerList;
 }

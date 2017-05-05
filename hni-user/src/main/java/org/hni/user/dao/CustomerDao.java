@@ -1,70 +1,77 @@
 package org.hni.user.dao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
-import org.h2.command.dml.Select;
-import org.hni.common.dao.DefaultGenericDAO;
-import org.hni.organization.om.UserOrganizationRole;
-import org.hni.type.HNIRoles;
-import org.hni.user.om.Client;
-import org.hni.user.om.User;
 import javax.persistence.Query;
+
+import org.hni.common.dao.DefaultGenericDAO;
+import org.hni.type.HNIRoles;
+import org.hni.user.om.Address;
+import org.hni.user.om.User;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CustomerDao extends DefaultGenericDAO {
 	
 	
-	public List<User> getAllCustomersByRole() {
-		List<User> customers = new ArrayList<>();
+	public List<Map> getAllCustomersByRole() {
+		List<Map> customers = new ArrayList<>();
 		Long role = HNIRoles.CLIENT.getRole();
 
 		List<Object[]> user = em
 				.createNativeQuery(
-						"select distinct u.first_name,u.last_name,u.gender_code,u.mobile_phone,u.email from users u INNER JOIN user_organization_role x ON u.id=x.user_id where x.role_id=:roleId")
+						"select distinct u.first_name,u.last_name,u.gender_code,u.mobile_phone,u.email,c.race,ad.address_line1, COUNT(o.id)  as ordCount from users u INNER JOIN user_organization_role x ON u.id=x.user_id INNER JOIN `client` c ON c.user_id=u.id INNER JOIN user_address uad ON uad.user_id=u.id INNER JOIN addresses ad ON ad.id=uad.address_id INNER JOIN orders o ON o.user_id=u.id where x.role_id=:roleId")
 				.setParameter("roleId", role).getResultList();
 		for (Object[] u : user) {
-			
-			User us = new User();
-
-			us.setFirstName(getValue(u[0]));
-			us.setLastName(getValue(u[1]));
-			us.setGenderCode(getValue(u[2]));
-			us.setMobilePhone(getValue(u[3]));
-			us.setEmail(getValue(u[4]));
-			customers.add(us);
+			Map<String,String> map=new HashMap<String,String>();
+			map.put("firstName",getValue(u[0]));
+			map.put("lastName",getValue(u[1]));
+			map.put("mobilePhone",getValue(u[3]));
+			map.put("race",getValue(u[5]));
+			map.put("address",getValue(u[6]));
+			map.put("orders", getValue(u[7]));	
+			customers.add(map);
 		}
 		return customers;
 
 	}
 	
 
-	public List<User> getAllCustomersUnderOrganisation(User u) {
-		List<User> customers = new ArrayList<>();
+	public List<Map> getAllCustomersUnderOrganisation(User u) {
+		List<Map> customers = new ArrayList<>();
 		Long role = HNIRoles.CLIENT.getRole();
 		Long userId = null;
 		if (u != null) {
 			userId = u.getId();
 			List<Object[]> user = em
 					.createNativeQuery(
-							"select distinct u.first_name,u.last_name,u.gender_code,u.mobile_phone,u.email from users u INNER JOIN user_organization_role x ON u.id=x.user_id where x.role_id=:role  and x.organization_id=(select x.organization_id from user_organization_role where user_id=:userId);")
-					.setParameter("role", role).setParameter("userId", userId).getResultList();
+							"select distinct u.first_name,u.last_name,u.gender_code,u.mobile_phone,u.email,c.race,ad.address_line1,"
+							+ " COUNT(o.id)  as ordCount from users u INNER JOIN user_organization_role x ON u.id=x.user_id "
+							+ "INNER JOIN `client` c ON c.user_id=u.id INNER JOIN user_address uad ON uad.user_id=u.id "
+							+ "INNER JOIN addresses ad ON ad.id=uad.address_id INNER JOIN orders o ON o.user_id=u.id"
+							+ " where x.role_id=:role")
+					.setParameter("role", role).getResultList();
 			for (Object[] usr : user) {
-				User us = new User();
-				us.setFirstName(getValue(usr[0]));
-				us.setLastName(getValue(usr[1]));
-				us.setGenderCode(getValue(usr[2]));
-				us.setMobilePhone(getValue(usr[3]));
-				us.setEmail(getValue(usr[4]));
-				customers.add(us);
+				Map<String,String> map=new HashMap<String,String>();
+				map.put("firstName",getValue(usr[0]));
+				map.put("lastName",getValue(usr[1]));
+				map.put("mobilePhone",getValue(usr[3]));
+				map.put("race",getValue(usr[5]));
+				map.put("address",getValue(usr[6]));
+				map.put("orders", getValue(usr[7]));	
+				customers.add(map);
+				
 			}
 		}
 		return customers;
 	}
 
-	public List<User> getAllCustomersEnrolledByNgo(User user) {
-		List<User> customers = new ArrayList<>();
+	public List<Map> getAllCustomersEnrolledByNgo(User user) {
+		List<Map> customers = new ArrayList<>();
 		Long role = HNIRoles.NGO.getRole();
 		Long userId = null;
 		if (user != null) {
@@ -78,16 +85,22 @@ public class CustomerDao extends DefaultGenericDAO {
 			if (!((userOrganizationRole.isEmpty()) || (userOrganizationRole == null))) {
 				List<Object[]> users = em
 						.createNativeQuery(
-								"select distinct u.first_name,u.last_name,u.gender_code,u.mobile_phone,u.email from users u INNER JOIN `client` x ON u.id=x.user_id where x.created_by=:userId")
+								"select distinct u.first_name,u.last_name,u.gender_code,u.mobile_phone,u.email,c.race,"
+								+ "ad.address_line1, COUNT(o.id)  from users u INNER JOIN user_organization_role x"
+								+ " ON u.id=x.user_id INNER JOIN `client` c ON c.user_id=u.id "
+								+ "INNER JOIN user_address uad ON uad.user_id=u.id "
+								+ "INNER JOIN addresses ad ON ad.id=uad.address_id "
+								+ "INNER JOIN orders o ON o.user_id=u.id where x.role_id=:role")
 						.setParameter("userId", userId).getResultList();
 				for (Object[] usr : users) {
-					User us = new User();
-					us.setFirstName(getValue(usr[0]));
-					us.setLastName(getValue(usr[1]));
-					us.setGenderCode(getValue(usr[2]));
-					us.setMobilePhone(getValue(usr[3]));
-					us.setEmail(getValue(usr[4]));
-					customers.add(us);
+					Map<String,String> map=new HashMap<String,String>();
+					map.put("firstName",getValue(usr[0]));
+					map.put("lastName",getValue(usr[1]));
+					map.put("mobilePhone",getValue(usr[3]));
+					map.put("race",getValue(usr[5]));
+					map.put("address",getValue(usr[6]));
+					map.put("orders", getValue(usr[7]));	
+					customers.add(map);
 				}
 			}
 		}
