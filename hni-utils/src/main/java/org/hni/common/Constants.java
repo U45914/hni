@@ -3,12 +3,14 @@ package org.hni.common;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.hni.type.HNIRoles;
+
 public class Constants {
-	public static final Long SUPER_USER = 1L;
-	public static final Long ADMIN = 2L;
-	public static final Long VOLUNTEER = 3L;
-	public static final Long USER = 5L;  
-	public static final Long CLIENT = 7L;
+	public static final Long SUPER_USER = HNIRoles.SUPER_ADMIN.getRole();
+	public static final Long ADMIN = HNIRoles.ADMINISTRATOR.getRole();
+	public static final Long VOLUNTEER = HNIRoles.VOLUNTEERS.getRole();
+	public static final Long USER = HNIRoles.USER.getRole();  
+	public static final Long CLIENT = HNIRoles.CLIENT.getRole();
 	
 	//Service
 	public static final String SUCCESS = "success";
