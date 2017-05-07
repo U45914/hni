@@ -50,6 +50,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.shiro.util.ThreadContext;
@@ -64,6 +65,7 @@ import org.hni.organization.om.HniServices;
 import org.hni.user.om.Address;
 import org.hni.user.om.BoardMember;
 import org.hni.user.om.BrandPartner;
+import org.hni.user.om.Endrosement;
 import org.hni.user.om.LocalPartner;
 import org.hni.user.om.Ngo;
 import org.slf4j.Logger;
@@ -75,6 +77,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class HNIConverter {
+
+	private static final String PROMOTERS = "promoters";
 
 	private static final String EMPLOYEES = "employees";
 
@@ -123,29 +127,31 @@ public class HNIConverter {
 		Ngo ngo = new Ngo();
 		ngo.setUserId((Long) ThreadContext.get(Constants.USERID));
 		
-		ngo.setWebsite(overviewNode.get(WEBSITE).asText());
+		ngo.setWebsite(overviewNode.has(WEBSITE) ? overviewNode.get(WEBSITE).asText() : "");
 		ngo.setFte(overviewNode.has(EMPLOYEES) ? overviewNode.get(EMPLOYEES).asInt() : 0);
-		ngo.setOverview(overviewNode.get(OVERVIEW).asText());
-		ngo.setMission(overviewNode.get(MISSION).asText());
+		ngo.setOverview(overviewNode.has(OVERVIEW) ? overviewNode.get(OVERVIEW).asText(): "");
+		ngo.setMission(overviewNode.has(MISSION) ? overviewNode.get(MISSION).asText(): "");
 
-		ngo.setMonthlyBudget(serviceNode.get(MONTHLY_BUDGET).asInt());
-		ngo.setOperatingCost(serviceNode.get(OPERATING_COST).asInt());
-		ngo.setPersonalCost(serviceNode.get(PERSONAL_COST).asInt());
-		ngo.setKitchenVolunteers(serviceNode.get(VOLUNTEER_NBR).asInt());
-		ngo.setFoodStampAssist(serviceNode.get(FOOD_STAMP).asInt());
-		ngo.setFoodBank(serviceNode.get(FOOD_BANK_SELECT).asInt());
+		ngo.setMonthlyBudget(serviceNode.has(MONTHLY_BUDGET) ? serviceNode.get(MONTHLY_BUDGET).asInt() : 0);
+		ngo.setOperatingCost(serviceNode.has(OPERATING_COST) ? serviceNode.get(OPERATING_COST).asInt() : 0);
+		ngo.setPersonalCost(serviceNode.has(PERSONAL_COST) ? serviceNode.get(PERSONAL_COST).asInt() : 0);
+		ngo.setKitchenVolunteers(serviceNode.has(VOLUNTEER_NBR) ? serviceNode.get(VOLUNTEER_NBR).asInt() : 0);
+		ngo.setFoodStampAssist(serviceNode.has(FOOD_STAMP) ? serviceNode.get(FOOD_STAMP).asInt() : 0);
+		ngo.setFoodBank(serviceNode.has(FOOD_BANK_SELECT) ? serviceNode.get(FOOD_BANK_SELECT).asInt() : 0);
 
 		ngo.setResourcesToClients(1);
-		ngo.setIndividualsServedDaily(clientNode.get(INDIVIDUALS_SERVED_DAILY).asInt());
-		ngo.setIndividualsServedMonthly(clientNode.get(INDIVIDUALS_SERVED_MONTHLY).asInt());
-		ngo.setIndividualsServedAnnually(clientNode.get(INDIVIDUALS_SERVED_ANNUALLY).asInt());
-		ngo.setClientInfo(clientNode.get(INDIVIDUAL_CLIENT_INFO_COLLECTED).asInt());
+		ngo.setIndividualsServedDaily(clientNode.has(INDIVIDUALS_SERVED_DAILY) ? clientNode.get(INDIVIDUALS_SERVED_DAILY).asInt() : 0);
+		ngo.setIndividualsServedMonthly(clientNode.has(INDIVIDUALS_SERVED_MONTHLY) ? clientNode.get(INDIVIDUALS_SERVED_MONTHLY).asInt() :0);
+		ngo.setIndividualsServedAnnually(clientNode.has(INDIVIDUALS_SERVED_ANNUALLY) ? clientNode.get(INDIVIDUALS_SERVED_ANNUALLY).asInt() :0);
+		ngo.setClientInfo(clientNode.has(INDIVIDUAL_CLIENT_INFO_COLLECTED) ? clientNode.get(INDIVIDUAL_CLIENT_INFO_COLLECTED).asInt() : 0) ;
 		
 		ngo.setStoreClientInfo(clientNode.has(STORE_CLIENT_INFO) ? clientNode.get(STORE_CLIENT_INFO).asText() : "");
-		ngo.setClientsUnSheltered(clientNode.get(UNSHELTERED_CLIENT_PERCENTAGE).asInt());
-		ngo.setClientsEmployed(clientNode.get(EMPLOYEED_CLIENT_PERCENTAGE).asInt());
+		ngo.setClientsUnSheltered(clientNode.has(UNSHELTERED_CLIENT_PERCENTAGE) ? clientNode.get(UNSHELTERED_CLIENT_PERCENTAGE).asInt() : 0);
+		ngo.setClientsEmployed(clientNode.has(EMPLOYEED_CLIENT_PERCENTAGE) ? clientNode.get(EMPLOYEED_CLIENT_PERCENTAGE).asInt() : 0);
 		ngo.setCreated(new Date());
 		ngo.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
+		
+		
 
 		return ngo;
 	}
@@ -168,13 +174,13 @@ public class HNIConverter {
 						JsonNode boardMemberJSON = boardMemberItr.next();
 		
 						BoardMember boardMember = new BoardMember();
-						boardMember.setNgo_id(ngoId);
+						boardMember.setNgoId(ngoId);
 						boardMember.setFirstName(boardMemberJSON.get(NAME).asText());
 							boardMember.setLastName("");
 						boardMember.setCompany(boardMemberJSON.get(COMPANY).asText());
 						boardMember.setCreated(new Date());
 						boardMember.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
-						boardMember.setNgo_id(ngoId);
+						boardMember.setNgoId(ngoId);
 						boardMembers.add(boardMember);
 					}
 				}
@@ -201,7 +207,7 @@ public class HNIConverter {
 						JsonNode brandPartnerJSON = brandPartnerItr.next();
 		
 						BrandPartner brandPartner = new BrandPartner();
-						brandPartner.setNgo_id(ngo_id);
+						brandPartner.setNgoId(ngo_id);
 						brandPartner.setPhone(String.valueOf(brandPartnerJSON.get(PHONE_NUMBER).asInt()));
 						brandPartner.setCompany(brandPartnerJSON.get(COMPANY).asText());
 						brandPartner.setCreated(new Date());
@@ -232,7 +238,7 @@ public class HNIConverter {
 				JsonNode localPartnerJSON = localPartnerItr.next();
 
 				LocalPartner localPartner = new LocalPartner();
-				localPartner.setNgo_id(ngoId);
+				localPartner.setNgoId(ngoId);
 				localPartner.setPhone(String.valueOf(localPartnerJSON.get(PHONE_NUMBER).asInt()));
 				localPartner.setCompany(localPartnerJSON.get(COMPANY).asText());
 				localPartner.setCreated(new Date());
@@ -286,35 +292,41 @@ public class HNIConverter {
 		List<FoodService> foodServices = new ArrayList<>();
 		JsonNode serviceNode = objectNode.get(SERVICE);
 
-		if (serviceNode.has(BRKFST_CHK)) {
+		if (serviceNode.has(BRKFST_CHK) && serviceNode.get(BRKFST_CHK).asBoolean()) {
 			FoodService foodService = new FoodService();
 			foodService.setNgoId(ngoId);
 			foodService.setServiceType(Constants.BREAKFAST_ID);
 			foodService.setTotalCount(serviceNode.get(BRKFST_QTY).asLong());
-			foodService.setWeekdays(convertJSONArrayToString((ArrayNode) serviceNode.get(BRKFST_AVAILABILTY)));
+			if(serviceNode.has(BRKFST_AVAILABILTY)){
+				foodService.setWeekdays(convertJSONArrayToString((ArrayNode) serviceNode.get(BRKFST_AVAILABILTY)));
+			}
 				foodService.setOther("");
 			foodService.setCreated(new Date());
 			foodService.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
 			foodServices.add(foodService);
 		}
-		if (serviceNode.has(LUNCH_CHK)) {
+		if (serviceNode.has(LUNCH_CHK) && serviceNode.get(LUNCH_CHK).asBoolean()) {
 			FoodService foodService = new FoodService();
 			foodService.setNgoId(ngoId);
 			foodService.setServiceType(Constants.LUNCH_ID);
 			foodService.setTotalCount(serviceNode.get(LUNCH_QTY).asLong());
-			foodService.setWeekdays(convertJSONArrayToString((ArrayNode) serviceNode.get(LUNCH_AVAILABILTY)));
-				foodService.setOther("");
+			if(serviceNode.has(LUNCH_AVAILABILTY)){
+				foodService.setWeekdays(convertJSONArrayToString((ArrayNode) serviceNode.get(LUNCH_AVAILABILTY)));
+			}
+			foodService.setOther("");
 			foodService.setCreated(new Date());
 			foodService.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
 			foodServices.add(foodService);
 		}
-		if (serviceNode.has(DINNER_CHK)) {
+		if (serviceNode.has(DINNER_CHK) && serviceNode.get(DINNER_CHK).asBoolean()) {
 			FoodService foodService = new FoodService();
 			foodService.setNgoId(ngoId);
 			foodService.setServiceType(Constants.DINNER_ID);
 			foodService.setTotalCount(serviceNode.get(DINNER_QTY).asLong());
-			foodService.setWeekdays(convertJSONArrayToString((ArrayNode) serviceNode.get(DINNER_AVAILABILTY)));
-				foodService.setOther("");
+			if(serviceNode.has(DINNER_AVAILABILTY)){
+				foodService.setWeekdays(convertJSONArrayToString((ArrayNode) serviceNode.get(DINNER_AVAILABILTY)));
+			}
+			foodService.setOther("");
 			foodService.setCreated(new Date());
 			foodService.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
 			foodServices.add(foodService);
@@ -426,8 +438,9 @@ public class HNIConverter {
 		overview.put(OVERVIEW, ngo.getOverview());
 		overview.put(MISSION, ngo.getMission());
 		overview.put(EMPLOYEES, ngo.getFte());
+		
 		parentJSON.set(OVERVIEW, overview);
-
+        
 		ObjectNode service = mapper.createObjectNode();
 		service.put(MONTHLY_BUDGET, ngo.getMonthlyBudget());
 		service.put(OPERATING_COST, ngo.getOperatingCost());
@@ -649,7 +662,8 @@ public class HNIConverter {
 		JsonNode addressNode = jsonNode.get("address");
 		Address addr = new Address();
 		addr.setAddress1(addressNode.get("address1").asText());
-		addr.setAddress2(addressNode.get("address2").asText());
+		
+		addr.setAddress2(addressNode.has("address2") ? addressNode.get("address2").asText() : "");
 		addr.setName(addressNode.get("name").asText());
 		addr.setCity(addressNode.get("city").asText());
 		addr.setState(addressNode.get("state").asText());
@@ -659,6 +673,42 @@ public class HNIConverter {
 		addresses.add(addr);
 		
 		return addresses;
+	}
+	
+	/**
+	 * Method For Building Endrosement from JSON
+	 * 
+	 * @param objectNode
+	 * @param ngoId
+	 * @return
+	 */
+	public static List <Endrosement> getEndrosement(ObjectNode objectNode, Long ngoId){
+		List <Endrosement> endrosement =new ArrayList<>();
+		JsonNode overview = objectNode.get(OVERVIEW);
+		
+		if(overview.has(PROMOTERS)){
+			JsonNode endrosementArray = overview.get(PROMOTERS);
+			if(endrosementArray.isArray()){
+				Iterator<JsonNode> endrosementArrayItr = endrosementArray.iterator();
+				while(endrosementArrayItr.hasNext()){
+					Endrosement endrosmentObject =new Endrosement();
+					endrosmentObject.setNgoId(ngoId);
+					endrosmentObject.setEndrosement(endrosementArrayItr.next().asText());
+					endrosement.add(endrosmentObject);
+				}
+			}
+		}
+		return endrosement;
+		
+	}
+	public static ObjectNode convertEndrosementToJSON(List<Endrosement> endrosement, ObjectNode parentJSON) {
+		ArrayNode endrosementJSONArray = mapper.createArrayNode();
+		endrosement.forEach(es -> {
+			endrosementJSONArray.add(es.getEndrosement());
+		});
+
+		parentJSON.set(PROMOTERS, endrosementJSONArray);
+		return parentJSON;
 	}
 
 }

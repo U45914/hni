@@ -86,24 +86,24 @@ public class EmailComponent {
 
         // first part (the html)
         BodyPart messageBodyPart = new MimeBodyPart();
-        String htmlText = "<img src=\"cid:header\"><p>"+contentText+"</p><br><img src=\"cid:footer\">";
+        String htmlText = "<p>"+contentText+"</p><br><img src=\"cid:footer\">";
         messageBodyPart.setContent(htmlText, "text/html");
         multipart.addBodyPart(messageBodyPart);
 
         // second part (the image)
-        messageBodyPart = new MimeBodyPart();
+       // messageBodyPart = new MimeBodyPart();
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         if (classLoader == null) {
             classLoader = EmailComponent.class.getClassLoader();
         }
-        DataSource fds = new URLDataSource(classLoader.getResource("image/not_impossible_logo.png"));
+        //DataSource fds = new URLDataSource(classLoader.getResource("image/not_impossible_logo.png"));
         
-        messageBodyPart.setDataHandler(new DataHandler(fds));
-        messageBodyPart.setHeader("Content-ID", "<header>");
+       // messageBodyPart.setDataHandler(new DataHandler(fds));
+      //  messageBodyPart.setHeader("Content-ID", "<header>");
         
         
         // add image to the multipart
-        multipart.addBodyPart(messageBodyPart);
+        //multipart.addBodyPart(messageBodyPart);
         
         messageBodyPart = new MimeBodyPart();
         DataSource footerDs = new URLDataSource(classLoader.getResource("image/not_impossible_logo.png"));
