@@ -34,6 +34,7 @@ import org.hni.user.om.Address;
 import org.hni.user.om.BoardMember;
 import org.hni.user.om.BrandPartner;
 import org.hni.user.om.Client;
+import org.hni.user.om.Endrosement;
 import org.hni.user.om.Invitation;
 import org.hni.user.om.LocalPartner;
 import org.hni.user.om.Ngo;
@@ -160,6 +161,7 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 		ngoGenericDAO.saveBatch(MealDonationSource.class ,HNIConverter.getMealDonationSourceFromJson(onboardData,ngo.getId()), ngo.getId());
 		ngoGenericDAO.saveBatch( MealFundingSource.class,HNIConverter.getMealFundingSourcesFromJson(onboardData,ngo.getId()), ngo.getId());
 		ngoGenericDAO.saveBatch(NgoFundingSource.class ,HNIConverter.getNgoFundingSourcesFromJson(onboardData,ngo.getId()), ngo.getId());
+		ngoGenericDAO.saveBatch(Endrosement.class, HNIConverter.getEndrosement(onboardData,ngo.getId()), ngo.getId());
 		ngoGenericDAO.updateStatus(ngo.getUserId());
 		return SUCCESS;
 		
@@ -230,16 +232,18 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 		parentJSON.set("service", mapper.createObjectNode());
 		parentJSON.set("funding", mapper.createObjectNode());
 		parentJSON.set("client", mapper.createObjectNode());
-		
+
+		HNIConverter.convertEndrosementToJSON(ngoGenericDAO.find(Endrosement.class, "select x from Endrosement x where x.ngoId=?1 ", ngoId), overViewNode);
 		HNIConverter.convertNGOToJSON((Ngo) ngoGenericDAO.get(Ngo.class, ngoId), parentJSON);
-		HNIConverter.convertBoardMembersToJSON(ngoGenericDAO.find(BoardMember.class, "select x from BoardMember x where x.ngo_id=?1 ", ngoId), parentJSON);
-		HNIConverter.convertBrandPartnersToJSON(ngoGenericDAO.find(BrandPartner.class, "select x from BrandPartner x where x.ngo_id=?1 ", ngoId), parentJSON);
-		HNIConverter.convertLocalPartnerToJSON(ngoGenericDAO.find(LocalPartner.class, "select x from LocalPartner x where x.ngo_id=?1 ", ngoId), parentJSON);
+		HNIConverter.convertBoardMembersToJSON(ngoGenericDAO.find(BoardMember.class, "select x from BoardMember x where x.ngoId=?1 ", ngoId), parentJSON);
+		HNIConverter.convertBrandPartnersToJSON(ngoGenericDAO.find(BrandPartner.class, "select x from BrandPartner x where x.ngoId=?1 ", ngoId), parentJSON);
+		HNIConverter.convertLocalPartnerToJSON(ngoGenericDAO.find(LocalPartner.class, "select x from LocalPartner x where x.ngoId=?1 ", ngoId), parentJSON);
 		HNIConverter.convertFoodBanksToJSON(ngoGenericDAO.find(FoodBank.class, "select x from FoodBank x where x.ngoId=?1 ", ngoId), parentJSON);
 		HNIConverter.convertFoodServiceToJSON(ngoGenericDAO.find(FoodService.class, "select x from FoodService x where x.ngoId=?1 ", ngoId), parentJSON);
 		HNIConverter.convertMealDonationToJSON(ngoGenericDAO.find(MealDonationSource.class, "select x from MealDonationSource x where x.ngoId=?1 ", ngoId), parentJSON);
 		HNIConverter.convertMealFundingToJSON(ngoGenericDAO.find(MealFundingSource.class, "select x from MealFundingSource x where x.ngoId=?1 ", ngoId), parentJSON);
 		HNIConverter.convertFundingSourceToJSON(ngoGenericDAO.find(NgoFundingSource.class, "select x from NgoFundingSource x where x.ngoId=?1 ", ngoId), parentJSON);
+		
 		return parentJSON;
 	}
 	

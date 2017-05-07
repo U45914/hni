@@ -24,7 +24,7 @@ public class BrandPartner implements Persistable, Serializable {
 	private Long id;
 
 	@Column(name = "ngo_id")
-	private Long ngo_id;
+	private Long ngoId;
 
 	@Column(name = "phone")
 	private String phone;
@@ -46,12 +46,12 @@ public class BrandPartner implements Persistable, Serializable {
 		this.id = id;
 	}
 
-	public Long getNgo_id() {
-		return ngo_id;
+	public Long getNgoId() {
+		return ngoId;
 	}
 
-	public void setNgo_id(Long ngo_id) {
-		this.ngo_id = ngo_id;
+	public void setNgoId(Long ngoId) {
+		this.ngoId = ngoId;
 	}
 
 	public String getPhone() {
