@@ -177,6 +177,7 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 		if (volunteerId != null) {
 			volunteer.setId(extVolunteer.getId());
 			volunteer.setCreatedBy(extVolunteer.getCreatedBy());
+			volunteer.setCreated(new Date());
 		} else {
 
 			
