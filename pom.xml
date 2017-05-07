@@ -52,6 +52,8 @@
         <httpcomponents.version>4.4.5</httpcomponents.version>
     </properties>
     <modules>
+    	<module>hni-data-model</module>
+    	<module>hni-utils</module>
         <module>hni-common</module>
         <module>hni-db-parent</module>
         <module>hni-events</module>

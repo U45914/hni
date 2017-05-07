@@ -55,6 +55,8 @@ insert into security_roles values(2,'Administrator');
 insert into security_roles values(3,'Volunteer');
 insert into security_roles values(4,'Client');
 insert into security_roles values(5,'User');
+insert into security_roles values(6,'NGOAdmin');
+insert into security_roles values(7,'NGO');
 
 truncate table security_permissions;
 insert into security_permissions values(1,'*','*'); /* user-user only! */
@@ -94,6 +96,12 @@ insert into security_permissions values(85,'activation-codes','*');
 /* super-user / admin */
 truncate table security_role_permissions;
 insert into security_role_permissions values(1,1,1);
+insert into security_role_permissions values(6,1,1);
+insert into security_role_permissions values(7,1,1);
+insert into security_role_permissions values(3,1,1);
+insert into security_role_permissions values(4,1,1);
+
+
 insert into security_role_permissions values(2,15,0);
 insert into security_role_permissions values(2,25,1);
 insert into security_role_permissions values(2,45,1);
@@ -101,10 +109,12 @@ insert into security_role_permissions values(2,65,1);
 insert into security_role_permissions values(2,85,1);
 
 /* volunteer */
+
 insert into security_role_permissions values(3,12,0);
 insert into security_role_permissions values(3,67,1);
 
 /* client/user */
+
 insert into security_role_permissions values(4,12,0);
 insert into security_role_permissions values(5,12,0);
 
@@ -139,6 +149,7 @@ insert into provider_locations values(1, 'Subway #1', 1, 4, now(), 1);
 insert into provider_locations values(2, 'Taco Bell #1', 2, 5, now(), 1);
 insert into provider_locations values(3, 'Chipolte #1', 3, 6, now(), 1);
 
+truncate table payment_instruments;
 insert into payment_instruments values(1, 1, 'gift', '1', '1000-0000-0000-0001','A', 10, 10, null, '1234');
 insert into payment_instruments values(2, 1, 'gift', '2', '2000-0000-0000-0001','A', 10, 10, null, '1234');
 insert into payment_instruments values(3, 1, 'gift', '3', '3000-0000-0000-0001','A', 10, 10, null, '1234');
@@ -150,6 +161,88 @@ insert into payment_instruments values(8, 1, 'gift', '8', '8000-0000-0000-0001',
 insert into payment_instruments values(9, 1, 'gift', '9', '9000-0000-0000-0001','A', 10, 10, null, '1234');
 insert into payment_instruments values(10, 1, 'gift', '10', '1100-0000-0000-0001','A', 10, 10, null, '1234');
 
-insert into provider_location_hours values(1,1,'Mon',8,20,);
-insert into provider_location_hours values(2,2,'Mon',8,20,);
-insert into provider_location_hours values(3,3,'Mon',8,20,);
+truncate table provider_location_hours;
+insert into provider_location_hours values(1,1,'Mon',8,20);
+insert into provider_location_hours values(2,2,'Mon',8,20);
+insert into provider_location_hours values(3,3,'Mon',8,20);
+
+truncate table hni_services;
+-- Super Admin
+INSERT INTO `hni_services` (`id`, `org_id`, `role_id`, `service_name`, `service_path`, `service_img`, `active`, `created`) VALUES
+	(1, 2, 1, 'NGO Invitation', 'ngoInvitation', '', 'Y', '2017-05-02 13:16:58'),
+	(2, 2, 1, 'Client Invitation', 'clientInvitation', '', 'Y', '2017-05-02 13:16:58'),
+	(3, 2, 1, 'Volunteer Invitation', 'inviteVolunteer', '', 'Y', '2017-05-02 13:16:59'),
+	(4, 2, 1, 'Reports', 'reports', '', 'Y', '2017-05-02 13:16:59'),
+	(5, 2, 1, 'Settings', 'settings', '', 'Y', '2017-05-02 13:16:59'),
+	(6, 2, 6, 'Add NGO', 'addNgo', '', 'Y', '2017-05-02 13:16:59'),
+	(7, 2, 6, 'Client Invitation', 'clientInvitation', '', 'Y', '2017-05-02 13:16:59'),
+	(8, 2, 6, 'Volunteer Invitaion', 'inviteVolunteer', '', 'Y', '2017-05-02 13:16:59'),
+	(9, 2, 6, 'View Profile', 'profile', '', 'Y', '2017-05-02 13:16:59'),
+	(10, 2, 6, 'Change Password', 'change-password', '', 'Y', '2017-05-02 13:16:59'),
+	(11, 2, 6, 'View Customers', 'view-customers', '', 'Y', '2017-05-02 13:16:59'),
+	(12, 2, 7, 'Client Invitation', 'clientInvitation', '', 'Y', '2017-05-02 13:16:59'),
+	(13, 2, 7, 'Clients', 'clients', '', 'Y', '2017-05-02 13:16:59'),
+	(14, 2, 7, 'Volunteer Invitaion', 'inviteVolunteer', '', 'Y', '2017-05-02 13:16:59'),
+	(15, 2, 7, 'View Profile', 'profile', '', 'Y', '2017-05-02 13:16:59'),
+	(16, 2, 7, 'Change Password', 'change-password', '', 'Y', '2017-05-02 13:16:59'),
+	(17, 2, 7, 'Add Resturants', 'add-resturants', '', 'Y', '2017-05-02 13:16:59'),
+	(18, 2, 3, 'Place Order', 'order', '', 'Y', '2017-05-02 13:16:59'),
+	(19, 2, 3, 'My Orders', 'my-orders', '', 'Y', '2017-05-02 13:16:59'),
+	(20, 2, 3, 'View Profile', 'profile', '', 'Y', '2017-05-02 13:16:59'),
+	(21, 2, 3, 'Change Password', 'change-password', '', 'Y', '2017-05-02 13:16:59'),
+	(22, 2, 4, 'Request Food', 'hungry', '', 'Y', '2017-05-02 13:16:59'),
+	(23, 2, 4, 'My Orders', 'my-orders', '', 'Y', '2017-05-02 13:16:59'),
+	(24, 2, 4, 'View Profile', 'user-profile', '', 'Y', '2017-05-02 13:16:59'),
+	(25, 2, 4, 'Change Password', 'change-password', '', 'Y', '2017-05-02 13:16:59');
+	
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,1,'NGO Invitation','ngoInvitation','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,1,'Customer Onboarding','custOnboard','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,1,'Clients','clients','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,1,'User Profile','user-profile','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,1,'View Organizations','user-profile','','Y',now());
+-- NGO Admin
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,6,'Add NGO','addNgo','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,6,'Customer Onboarding','custOnboard','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,6,'Clients','clients','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,6,'User Profile','user-profile','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,6,'Change Password','change-password','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,6,'View Customers','view-customers','','Y',now());
+-- NGO
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,7,'Customer Onboarding','custOnboard','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,7,'Clients','clients','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,7,'User Profile','user-profile','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,7,'Change Password','change-password','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,7,'View Customers','view-customers','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,7,'Add Resturants','add-resturants','','Y',now());
+-- Volunteers
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,3,'Place Order','order','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,3,'My Orders','my-orders','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,3,'User Profile','user-profile','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,3,'Change Password','change-password','','Y',now());
+-- Customers
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,4,'Request Food','hungry','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,4,'My Orders','my-orders','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,4,'User Profile','user-profile','','Y',now());
+-- insert into hni_services(org_id,role_id,service_name,service_path,service_img,active,created) values (2,4,'Change Password','change-password','','Y',now());
+
+
+-- Reports
+truncate table reports;
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES (1, 'ngo/all', 'NGO list', 1);
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(2, 'volunteers/all', 'Volunteer list', 1);
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(3, 'customers/all', 'All customers list', 1);
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(5, 'customers/ngo', 'Customers ', 6);
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(6, 'customers/ngo', 'Customers', 7);
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(7, 'volunteers/all', 'Volunteer list', 6);
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(8, 'volunteers/all', 'Volunteer list', 5);
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(9, 'volunteers/all', 'Volunteer list', 7);
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(10, 'ngo/all', 'NGO List', 6);
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(11, 'orders/all', 'Orders', 4);
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(12, 'orders/all', 'Orders completed', 3);
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(13, 'orders/all', 'Orders ', 2);
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(14, 'orders/all', 'Orders', 6);
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(15, 'orders/all', 'Orders placed', 1);
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(16, 'customers/organization', 'Organization', 6);
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(17, 'provider/all', 'Providers', 1);
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(18, 'orders/all', 'Orders', 7);
+INSERT INTO `reports` (`id`, `report_path`, `label`, `role`) VALUES(19, 'customers/organization', 'Organization', 7);

@@ -1,5 +1,7 @@
 package org.hni.admin.service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -41,7 +43,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -69,7 +70,7 @@ public class UserSecurityController extends AbstractBaseController {
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Path("/authentication")
 	@ApiOperation(value = "Authenticates a user, returning a token for that user.", notes = "Requires username & password to be populated in the body", response = String.class, responseContainer = "")
-	public String authenticate(UsernamePasswordToken userPasswordToken, @HeaderParam("organizationId") Long organizationId) {
+	public AuthenticationResult authenticate(UsernamePasswordToken userPasswordToken, @HeaderParam("organizationId") Long organizationId) {
 		Subject subject = SecurityUtils.getSubject();
 		try {
 			subject.login(userPasswordToken);
@@ -78,13 +79,34 @@ public class UserSecurityController extends AbstractBaseController {
 			logger.info("user is authenticated");
 			Set<OrganizationUserRolePermission> permissions = userTokenService.getUserOrganizationRolePermissions(user, organizationId);
 			String permissionObject = mapPermissionsToString(permissions);
-			return JWTTokenFactory.encode(tokenKey, tokenIssuer, "", TTL_MILLIS, user.getId(), permissionObject);
+			
+			String roleName = null;
+			OrganizationUserRolePermission orgUserRole = permissions.iterator().next();
+			if (!permissions.isEmpty()) {
+				if (!orgUserRole.getRoleId().equals(1L)) {
+					user.setOrganizationId(permissions.iterator().next().getOrganizationId());
+				}
+			}
+			roleName = getRoleName(orgUserRole.getRoleId());
+			
+			return new AuthenticationResult(HttpStatus.OK.value(), user, JWTTokenFactory.encode(tokenKey, tokenIssuer, "", TTL_MILLIS, user.getId(), permissionObject), "Success", roleName);
+	
 		} catch (IncorrectCredentialsException ice) {
 			logger.error("couldn't auth user:", ice.getMessage());
-			return null;
+			return new AuthenticationResult(HttpStatus.UNAUTHORIZED.value(), String.format("{\"error\":\"Invalid username or password supplied %s\"}", ice.getMessage()));
 		}
 	}
 
+	private String getJsonString(Object source) {
+		String response = "";
+		try {
+			response = mapper.writeValueAsString(source);
+		}  catch (JsonProcessingException e) {
+			logger.warn("Couldn't map permissions: ", e.getOriginalMessage());
+		}
+		
+		return response;
+	}
 	private String mapPermissionsToString(Set<OrganizationUserRolePermission> permissions) {
 		String response = "";
 		try {
@@ -140,7 +162,7 @@ public class UserSecurityController extends AbstractBaseController {
 			//String permissionObject = mapPermissionsToString(permissions);
 			return new AuthenticationResult(HttpStatus.OK.value(), user, 
 					JWTTokenFactory.encode(tokenKey, tokenIssuer, "", TTL_MILLIS, user.getId(), mapper.writeValueAsString(acl))
-				   ,"Success");
+				   ,"Success", "");
 
 		} catch(Exception e) {
 			logger.error(String.format("unable to authenticate from go	gle token due to %s", e.getMessage()),e);

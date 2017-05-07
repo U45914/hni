@@ -31,7 +31,7 @@ public class OrderEventConsumerImpl implements OrderEventConsumer {
     @Inject
     private SlackWebHookClient slackWebHookClient;
 
-    @PostConstruct
+    //@PostConstruct
     private void register() {
         RRemoteService remoteService = redissonClient.getNativeClient().getRemoteService();
         remoteService.register(OrderEventConsumer.class, this, CONCURRENT_INVOCATION_NUMBER);

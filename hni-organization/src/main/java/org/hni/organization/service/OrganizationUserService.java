@@ -5,6 +5,7 @@ import java.util.Collection;
 import org.hni.common.om.Role;
 import org.hni.organization.om.Organization;
 import org.hni.organization.om.UserOrganizationRole;
+import org.hni.organization.om.HniServices;
 import org.hni.user.om.User;
 import org.hni.user.service.UserService;
 
@@ -97,4 +98,15 @@ public interface OrganizationUserService extends UserService {
 	 * @return
 	 */
 	Collection<User> byRole(Role role);
+	
+	
+	/**
+	 *  Returns hni services for a user of an organization
+	 */
+	
+	Collection<HniServices> getHniServices(Collection<UserOrganizationRole> userOrganizationRoles);
+	
+	/*user profile completion status
+	 * */
+	public boolean getProfileStatus(User user);
 }

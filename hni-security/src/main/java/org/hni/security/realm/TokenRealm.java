@@ -20,6 +20,7 @@ import org.apache.shiro.util.SimpleByteSource;
 import org.apache.shiro.util.ThreadContext;
 import org.hni.common.Constants;
 import org.hni.security.om.OrganizationUserRolePermission;
+import org.hni.security.om.Permission;
 import org.hni.security.om.UserAccessControls;
 import org.hni.security.realm.token.JWTAuthenticationToken;
 import org.hni.user.om.User;
@@ -27,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 
 public class TokenRealm extends PasswordRealm {
 	private static final Logger logger = LoggerFactory.getLogger(TokenRealm.class);
@@ -72,19 +74,26 @@ public class TokenRealm extends PasswordRealm {
 		}
 		SimpleAuthorizationInfo authInfo = new SimpleAuthorizationInfo();
 		String permissions = (String) ThreadContext.get(Constants.PERMISSIONS);
-		//Set<OrganizationUserRolePermission> permissionSet = deserializePermissions(permissions);
+		Set<OrganizationUserRolePermission> permissionSet = deserializePermissions(permissions);
 		UserAccessControls acl;
 		try {
-			acl = objectMapper.readValue(permissions, UserAccessControls.class);
-			authInfo.addStringPermissions(acl.getPermissions());
-			authInfo.addRoles(acl.getRoles());
-			for(String v : acl.getRoles()) {
+			//acl = objectMapper.readValue(permissions, UserAccessControls.class);
+			//authInfo.addStringPermissions(acl.getPermissions());
+			//authInfo.addRoles(acl.getRoles());
+			
+			for (OrganizationUserRolePermission orgUserRolePermission : permissionSet) {
+				authInfo.addRole(String.valueOf(orgUserRolePermission.getRoleId()));
+				for (Permission permission : orgUserRolePermission.getPermissions()) {
+					authInfo.addStringPermission(permission.toString());
+				}
+			}
+			/*for(String v : acl.getRoles()) {
 				logger.info("ROLE:"+v);
 			}
 			for(String p : acl.getPermissions()) {
 				logger.info("PERM:"+p);
-			}
-		} catch (IOException e) {
+			}*/
+		} catch (Exception e) {
 			logger.warn("unable to deserialize token permissions..setting to nothing");
 		}
 		
@@ -100,7 +109,8 @@ public class TokenRealm extends PasswordRealm {
 	private Set<OrganizationUserRolePermission> deserializePermissions(String permissionString) {
 		Set<OrganizationUserRolePermission> permissions = new TreeSet<OrganizationUserRolePermission>();
 		try {
-			objectMapper.readValue(permissionString, permissions.getClass());
+			permissions = objectMapper.readValue(permissionString, TypeFactory.defaultInstance().constructCollectionType(Set.class,  
+					OrganizationUserRolePermission.class));
 		} catch (IOException e) {
 			logger.warn("Could not deserialize permissions set...", e.getMessage());
 		}

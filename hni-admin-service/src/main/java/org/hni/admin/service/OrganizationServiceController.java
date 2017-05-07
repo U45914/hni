@@ -95,5 +95,22 @@ public class OrganizationServiceController extends AbstractBaseController {
 	public Collection<Organization> getAll() {
 		return orgService.getAll();
 	}
+	
+	/*
+	 * Test Methods
+	 */
+	
+	@GET
+	@Path("/test")
+	@Produces({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = "This is a test method."
+	, notes = ""
+	, response = String.class
+	, responseContainer = "")
+	public String getUser() {
+		System.out.println("pinging...");
+		return "Pinging...";
+	}
+	
 
 }

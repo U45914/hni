@@ -22,4 +22,11 @@ public class DefaultOrganizationService extends AbstractService<Organization> im
 		super(organizationDao);
 		this.organizationDao = organizationDao;
 	}
+
+	@Override
+	public boolean isAlreadyExists(Organization org) {
+		return organizationDao.isAlreadyExists(org);
+	}
+	
+	
 }

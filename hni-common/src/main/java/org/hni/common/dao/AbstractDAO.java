@@ -9,6 +9,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.hni.common.om.Persistable;
+import org.hni.user.om.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,7 +91,7 @@ public abstract class AbstractDAO<T extends Persistable> implements BaseDAO<T> {
 		}			
 		return objx;
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<T> getAll() {
