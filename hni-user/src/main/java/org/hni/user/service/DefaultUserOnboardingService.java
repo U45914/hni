@@ -139,7 +139,7 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 	private String saveNGOData(ObjectNode onboardData, User user){
 		
 		Ngo ngoExst = ngoGenericDAO.findUnique(Ngo.class,"select x from Ngo x where x.userId=?1 ", user.getId());
-		Ngo ngo =HNIConverter.getNGOFromJson(onboardData);
+		Ngo ngo = HNIConverter.getNGOFromJson(onboardData);
 		if(ngoExst!=null ){
 			ngo.setId(ngoExst.getId());
 			ngo = ngoGenericDAO.update(Ngo.class ,ngo);

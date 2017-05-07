@@ -76,6 +76,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class HNIConverter {
 
+	private static final String EMPLOYEES = "employees";
+
+	private static final String STORE_CLIENT_INFO = "storeClientInfo";
+
 	private static final Logger logger = LoggerFactory.getLogger(HNIConverter.class);
 
 	public static final String USERID = "userId";
@@ -120,7 +124,7 @@ public class HNIConverter {
 		ngo.setUserId((Long) ThreadContext.get(Constants.USERID));
 		
 		ngo.setWebsite(overviewNode.get(WEBSITE).asText());
-		ngo.setFte(1);
+		ngo.setFte(overviewNode.has(EMPLOYEES) ? overviewNode.get(EMPLOYEES).asInt() : 0);
 		ngo.setOverview(overviewNode.get(OVERVIEW).asText());
 		ngo.setMission(overviewNode.get(MISSION).asText());
 
@@ -137,7 +141,7 @@ public class HNIConverter {
 		ngo.setIndividualsServedAnnually(clientNode.get(INDIVIDUALS_SERVED_ANNUALLY).asInt());
 		ngo.setClientInfo(clientNode.get(INDIVIDUAL_CLIENT_INFO_COLLECTED).asInt());
 		
-		ngo.setStoreClientInfo("");
+		ngo.setStoreClientInfo(clientNode.has(STORE_CLIENT_INFO) ? clientNode.get(STORE_CLIENT_INFO).asText() : "");
 		ngo.setClientsUnSheltered(clientNode.get(UNSHELTERED_CLIENT_PERCENTAGE).asInt());
 		ngo.setClientsEmployed(clientNode.get(EMPLOYEED_CLIENT_PERCENTAGE).asInt());
 		ngo.setCreated(new Date());

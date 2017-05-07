@@ -1,6 +1,5 @@
 package org.hni.user.dao;
 
-import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +26,7 @@ public class NGOGenericDAO extends DefaultGenericDAO {
 	}
 
 	public <T extends Persistable> List<T> saveBatch(Class<T> clazz, List<T> objList, Long id) {
-		deleteByTable(getTableName(clazz), "ngo_id", id);
+		deleteByTable(getTableName(clazz, true), "ngo_id", id);
 		for (T obj : objList) {
 			if (null == obj) {
 				return null;
@@ -41,11 +40,15 @@ public class NGOGenericDAO extends DefaultGenericDAO {
 		return objList;
 	}
 
-	private String getTableName(Class clazz) {
+	private String getTableName(Class clazz, boolean simpleName) {
 		try {
-			Table annotation = (Table) clazz.getAnnotation(Table.class);
-			String tableName = annotation.name();
-			return tableName;
+			if (simpleName) {
+				return clazz.getSimpleName();
+			} else {
+				Table annotation = (Table) clazz.getAnnotation(Table.class);
+				String tableName = annotation.name();
+				return tableName;
+			}
 		} catch (Exception e) {
 			logger.error("Exception while getting table name", e);
 		}
