@@ -26,7 +26,7 @@ public class NGOGenericDAO extends DefaultGenericDAO {
 	}
 
 	public <T extends Persistable> List<T> saveBatch(Class<T> clazz, List<T> objList, Long id) {
-		deleteByTable(getTableName(clazz, true), "ngo_id", id);
+		deleteByTable(getTableName(clazz, true), "ngoId", id);
 		for (T obj : objList) {
 			if (null == obj) {
 				return null;

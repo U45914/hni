@@ -425,6 +425,7 @@ public class HNIConverter {
 		overview.put(WEBSITE, ngo.getWebsite());
 		overview.put(OVERVIEW, ngo.getOverview());
 		overview.put(MISSION, ngo.getMission());
+		overview.put(EMPLOYEES, ngo.getFte());
 		parentJSON.set(OVERVIEW, overview);
 
 		ObjectNode service = mapper.createObjectNode();
@@ -444,6 +445,8 @@ public class HNIConverter {
 		client.put(INDIVIDUAL_CLIENT_INFO_COLLECTED, ngo.getClientInfo());
 		client.put(UNSHELTERED_CLIENT_PERCENTAGE, ngo.getClientsUnSheltered());
 		client.put(EMPLOYEED_CLIENT_PERCENTAGE, ngo.getClientsEmployed());
+		client.put(STORE_CLIENT_INFO, ngo.getStoreClientInfo());
+		
 		parentJSON.set(CLIENT_NODE, client);
 
 		return parentJSON;

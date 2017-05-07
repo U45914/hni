@@ -158,6 +158,9 @@ public class Client implements Persistable, Serializable {
 	private Integer lastVisitDentist;
 	@Column(name = "live_with")
 	private Integer liveWith;
+	@Column(name = "ethinicity")
+	private Integer ethnicity;
+	
 	public Client() {
 	}
 
@@ -847,7 +850,14 @@ public class Client implements Persistable, Serializable {
 	public void setUser(User user) {
 		this.user = user;
 	}
-	
+
+	public Integer getEthnicity() {
+		return ethnicity;
+	}
+
+	public void setEthnicity(Integer ethnicity) {
+		this.ethnicity = ethnicity;
+	}
 	
 
 }
