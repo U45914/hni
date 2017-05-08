@@ -303,7 +303,8 @@ public class UserServiceController extends AbstractBaseController {
 				}
 			}
 		}catch(Exception e){
-			_LOGGER.error("Client save failed!"+ e.getMessage());
+			_LOGGER.error("Client save failed!"+ e.getMessage(), e);
+			e.printStackTrace();
 		}
 		return Response.ok(response).build();
 	}
@@ -330,7 +331,8 @@ public class UserServiceController extends AbstractBaseController {
 				}
 			}
 		}catch(Exception e){
-			_LOGGER.error("Volunteer save failed!");
+			_LOGGER.error("Volunteer save failed!", e);
+			e.printStackTrace();
 		}
 		return Response.ok(response).build();
 	}
@@ -346,7 +348,7 @@ public class UserServiceController extends AbstractBaseController {
 			ObjectNode objectNode = new ObjectMapper().readValue(availabilityJSON, ObjectNode.class);
 			response = userOnBoardingService.saveVolunteerAvailability(objectNode);
 		} catch (Exception e) {
-			_LOGGER.error("Save VolunteerAvailability Failed");
+			_LOGGER.error("Save VolunteerAvailability Failed", e);
 			response.put(ERROR, "Save VolunteerAvailability Failed");
 		}
 		return Response.ok(response).build();
@@ -397,7 +399,7 @@ public class UserServiceController extends AbstractBaseController {
 			}
 
 		} catch (Exception e) {
-			_LOGGER.error("User Profile fetching failed!");
+			_LOGGER.error("User Profile fetching failed!", e);
 			return Response.serverError().build();
 		}
 		return Response.ok(response).build();

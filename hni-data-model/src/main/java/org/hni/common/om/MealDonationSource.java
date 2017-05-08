@@ -26,6 +26,9 @@ public class MealDonationSource  implements Persistable, Serializable{
 	@Column(name = "source")
 	private String source;
 	
+	@Column(name = "quantity")
+	private Long mealQuantity;
+	
 	@Column(name = "frequency")
 	private String frequency;
 	
@@ -82,5 +85,15 @@ public class MealDonationSource  implements Persistable, Serializable{
 	public void setCreatedBy(Long createdBy) {
 		this.createdBy = createdBy;
 	}
+
+	public Long getMealQuantity() {
+		return mealQuantity;
+	}
+
+	public void setMealQuantity(Long mealQuantity) {
+		this.mealQuantity = mealQuantity;
+	}
+	
+	
 	
 }
