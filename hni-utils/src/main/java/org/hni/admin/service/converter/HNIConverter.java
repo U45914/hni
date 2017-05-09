@@ -50,7 +50,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.shiro.util.ThreadContext;
@@ -77,6 +76,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class HNIConverter {
+
+	private static final String MEAL_QTY = "mealQty";
 
 	private static final String PROMOTERS = "promoters";
 
@@ -208,7 +209,9 @@ public class HNIConverter {
 		
 						BrandPartner brandPartner = new BrandPartner();
 						brandPartner.setNgoId(ngo_id);
-						brandPartner.setPhone(String.valueOf(brandPartnerJSON.get(PHONE_NUMBER).asInt()));
+						if (brandPartnerJSON.has(PHONE_NUMBER)) {
+							brandPartner.setPhone(String.valueOf(brandPartnerJSON.get(PHONE_NUMBER).asText()));
+						}
 						brandPartner.setCompany(brandPartnerJSON.get(COMPANY).asText());
 						brandPartner.setCreated(new Date());
 						brandPartner.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
@@ -239,7 +242,9 @@ public class HNIConverter {
 
 				LocalPartner localPartner = new LocalPartner();
 				localPartner.setNgoId(ngoId);
-				localPartner.setPhone(String.valueOf(localPartnerJSON.get(PHONE_NUMBER).asInt()));
+				if (localPartnerJSON.has(PHONE_NUMBER)) {
+					localPartner.setPhone(String.valueOf(localPartnerJSON.get(PHONE_NUMBER).asText()));
+				}
 				localPartner.setCompany(localPartnerJSON.get(COMPANY).asText());
 				localPartner.setCreated(new Date());
 				localPartner.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
@@ -263,7 +268,7 @@ public class HNIConverter {
 		if(objectNode.has(SERVICE)){
 			JsonNode serviceNode = objectNode.get(SERVICE);
 	
-			if (serviceNode.has(FOOD_BANK_SELECT)) {
+			if (serviceNode.has(FOOD_BANK_SELECT) && serviceNode.get(FOOD_BANK_SELECT).asBoolean()) {
 				JsonNode foodBankArray = serviceNode.get(FOOD_BANK_VALUE);
 				if (foodBankArray.isArray()) {
 					Iterator<JsonNode> foodBankItr = foodBankArray.iterator();
@@ -349,15 +354,21 @@ public class HNIConverter {
 			JsonNode mealDonationSourceArray = objectNode.get(FUNDING).get(MEAL_DONATION);
 			if (mealDonationSourceArray.isArray()) {
 				Iterator<JsonNode> mealDonationSourceItr = mealDonationSourceArray.iterator();
-				while (mealDonationSourceItr.hasNext()) {
-					JsonNode mealDonationSourceJSON = mealDonationSourceItr.next();
-					MealDonationSource mealDonationSource = new MealDonationSource();
-					mealDonationSource.setNgoId(ngoId);
-					mealDonationSource.setSource(mealDonationSourceJSON.get(SOURCE).asText());
-					mealDonationSource.setFrequency(mealDonationSourceJSON.get(FREQUENCY).asText());
-					mealDonationSource.setCreated(new Date());
-					mealDonationSource.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
-					mealDonationSources.add(mealDonationSource);
+				try{
+					while (mealDonationSourceItr.hasNext()) {
+						JsonNode mealDonationSourceJSON = mealDonationSourceItr.next();
+						MealDonationSource mealDonationSource = new MealDonationSource();
+						mealDonationSource.setNgoId(ngoId);
+						mealDonationSource.setSource(mealDonationSourceJSON.has(SOURCE) ? mealDonationSourceJSON.get(SOURCE).asText() : "");
+						mealDonationSource.setFrequency(mealDonationSourceJSON.has(FREQUENCY) ? mealDonationSourceJSON.get(FREQUENCY).asText() : "");
+						mealDonationSource.setMealQuantity(mealDonationSourceJSON.has(MEAL_QTY) ? mealDonationSourceJSON.get(MEAL_QTY).asLong() : 0);
+						mealDonationSource.setCreated(new Date());
+						mealDonationSource.setCreatedBy((Long) ThreadContext.get(Constants.USERID));
+						mealDonationSources.add(mealDonationSource);
+					}
+				
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
 			}
@@ -593,6 +604,7 @@ public class HNIConverter {
 			ObjectNode mealDonationJSON = mapper.createObjectNode();
 			mealDonationJSON.put(SOURCE, md.getSource());
 			mealDonationJSON.put(FREQUENCY, md.getFrequency());
+			mealDonationJSON.put(MEAL_QTY, md.getMealQuantity());
 			mealDonationJSONArray.add(mealDonationJSON);
 		});
 

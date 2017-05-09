@@ -1,10 +1,10 @@
 package org.hni.admin.service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
@@ -12,20 +12,26 @@ import javax.ws.rs.core.Response;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.util.ThreadContext;
+import org.hni.admin.service.converter.HNIConverter;
 import org.hni.common.Constants;
 import org.hni.organization.service.OrganizationUserService;
 import org.hni.security.utils.HNISecurityUtils;
 import org.hni.type.HNIRoles;
 import org.hni.user.om.Address;
+import org.hni.user.om.Client;
 import org.hni.user.om.User;
+import org.hni.user.om.Volunteer;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.monitorjbl.json.JsonView;
 import com.monitorjbl.json.JsonViewSerializer;
 
 public class AbstractBaseController {
 
+	private static final String EMPTY = "";
 	protected static final String SOMETHING_WENT_WRONG_PLEASE_TRY_AGAIN = "Something went wrong, please try again";
 	protected static final String ERROR_MSG = "errorMsg";
 	protected static final String SUCCESS = "success";
@@ -118,4 +124,53 @@ public class AbstractBaseController {
 			return "User";
 		}
 	}
+	
+	
+	protected String getInitialData(User user, Long role) throws JsonProcessingException {
+		String initialProfileData = "{}";
+		if (role.equals(HNIRoles.NGO_ADMIN.getRole()) && role.equals(HNIRoles.NGO.getRole())) {
+			ObjectNode parentJSON = mapper.createObjectNode();
+			ObjectNode overViewNode = mapper.createObjectNode();
+			if (user != null) {
+				overViewNode.set("address", HNIConverter.getAddress(mapper.createObjectNode(), user.getAddresses()));
+				overViewNode.put("name", user.getFirstName() + " " + user.getLastName());
+				overViewNode.put("mobilePhone", user.getMobilePhone());
+				overViewNode.put("genderCode", user.getGenderCode());				 
+			}
+			parentJSON.set("overview", overViewNode);
+			
+			initialProfileData = mapper.writeValueAsString(mapper.writeValueAsString(parentJSON));
+			
+		} else if (role.equals(HNIRoles.VOLUNTEERS.getRole())) {
+			Volunteer volunteer = new Volunteer();
+			volunteer.setUser(maskUserInfo(user));
+			volunteer.setAddress(createAddress(user.getAddresses()));
+			initialProfileData = mapper.writeValueAsString(volunteer);
+		} else if (role.equals(HNIRoles.CLIENT.getRole())) {
+			Client client = new Client();
+			client.setUser(maskUserInfo(user));
+			client.setAddress(createAddress(user.getAddresses()));
+			initialProfileData = mapper.writeValueAsString(client);
+		} else {
+			initialProfileData = EMPTY;
+		}
+		return initialProfileData;
+	}
+	
+	private Address createAddress(Set<Address> addresses) {
+		Address addr = new Address();
+		
+		if (addresses != null && !addresses.isEmpty()) {
+			addr = addresses.iterator().next();
+		}
+		
+		return addr;
+	}
+	
+	private User maskUserInfo(User user) {
+		user.setId(null);
+		
+		return user;
+	}
+
 }

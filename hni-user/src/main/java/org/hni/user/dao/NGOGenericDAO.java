@@ -63,8 +63,9 @@ public class NGOGenericDAO extends DefaultGenericDAO {
 						"select u.id,u.first_name,u.last_name,u.mobile_phone,n.website,ad.address_line1,ad.city,ad.state"
 								+ " from user_organization_role x INNER JOIN users u ON u.id = x.user_id "
 								+ "LEFT OUTER join user_address ua on ua.user_id= x.user_id  LEFT OUTER join addresses ad on ad.id=ua.address_id "
-								+ "LEFT OUTER JOIN ngo n ON n.id=u.id where x.role_id=:roleId")
-				.setParameter("roleId", ngoRoleId).getResultList();
+								+ "LEFT OUTER JOIN ngo n ON n.id=u.id where x.role_id=:roleId OR x.role_id=:ngoParent")
+				.setParameter("roleId", ngoRoleId)
+				.setParameter("ngoParent", HNIRoles.NGO_ADMIN.getRole()).getResultList();
 		for (Object[] u : userOrganizationRoles) {
 			NgoBasicDto ngoBasicDto = new NgoBasicDto();
 			Long userId = Long.valueOf(getValue(u[0]));

@@ -252,6 +252,7 @@ public class UserOnboardingController extends AbstractBaseController {
 			ObjectNode ngoDetailJSON = userOnBoardingService.getNGODetail(ngoId, null);
 			return Response.ok(ngoDetailJSON).build();
 		} catch (Exception e) {
+			e.printStackTrace();
 			response.put(ERROR, SOMETHING_WENT_WRONG_PLEASE_TRY_AGAIN);
 		}
 		return Response.ok(response).build();

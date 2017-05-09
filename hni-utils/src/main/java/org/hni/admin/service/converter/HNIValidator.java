@@ -248,29 +248,29 @@ public class HNIValidator {
 		if(volunteer.getBirthday()==null){
 			error.put("Volunteer Birthday", "Cannot be null");
 		}
-		if(volunteer.getEducation()==null){
-			error.put("Volunteer Education", "Cannot be null");
+		if(volunteer.getEducation() == null){
+			volunteer.setEducation(0L);
 		}
-		if(volunteer.getEmployer()==null){
-			error.put("Volunteer Employer", "Cannot be null");
+		if(volunteer.getEmployer() == null){
+			volunteer.setEmployer("Not Specified");
 		}
-		if(volunteer.getIncome()==null){
-			error.put("Volunteer Income", "Cannot be null");
+		if(volunteer.getIncome() == null){
+			volunteer.setIncome(0L);
 		}
 		if(volunteer.getKids()==null){
-			error.put("Volunteer Kids", "Cannot be null");
+			volunteer.setKids(0L);
 		}
-		if(volunteer.getMaritalStatus()==null){
-			error.put("Volunteer Marital Status", "Cannot be null");
+		if(volunteer.getMaritalStatus() == null){
+			volunteer.setMaritalStatus(1l);
 		}
-		if(volunteer.getNonProfit()==null){
-			error.put("Volunteer Non Profit", "Cannot be null");
+		if(volunteer.getNonProfit() == null){
+			volunteer.setNonProfit("Y");
 		}
-		if(volunteer.getRace()==null){
-			error.put("Volunteer Race", "Cannot be null");
+		if(volunteer.getRace() == null){
+			volunteer.setRace(2l);
 		}
-		if(volunteer.getSex()==null){
-			error.put("Volunteer Sex", "Cannot be null");
+		if(volunteer.getSex() == null){
+			volunteer.setSex("O");
 		}
 		
 		return error;
@@ -304,7 +304,11 @@ public class HNIValidator {
 			error.put("Client createdBy", "Cannot be null");
 		}
 		if(client.getRace()==null){
-			error.put("Client race", "Cannot be null");
+			client.setRace(2L);
+		}
+		
+		if (client.getEthnicity() == null) {
+			client.setEthnicity(0);
 		}
 		
 		return error;

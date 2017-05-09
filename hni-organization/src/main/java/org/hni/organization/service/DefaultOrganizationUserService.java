@@ -16,7 +16,6 @@ import org.hni.organization.om.UserOrganizationRole;
 import org.hni.organization.om.UserOrganizationRolePK;
 import org.hni.type.HNIRoles;
 import org.hni.user.dao.UserDAO;
-import org.hni.user.dao.UserOnboardingDAO;
 import org.hni.user.om.User;
 import org.hni.user.service.DefaultUserService;
 import org.springframework.stereotype.Component;

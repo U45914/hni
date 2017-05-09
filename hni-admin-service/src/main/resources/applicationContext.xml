@@ -83,7 +83,11 @@
 			<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 				<property name="locations" value="classpath:config/localdev/application.properties" />	
 			</bean>	
-
+			
+			<bean id="redisLockingService" class=" org.hni.order.service.RedisLockingService">
+				<property name="configLocation" value="/config/localdev/redis-cache.json" />
+			</bean>
+			
 			<bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
 			    <property name="poolName" value="springHikariCP" />
 			    <property name="connectionTestQuery" value="${dataSource.connectionTestQuery}" />

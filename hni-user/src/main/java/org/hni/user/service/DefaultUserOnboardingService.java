@@ -23,7 +23,6 @@ import org.hni.common.om.MealDonationSource;
 import org.hni.common.om.MealFundingSource;
 import org.hni.common.om.NgoFundingSource;
 import org.hni.common.service.AbstractService;
-import org.hni.user.dao.AddressDAO;
 import org.hni.user.dao.ClientDAO;
 import org.hni.user.dao.NGOGenericDAO;
 import org.hni.user.dao.UserDAO;
@@ -63,9 +62,6 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 	
 	@Inject
 	private NGOGenericDAO ngoGenericDAO;
-	
-	@Inject
-	private AddressDAO addressDAO;
 	
 	@Inject
 	private VolunteerDao volunteerDao;

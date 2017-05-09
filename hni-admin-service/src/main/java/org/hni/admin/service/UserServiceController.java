@@ -54,6 +54,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -239,12 +240,13 @@ public class UserServiceController extends AbstractBaseController {
 	@Path("/register")
 	@ApiOperation(value = "register a customer", notes = "An update occurs if the ID field is specified", response = User.class, responseContainer = "")
 	public Response registerUser(User user, @HeaderParam("user-type") String type, @HeaderParam("invite-code") String invitaionCode, 
-			@HeaderParam("act-code") String activationCode) {
+			@HeaderParam("act-code") String activationCode) throws JsonProcessingException {
 		Map<String, String> userResponse = new HashMap<>();
 		boolean validPassword = false;
 		validPassword = CheckPassword.passwordCheck(user);
 		if (validPassword == true) {
-			User u = orgUserService.register(setPassword(user), convertUserTypeToRole(type));
+			Long userRole = convertUserTypeToRole(type);
+			User u = orgUserService.register(setPassword(user), userRole);
 			if (u != null) {
 				UserPartialData userProfileTempInfo = new UserPartialData();
 				userProfileTempInfo.setUserId(u.getId());
@@ -252,7 +254,7 @@ public class UserServiceController extends AbstractBaseController {
 				userProfileTempInfo.setCreated(new Date());
 				userProfileTempInfo.setStatus(Constants.N);
 				userProfileTempInfo.setType(type);
-				userProfileTempInfo.setData("{}");
+				userProfileTempInfo.setData(getInitialData(user, userRole));
 				// Saving user data to userProfileTable for user profile redirection
 				userPartialCreateService.save(userProfileTempInfo);
 				if(type.equalsIgnoreCase("client") && StringUtils.isNotEmpty(activationCode) && activationCodeService.validate(activationCode)) {
@@ -291,8 +293,14 @@ public class UserServiceController extends AbstractBaseController {
 		Map<String,String> response = new HashMap<>();
 		try{
 			User user = getLoggedInUser();
+			user.setFirstName(client.getUser().getFirstName());
+			user.setLastName(client.getUser().getLastName());
+			user.setMobilePhone(client.getUser().getMobilePhone());
+			
 			user.setAddresses(getAddressSet(user.getAddresses(), client.getAddress()));
+			
 			userService.update(user);
+			
 			Map<String,String> errors = userOnBoardingService.clientSave(client, user);
 			if(errors!=null && errors.isEmpty()){
 				response.put(RESPONSE, SUCCESS);
@@ -303,7 +311,8 @@ public class UserServiceController extends AbstractBaseController {
 				}
 			}
 		}catch(Exception e){
-			_LOGGER.error("Client save failed!"+ e.getMessage());
+			_LOGGER.error("Client save failed!"+ e.getMessage(), e);
+			e.printStackTrace();
 		}
 		return Response.ok(response).build();
 	}
@@ -317,7 +326,13 @@ public class UserServiceController extends AbstractBaseController {
 		User user = getLoggedInUser();
 		Map<String,String> response = new HashMap<>();
 		try{
+			user.setFirstName(volunteer.getUser().getFirstName());
+			user.setLastName(volunteer.getUser().getLastName());
+			user.setMobilePhone(volunteer.getUser().getMobilePhone());
+			
 			user.setAddresses(getAddressSet(user.getAddresses(), volunteer.getAddress()));
+			user.setMobilePhone(volunteer.getUser().getMobilePhone());
+			user.setGender(volunteer.getUser().getGender());
 			userService.update(user);
 			
 			Map<String,String> errors =   userOnBoardingService.buildVolunteerAndSave(volunteer, user);
@@ -330,7 +345,8 @@ public class UserServiceController extends AbstractBaseController {
 				}
 			}
 		}catch(Exception e){
-			_LOGGER.error("Volunteer save failed!");
+			_LOGGER.error("Volunteer save failed!", e);
+			e.printStackTrace();
 		}
 		return Response.ok(response).build();
 	}
@@ -343,10 +359,10 @@ public class UserServiceController extends AbstractBaseController {
 	public Response saveVolunteerAvailability(String availabilityJSON){
 		Map<String,String> response = new HashMap<>();
 		try {
-			ObjectNode objectNode = new ObjectMapper().readValue(availabilityJSON, ObjectNode.class);
+			ObjectNode objectNode = mapper.readValue(availabilityJSON, ObjectNode.class);
 			response = userOnBoardingService.saveVolunteerAvailability(objectNode);
 		} catch (Exception e) {
-			_LOGGER.error("Save VolunteerAvailability Failed");
+			_LOGGER.error("Save VolunteerAvailability Failed", e);
 			response.put(ERROR, "Save VolunteerAvailability Failed");
 		}
 		return Response.ok(response).build();
@@ -397,7 +413,7 @@ public class UserServiceController extends AbstractBaseController {
 			}
 
 		} catch (Exception e) {
-			_LOGGER.error("User Profile fetching failed!");
+			_LOGGER.error("User Profile fetching failed!", e);
 			return Response.serverError().build();
 		}
 		return Response.ok(response).build();
