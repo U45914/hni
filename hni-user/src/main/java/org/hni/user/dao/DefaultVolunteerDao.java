@@ -7,11 +7,15 @@ import javax.persistence.Query;
 
 import org.hni.common.dao.AbstractDAO;
 import org.hni.user.om.Volunteer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
 public class DefaultVolunteerDao extends AbstractDAO<Volunteer> implements VolunteerDao  {
  
+	private static final Logger _LOGGER = LoggerFactory.getLogger(DefaultVolunteerDao.class);
+
 	public DefaultVolunteerDao() {
 		super(Volunteer.class);
 	}
@@ -27,6 +31,7 @@ public class DefaultVolunteerDao extends AbstractDAO<Volunteer> implements Volun
 				return volunteers.get(0);
 			}
 		} catch (NoResultException e) {
+			_LOGGER.error("Error in volunteer Query:" + e.getMessage(), e);
 			return null;
 		}
 	}
