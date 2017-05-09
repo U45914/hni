@@ -331,6 +331,8 @@ public class UserServiceController extends AbstractBaseController {
 			user.setMobilePhone(volunteer.getUser().getMobilePhone());
 			
 			user.setAddresses(getAddressSet(user.getAddresses(), volunteer.getAddress()));
+			user.setMobilePhone(volunteer.getUser().getMobilePhone());
+			user.setGender(volunteer.getUser().getGender());
 			userService.update(user);
 			
 			Map<String,String> errors =   userOnBoardingService.buildVolunteerAndSave(volunteer, user);
