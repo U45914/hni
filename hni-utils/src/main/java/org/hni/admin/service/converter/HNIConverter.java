@@ -243,7 +243,7 @@ public class HNIConverter {
 				LocalPartner localPartner = new LocalPartner();
 				localPartner.setNgoId(ngoId);
 				if (localPartnerJSON.has(PHONE_NUMBER)) {
-					localPartner.setPhone(String.valueOf(localPartnerJSON.get(PHONE_NUMBER)));
+					localPartner.setPhone(String.valueOf(localPartnerJSON.get(PHONE_NUMBER).asText()));
 				}
 				localPartner.setCompany(localPartnerJSON.get(COMPANY).asText());
 				localPartner.setCreated(new Date());
