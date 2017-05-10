@@ -34,6 +34,17 @@ public class Ngo implements Persistable, Serializable {
 	 
 	@Column(name = "overview")
 	private String overview;
+	
+	@Column(name = "contact_name")
+	private Long contactName;
+
+	public Long getContactName() {
+		return contactName;
+	}
+
+	public void setContactName(Long contactName) {
+		this.contactName = contactName;
+	}
 
 	@Column(name = "mission")
 	private String mission;
@@ -85,7 +96,7 @@ public class Ngo implements Persistable, Serializable {
 	
 	@Column(name = "created_by")
 	private Long createdBy;
-
+	
 	public Long getId() {
 		return id;
 	}
