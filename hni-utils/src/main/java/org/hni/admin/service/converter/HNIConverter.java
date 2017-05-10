@@ -133,7 +133,7 @@ public class HNIConverter {
 		ngo.setFte(overviewNode.has(EMPLOYEES) ? overviewNode.get(EMPLOYEES).asInt() : 0);
 		ngo.setOverview(overviewNode.has(OVERVIEW) ? overviewNode.get(OVERVIEW).asText(): "");
 		ngo.setMission(overviewNode.has(MISSION) ? overviewNode.get(MISSION).asText(): "");
-		ngo.setMission(overviewNode.has(CONTACT_PERSON) ? overviewNode.get(CONTACT_PERSON).asText(): "");
+		ngo.setContactName(overviewNode.has(CONTACT_PERSON) ? overviewNode.get(CONTACT_PERSON).asText(): "");
 		
 		ngo.setMonthlyBudget(serviceNode.has(MONTHLY_BUDGET) ? serviceNode.get(MONTHLY_BUDGET).asInt() : 0);
 		ngo.setOperatingCost(serviceNode.has(OPERATING_COST) ? serviceNode.get(OPERATING_COST).asInt() : 0);
@@ -451,7 +451,7 @@ public class HNIConverter {
 		overview.put(OVERVIEW, ngo.getOverview());
 		overview.put(MISSION, ngo.getMission());
 		
-		overview.put(CONTACT_PERSON, ngo.getMission());
+		overview.put(CONTACT_PERSON, ngo.getContactName());
 		overview.put(EMPLOYEES, ngo.getFte());
 		
 		parentJSON.set(OVERVIEW, overview);
