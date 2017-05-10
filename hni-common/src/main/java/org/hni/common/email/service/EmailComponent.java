@@ -130,12 +130,12 @@ public class EmailComponent {
 		}
 		emailTextBuilder.append(emailBodyTemplate);
 		if (invitationMessage != null && !invitationMessage.isEmpty()) {
-			emailTextBuilder.append("\n\n"+invitationMessage);
+			emailTextBuilder.append("<br/><br/>"+invitationMessage);
 		}
 		if (activationCode != null && !activationCode.isEmpty()) {
-			emailTextBuilder.append("\n\n Activation Code : "+ activationCode);
+			emailTextBuilder.append("<br/><br/> Activation Code : "+ activationCode);
 		}
-		emailTextBuilder.append("\n\n");
+		emailTextBuilder.append("<br/><br/>");
 		emailTextBuilder.append(emailFooterTemplate);
 		return String.format(emailTextBuilder.toString(), activateURL + userType + "/" + code);
 	}

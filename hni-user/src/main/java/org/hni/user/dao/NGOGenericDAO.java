@@ -59,11 +59,13 @@ public class NGOGenericDAO extends DefaultGenericDAO {
 		List<NgoBasicDto> ngos = new ArrayList<>();
 		Long ngoRoleId = HNIRoles.NGO.getRole();
 		List<Object[]> userOrganizationRoles = em
-				.createNativeQuery(
-						"select u.id,u.first_name,u.last_name,u.mobile_phone,n.website,ad.address_line1,ad.city,ad.state"
-								+ " from user_organization_role x INNER JOIN users u ON u.id = x.user_id "
-								+ "LEFT OUTER join user_address ua on ua.user_id= x.user_id  LEFT OUTER join addresses ad on ad.id=ua.address_id "
-								+ "LEFT OUTER JOIN ngo n ON n.id=u.id where x.role_id=:roleId OR x.role_id=:ngoParent")
+				.createNativeQuery("SELECT u.id,u.first_name,u.last_name, u.mobile_phone,ng.website,ad.address_line1, ad.city,ad.state  "
+						+ "FROM ngo ng  "
+						+ "LEFT JOIN users u ON u.id = ng.user_id  "
+						+ "LEFT JOIN user_organization_role uor ON uor.user_id = u.id  "
+						+ "LEFT JOIN user_address ua ON ua.user_id = u.id  "
+						+ "LEFT JOIN addresses ad ON ad.id = ua.address_id  "
+						+ "WHERE uor.role_id=:roleId OR uor.role_id=:ngoParent")
 				.setParameter("roleId", ngoRoleId)
 				.setParameter("ngoParent", HNIRoles.NGO_ADMIN.getRole()).getResultList();
 		for (Object[] u : userOrganizationRoles) {
@@ -89,8 +91,10 @@ public class NGOGenericDAO extends DefaultGenericDAO {
 		Long volunteerRoleId = HNIRoles.VOLUNTEERS.getRole();
 		List<Object[]> userDetails = em.createNativeQuery("SELECT "
 				+ "u.id, u.first_name, u.last_name, u.gender_code, u.email,u.mobile_phone, ad.address_line1,ad.city,ad.state "
-				+ "FROM user_organization_role uo INNER JOIN users u   on   u.id = uo.user_id "
-				+ "INNER JOIN user_address uad on uad.user_id=uo.user_id inner join addresses ad on ad.id = uad.address_id "
+				+ "FROM user_organization_role uo "
+				+ "INNER JOIN users u   on   u.id = uo.user_id "
+				+ "INNER JOIN user_address uad on uad.user_id=uo.user_id "
+				+ "INNER JOIN addresses ad on ad.id = uad.address_id "
 				+ "WHERE uo.role_id=:roleId").setParameter("roleId", volunteerRoleId).getResultList();
 
 		for (Object[] user : userDetails) {
@@ -127,7 +131,11 @@ public class NGOGenericDAO extends DefaultGenericDAO {
 		Long userId = user.getId();
 		List<Object[]> result = em
 				.createNativeQuery(
-						"select p.name as provider_name,p.website_url,p.created,u.first_name,a.name from providers p INNER JOIN users u  ON p.created_by =u.id INNER JOIN addresses a ON p.address_id=a.id and p.created_by=:uId")
+						"select p.name as provider_name,p.website_url,p.created,u.first_name,a.name "
+						+ "from providers p "
+						+ "INNER JOIN users u  ON p.created_by =u.id "
+						+ "INNER JOIN addresses a ON p.address_id=a.id "
+						+ "and p.created_by=:uId")
 				.setParameter("uId", userId).getResultList();
 		for (Object[] prov : result) {
 			ObjectNode provider = new ObjectMapper().createObjectNode();
