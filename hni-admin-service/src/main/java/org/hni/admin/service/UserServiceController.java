@@ -247,7 +247,7 @@ public class UserServiceController extends AbstractBaseController {
 		if (validPassword == true) {
 			Long userRole = convertUserTypeToRole(type);
 			User u = orgUserService.register(setPassword(user), userRole);
-			if (u != null) {
+			if (u != null && u.getId()!=null) {
 				UserPartialData userProfileTempInfo = new UserPartialData();
 				userProfileTempInfo.setUserId(u.getId());
 				userProfileTempInfo.setLastUpdated(new Date());

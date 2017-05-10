@@ -31,6 +31,7 @@ import static org.hni.common.Constants.LUNCH_QTY;
 import static org.hni.common.Constants.MEAL_DONATION;
 import static org.hni.common.Constants.MEAL_FUNDING;
 import static org.hni.common.Constants.MISSION;
+import static org.hni.common.Constants.CONTACT_PERSON;
 import static org.hni.common.Constants.MONTHLY_BUDGET;
 import static org.hni.common.Constants.NAME;
 import static org.hni.common.Constants.OPERATING_COST;
@@ -132,7 +133,8 @@ public class HNIConverter {
 		ngo.setFte(overviewNode.has(EMPLOYEES) ? overviewNode.get(EMPLOYEES).asInt() : 0);
 		ngo.setOverview(overviewNode.has(OVERVIEW) ? overviewNode.get(OVERVIEW).asText(): "");
 		ngo.setMission(overviewNode.has(MISSION) ? overviewNode.get(MISSION).asText(): "");
-
+		ngo.setContactName(overviewNode.has(CONTACT_PERSON) ? overviewNode.get(CONTACT_PERSON).asText(): "");
+		
 		ngo.setMonthlyBudget(serviceNode.has(MONTHLY_BUDGET) ? serviceNode.get(MONTHLY_BUDGET).asInt() : 0);
 		ngo.setOperatingCost(serviceNode.has(OPERATING_COST) ? serviceNode.get(OPERATING_COST).asInt() : 0);
 		ngo.setPersonalCost(serviceNode.has(PERSONAL_COST) ? serviceNode.get(PERSONAL_COST).asInt() : 0);
@@ -448,6 +450,8 @@ public class HNIConverter {
 		overview.put(WEBSITE, ngo.getWebsite());
 		overview.put(OVERVIEW, ngo.getOverview());
 		overview.put(MISSION, ngo.getMission());
+		
+		overview.put(CONTACT_PERSON, ngo.getContactName());
 		overview.put(EMPLOYEES, ngo.getFte());
 		
 		parentJSON.set(OVERVIEW, overview);

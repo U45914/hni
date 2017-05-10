@@ -65,6 +65,11 @@ public class HNIValidator {
 		if (ngo.getClientsEmployed() == null) {
 			errors.put("Ngo -> clientsEmployed", "cannot be null");
 		}
+		
+		if (ngo.getContactName() == null) {
+			errors.put("Ngo -> ContactName", "cannot be null");
+		}
+
 
 		return errors;
 

@@ -135,6 +135,8 @@ public class Constants {
 	public static final String MONTHLY_BUDGET = "monthlyBudget";
 
 	public static final String MISSION = "mission";
+	
+	public static final String CONTACT_PERSON = "contactName";
 
 	public static final String WEBSITE = "website";
 

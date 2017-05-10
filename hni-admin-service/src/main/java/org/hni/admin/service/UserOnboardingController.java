@@ -133,7 +133,7 @@ public class UserOnboardingController extends AbstractBaseController {
 	}
 
 	@GET
-	@Path("/activate/{ngo}/{invitationCode}")
+	@Path("/activate/{userType}/{invitationCode}")
 	@Produces({ MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "", notes = "", response = Map.class, responseContainer = "")
 	public Map<String, String> activateNGO(@PathParam("userType") String userType, @PathParam("invitationCode") String invitationCode) throws JsonParseException, JsonMappingException, IOException {
@@ -147,6 +147,9 @@ public class UserOnboardingController extends AbstractBaseController {
 			map.put(USER_NAME, invitations.get(0).getEmail());
 			if(invitations.get(0).getData()!=null){
 				map.put(FIRST_NAME, (String) mapper.readValue(invitations.get(0).getData(), Map.class).get("name"));
+			}
+			if(userType!=null && userType.equalsIgnoreCase("client") && invitations.get(0).getData()!=null){
+				map.put("userActivationCode", (String) mapper.readValue(invitations.get(0).getData(), Map.class).get("activationCode"));
 			}
 			return map;
 		}

@@ -36,7 +36,7 @@ public class DefaultUserOnboardingDAO extends AbstractDAO<Invitation> implements
 	public Invitation getInvitedBy(String email) {
 		try {
 			Query q = em.createQuery("SELECT x FROM Invitation x WHERE x.email = :email and activated=1 order by createdDate desc").setParameter("email", email);
-			return  q.getResultList()!=null?(Invitation)q.getResultList().get(0):null;
+			return  (q.getResultList()!=null&&!q.getResultList().isEmpty())?(Invitation)q.getResultList().get(0):null;
 		} catch (NoResultException e) {
 			e.printStackTrace();
 			return null;
