@@ -1,6 +1,7 @@
 package org.hni.admin.service;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hni.common.Constants;
 import org.hni.common.email.service.EmailComponent;
 import org.hni.organization.om.Organization;
+import org.hni.organization.om.UserOrganizationRole;
 import org.hni.organization.service.OrganizationService;
 import org.hni.user.dao.UserDAO;
 import org.hni.user.om.Invitation;
@@ -108,15 +110,18 @@ public class UserOnboardingController extends AbstractBaseController {
 		Map<String, String> map = new HashMap<>();
 		map.put(RESPONSE, ERROR);
 		try {
-			String orgId = userInfo.get("orgId");
 			String message = userInfo.get("invitationMessage");
 			String activationCode = userInfo.get("activationCode");
 			Long organizationId;
-			if (StringUtils.isNotEmpty(orgId)) {
-				organizationId = Long.valueOf(orgId);
+			
+			List<UserOrganizationRole> userOrganizationRoles = (List<UserOrganizationRole>) organizationUserService.getUserOrganizationRoles(getLoggedInUser());
+			if (!userOrganizationRoles.isEmpty()) {
+				organizationId = userOrganizationRoles.get(0).getId().getOrgId();
 			} else {
-				organizationId = getLoggedInUser().getOrganizationId() != null ? getLoggedInUser().getOrganizationId() : 1;
+				// Sets org to super user - hack
+				organizationId = 1L;
 			}
+			
 			String UUID = userOnBoardingService.buildInvitationAndSave(organizationId, getLoggedInUser().getId(), userInfo.get("email"), mapper.writeValueAsString(userInfo));
 			if (UUID != null) {
 				emailComponent.sendEmail(userInfo.get("email"), UUID, userType, message, activationCode,mapper.writeValueAsString(userInfo));
