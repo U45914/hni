@@ -78,10 +78,12 @@ public class EmailComponent {
 		Message message = new MimeMessage(session);
 		message.setFrom(new InternetAddress(fromAddress, fromName));
 		message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(receiverEmail));
-		if(userType.equalsIgnoreCase("Client")){
-			userType = "Particpant";
+		
+		String subject = new String(userType);
+		if(subject.equalsIgnoreCase("client")){
+			subject = "participant";
 		}
-		message.setSubject(capitalize(userType)+" "+emailSubTemplate);
+		message.setSubject(capitalize(subject)+" "+emailSubTemplate);
 		
 		//message.setText(getEmailText(userType, UUID, invitationMessage, activationCode,data));
 		String contentText =getEmailText(userType, UUID, invitationMessage, activationCode,data);

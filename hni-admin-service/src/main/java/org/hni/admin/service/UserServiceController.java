@@ -248,6 +248,11 @@ public class UserServiceController extends AbstractBaseController {
 			Long userRole = convertUserTypeToRole(type);
 			User u = orgUserService.register(setPassword(user), userRole);
 			if (u != null && u.getId()!=null) {
+				if(type.equalsIgnoreCase("client") && StringUtils.isNotEmpty(activationCode) && activationCodeService.validate(activationCode)) {
+					ActivationCode activationCodeEnity = activationCodeService.getByActivationCode(activationCode);
+					activationCodeEnity.setUser(u);
+					activationCodeService.update(activationCodeEnity);
+				}
 				UserPartialData userProfileTempInfo = new UserPartialData();
 				userProfileTempInfo.setUserId(u.getId());
 				userProfileTempInfo.setLastUpdated(new Date());
@@ -257,11 +262,6 @@ public class UserServiceController extends AbstractBaseController {
 				userProfileTempInfo.setData(getInitialData(user, userRole));
 				// Saving user data to userProfileTable for user profile redirection
 				userPartialCreateService.save(userProfileTempInfo);
-				if(type.equalsIgnoreCase("client") && StringUtils.isNotEmpty(activationCode) && activationCodeService.validate(activationCode)) {
-					ActivationCode activationCodeEnity = activationCodeService.getByActivationCode(activationCode);
-					activationCodeEnity.setUser(u);
-					activationCodeService.update(activationCodeEnity);
-				}
 				userOnBoardingService.finalizeRegistration(invitaionCode);
 				userResponse.put(SUCCESS, "Account has been created successfully");
 			} else {
