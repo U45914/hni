@@ -58,9 +58,9 @@ public class EmailComponent {
 	@Value("#{hniProperties['mail.template.body']}")
 	private String emailBodyTemplate;
 	@Value("#{hniProperties['mail.template.footer']}")
+	private String emailFooterTemplate;
 	
 	private ObjectMapper mapper = new ObjectMapper();
-	private String emailFooterTemplate;
 	
 	public boolean sendEmail(String receiverEmail, String UUID, String userType, String invitationMessage, String activationCode,String data)
 			throws AddressException, MessagingException, JsonParseException, JsonMappingException, IOException {
