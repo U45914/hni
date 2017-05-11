@@ -78,6 +78,9 @@ public class EmailComponent {
 		Message message = new MimeMessage(session);
 		message.setFrom(new InternetAddress(fromAddress, fromName));
 		message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(receiverEmail));
+		if(userType.equalsIgnoreCase("Client")){
+			userType = "Particpant";
+		}
 		message.setSubject(capitalize(userType)+" "+emailSubTemplate);
 		
 		//message.setText(getEmailText(userType, UUID, invitationMessage, activationCode,data));
@@ -123,7 +126,7 @@ public class EmailComponent {
 		Map<String,String> dataMap = null;
 		if(data!=null){
 		dataMap = (Map) mapper.readValue(data, Map.class);
-		emailTextBuilder.append("Dear "+dataMap.get("name")+",");
+		emailTextBuilder.append("Hi "+dataMap.get("name")+",");
 		}
 		else{
 			emailTextBuilder.append(getInviteName(userType));
@@ -142,11 +145,11 @@ public class EmailComponent {
 	
 	private String getInviteName(String type) {
 		if ("ngo".equalsIgnoreCase(type)) {
-			return "Dear NGO,";
+			return "Hi NGO,";
 		} else if ("volunteer".equalsIgnoreCase("type")) {
-			return "Dear Volunteer,";
+			return "Hi Volunteer,";
 		} else {
-			return "Dear User,";
+			return "Hi User,";
 		}
 		
 	}
