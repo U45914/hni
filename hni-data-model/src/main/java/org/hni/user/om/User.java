@@ -16,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hni.common.om.Persistable;
 import org.hni.user.om.type.Gender;
@@ -61,6 +62,9 @@ public class User implements Persistable, Serializable {
 	private String hashedSecret;
 	@Column(name = "salt")
 	private String salt;
+	
+	private transient String organizationName;
+	
 	@ManyToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
 	@JoinTable(name = "user_address", joinColumns = { @JoinColumn(name = "user_id", nullable = false, updatable = false) }, inverseJoinColumns = { @JoinColumn(name = "address_id",  referencedColumnName = "id", nullable = false, updatable = false) })	
 	private Set<Address> addresses = new HashSet<>(0);
@@ -172,6 +176,14 @@ public class User implements Persistable, Serializable {
 
 	public void setSalt(String salt) {
 		this.salt = salt;
+	}
+	
+	public String getOrganizationName() {
+		return organizationName;
+	}
+
+	public void setOrganizationName(String organizationName) {
+		this.organizationName = organizationName;
 	}
 
 	public String getToken() {
