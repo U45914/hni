@@ -23,7 +23,7 @@ public class CustomerDao extends DefaultGenericDAO {
 		List<Object[]> user = em
 				//.createNativeQuery("select distinct u.first_name,u.last_name,u.gender_code,u.mobile_phone,u.email,c.race,ad.address_line1, COUNT(o.id)  as ordCount from users u LEFT JOIN user_organization_role x ON u.id=x.user_id LEFT JOIN `client` c ON c.user_id=u.id LEFT JOIN user_address uad ON uad.user_id=u.id LEFT JOIN addresses ad ON ad.id=uad.address_id LEFT JOIN orders o ON o.user_id=u.id where x.role_id=:roleId")
 				.createNativeQuery("SELECT u.first_name,u.last_name,u.gender_code,u.mobile_phone,u.email,c.race,ad.address_line1, COUNT(o.id) AS ordCount "
-						+ "FROM Client c "
+						+ "FROM client c "
 						+ "LEFT JOIN users u ON u.id = c.user_id "
 						+ "LEFT JOIN user_organization_role uor ON u.id=uor.user_id "
 						+ "LEFT JOIN user_address uad ON u.id=uad.user_id "
