@@ -81,11 +81,7 @@ public class EmailComponent {
 		message.setFrom(new InternetAddress(fromAddress, fromName));
 		message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(receiverEmail));
 		
-		String subject = new String(userType);
-		if(subject.equalsIgnoreCase("client")){
-			subject = "participant";
-		}
-		message.setSubject(capitalize(subject)+" " + emailSubTemplate);
+		message.setSubject(capitalize(getInviteName(userType))+" " + emailSubTemplate);
 		
 		//message.setText(getEmailText(userType, UUID, invitationMessage, activationCode,data));
 		String contentText = getEmailText(userType, UUID, invitationMessage, activationCode, data);
@@ -141,7 +137,7 @@ public class EmailComponent {
 	private String getInviteName(String type) {
 		if ("ngo".equalsIgnoreCase(type)) {
 			return "NGO";
-		} else if ("volunteer".equalsIgnoreCase("type")) {
+		} else if ("volunteer".equalsIgnoreCase(type)) {
 			return "Volunteer";
 		} else if ("Client".equalsIgnoreCase(type)) {
 			return "Participant";
