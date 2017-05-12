@@ -19,6 +19,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
+import org.hni.admin.service.converter.HNIConverter;
 import org.hni.common.Constants;
 import org.hni.common.exception.HNIException;
 import org.hni.common.om.Role;
@@ -76,6 +77,7 @@ public class UserSecurityController extends AbstractBaseController {
 			subject.login(userPasswordToken);
 			logger.info("Attempt to auth uyser " + userPasswordToken.getUsername());
 			User user = organizationUserService.byEmailAddress(userPasswordToken.getUsername());
+			user.setMobilePhone(HNIConverter.convertPhoneNumberToUiFormat(user.getMobilePhone()));
 			logger.info("user is authenticated");
 			Set<OrganizationUserRolePermission> permissions = userTokenService.getUserOrganizationRolePermissions(user, organizationId);
 			String permissionObject = mapPermissionsToString(permissions);

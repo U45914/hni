@@ -142,9 +142,9 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 			ngo = ngoGenericDAO.update(Ngo.class ,ngo);
 		}
 		else{
-		Invitation invitation = invitationDAO.getInvitedBy(user.getEmail());
-		ngo.setCreatedBy(invitation.getInvitedBy());
-		ngo = ngoGenericDAO.save(Ngo.class ,ngo);
+			Invitation invitation = invitationDAO.getInvitedBy(user.getEmail());
+			ngo.setCreatedBy(invitation.getInvitedBy());
+			ngo = ngoGenericDAO.save(Ngo.class ,ngo);
 		}
 		user.setAddresses(HNIConverter.getAddressSet(onboardData));
 		userDao.update(user);
@@ -282,6 +282,7 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 	public Map<String, Object> getUserProfiles(String type, Long userId) {
 		Long id = findIdByType(userId,type);
 		User user = userDao.get(userId);
+		user.setMobilePhone(HNIConverter.convertPhoneNumberToUiFormat(user.getMobilePhone()));
 		
 		Map<String,Object> response = new HashMap<>();
 		

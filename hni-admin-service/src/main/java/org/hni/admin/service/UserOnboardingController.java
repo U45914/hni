@@ -1,7 +1,6 @@
 package org.hni.admin.service;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +16,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang3.StringUtils;
 import org.hni.common.Constants;
 import org.hni.common.email.service.EmailComponent;
 import org.hni.organization.om.Organization;
@@ -211,7 +209,7 @@ public class UserOnboardingController extends AbstractBaseController {
 			 
 			Map<String, String> errors = userOnBoardingService.ngoSave((ObjectNode) objectNode, getLoggedInUser());
 			 if(errors!=null && errors.isEmpty()){
-			map.put(RESPONSE, SUCCESS);
+				 map.put(RESPONSE, SUCCESS);
 			 }
 			 else{
 				 if(map!=null)

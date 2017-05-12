@@ -55,7 +55,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import io.swagger.annotations.Api;
@@ -245,6 +244,9 @@ public class UserServiceController extends AbstractBaseController {
 		boolean validPassword = false;
 		validPassword = CheckPassword.passwordCheck(user);
 		if (validPassword == true) {
+			
+			user.setMobilePhone(HNIConverter.convertPhoneNumberFromUiFormat(user.getMobilePhone()));
+			
 			Long userRole = convertUserTypeToRole(type);
 			User u = orgUserService.register(setPassword(user), userRole);
 			if (u != null && u.getId()!=null) {
@@ -295,7 +297,7 @@ public class UserServiceController extends AbstractBaseController {
 			User user = getLoggedInUser();
 			user.setFirstName(client.getUser().getFirstName());
 			user.setLastName(client.getUser().getLastName());
-			user.setMobilePhone(client.getUser().getMobilePhone());
+			user.setMobilePhone(HNIConverter.convertPhoneNumberFromUiFormat(client.getUser().getMobilePhone()));
 			
 			user.setAddresses(getAddressSet(user.getAddresses(), client.getAddress()));
 			
@@ -328,10 +330,9 @@ public class UserServiceController extends AbstractBaseController {
 		try{
 			user.setFirstName(volunteer.getUser().getFirstName());
 			user.setLastName(volunteer.getUser().getLastName());
-			user.setMobilePhone(volunteer.getUser().getMobilePhone());
+			user.setMobilePhone(HNIConverter.convertPhoneNumberFromUiFormat(volunteer.getUser().getMobilePhone()));
 			
 			user.setAddresses(getAddressSet(user.getAddresses(), volunteer.getAddress()));
-			user.setMobilePhone(volunteer.getUser().getMobilePhone());
 			user.setGender(volunteer.getUser().getGender());
 			userService.update(user);
 			

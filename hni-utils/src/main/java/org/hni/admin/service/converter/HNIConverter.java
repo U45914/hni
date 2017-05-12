@@ -10,6 +10,7 @@ import static org.hni.common.Constants.BRKFST_CHK;
 import static org.hni.common.Constants.BRKFST_QTY;
 import static org.hni.common.Constants.CLIENT_NODE;
 import static org.hni.common.Constants.COMPANY;
+import static org.hni.common.Constants.CONTACT_PERSON;
 import static org.hni.common.Constants.DINNER_AVAILABILTY;
 import static org.hni.common.Constants.DINNER_CHK;
 import static org.hni.common.Constants.DINNER_QTY;
@@ -31,7 +32,6 @@ import static org.hni.common.Constants.LUNCH_QTY;
 import static org.hni.common.Constants.MEAL_DONATION;
 import static org.hni.common.Constants.MEAL_FUNDING;
 import static org.hni.common.Constants.MISSION;
-import static org.hni.common.Constants.CONTACT_PERSON;
 import static org.hni.common.Constants.MONTHLY_BUDGET;
 import static org.hni.common.Constants.NAME;
 import static org.hni.common.Constants.OPERATING_COST;
@@ -727,4 +727,35 @@ public class HNIConverter {
 		return parentJSON;
 	}
 
+	public static String convertPhoneNumberToUiFormat(String phone) {
+		try {
+			if (phone != null) {
+				StringBuilder sb = new StringBuilder();
+				phone = phone.trim().replace("-", "");
+				sb.append(phone.substring(0, 3));
+				sb.append("-");
+				sb.append(phone.substring(3, 6));
+				sb.append("-");
+				sb.append(phone.substring(6));
+				return sb.toString();
+			} else {
+				return phone;
+			}
+		} catch (Exception e) {
+			logger.error("Exception while converting phone number to UI format "+ phone, e);
+		}
+		
+		return phone;
+	}
+	
+	public static String convertPhoneNumberFromUiFormat(String phone) {
+		try {
+			if (phone != null) {
+				return phone.replaceAll("-", "");
+			}
+		} catch (Exception e) {
+			logger.error("Exception while converting phone number from UI format "+ phone, e);
+		}
+		return  phone;
+	}
 }
