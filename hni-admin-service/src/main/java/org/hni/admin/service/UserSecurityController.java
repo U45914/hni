@@ -85,6 +85,10 @@ public class UserSecurityController extends AbstractBaseController {
 			if (!permissions.isEmpty()) {
 				if (!orgUserRole.getRoleId().equals(1L)) {
 					user.setOrganizationId(permissions.iterator().next().getOrganizationId());
+					Organization organization = organizationService.get(user.getOrganizationId());
+					setOrganizationName(user, organization);
+				} else {
+					setOrganizationName(user, null);
 				}
 			}
 			roleName = getRoleName(orgUserRole.getRoleId());
@@ -94,6 +98,18 @@ public class UserSecurityController extends AbstractBaseController {
 		} catch (IncorrectCredentialsException ice) {
 			logger.error("couldn't auth user:", ice.getMessage());
 			return new AuthenticationResult(HttpStatus.UNAUTHORIZED.value(), String.format("{\"error\":\"Invalid username or password supplied %s\"}", ice.getMessage()));
+		}
+	}
+
+	/**
+	 * @param user
+	 * @param organization
+	 */
+	private void setOrganizationName(User user, Organization organization) {
+		if (organization != null) {
+			user.setOrganizationName(organization.getName());
+		} else {
+			user.setOrganizationName("Hunger Not Impossible");
 		}
 	}
 
