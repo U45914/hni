@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.Query;
 import javax.persistence.Table;
 
+import org.hni.admin.service.converter.HNIConverter;
 import org.hni.admin.service.dto.NgoBasicDto;
 import org.hni.common.dao.DefaultGenericDAO;
 import org.hni.common.om.Persistable;
@@ -74,7 +75,7 @@ public class NGOGenericDAO extends DefaultGenericDAO {
 
 			ngoBasicDto.setUserId(userId);
 			ngoBasicDto.setName(getValue(u[1]) + " " + getValue(u[2]));
-			ngoBasicDto.setPhone(getValue(u[3]));
+			ngoBasicDto.setPhone(HNIConverter.convertPhoneNumberToUiFormat(getValue(u[3])));
 			ngoBasicDto.setWebsite(u[4] != null ? (String) u[4] : "");
 			ngoBasicDto.setAddress(getValue(u[5]) + "," + getValue(u[6]) + "," + getValue(u[7]));
 			ngoBasicDto.setCreatedUsers((Long) em.createQuery("select count(id) from Client where createdBy=:userId")
@@ -105,7 +106,7 @@ public class NGOGenericDAO extends DefaultGenericDAO {
 			volunteer.setLastName(getValue(user[2]));
 			volunteer.setSex(getValue(user[3]));
 			volunteer.setEmail(getValue(user[4]));
-			volunteer.setPhoneNumber(getValue(user[5]));
+			volunteer.setPhoneNumber(HNIConverter.convertPhoneNumberToUiFormat(getValue(user[5])));
 			address.setAddress1(getValue(user[6]));
 			address.setCity(getValue(user[7]));
 			address.setState(getValue(user[8]));

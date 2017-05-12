@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.persistence.Query;
 
+import org.hni.admin.service.converter.HNIConverter;
 import org.hni.common.dao.DefaultGenericDAO;
 import org.hni.type.HNIRoles;
 import org.hni.user.om.User;
@@ -35,7 +36,7 @@ public class CustomerDao extends DefaultGenericDAO {
 			Map<String,String> map=new HashMap<String,String>();
 			map.put("firstName",getValue(u[0]));
 			map.put("lastName",getValue(u[1]));
-			map.put("mobilePhone",getValue(u[3]));
+			map.put("mobilePhone",HNIConverter.convertPhoneNumberToUiFormat(getValue(u[3])));
 			map.put("race",getValue(u[5]));
 			map.put("address",getValue(u[6]));
 			map.put("orders", getValue(u[7]));	
@@ -64,7 +65,7 @@ public class CustomerDao extends DefaultGenericDAO {
 				Map<String,String> map=new HashMap<String,String>();
 				map.put("firstName",getValue(usr[0]));
 				map.put("lastName",getValue(usr[1]));
-				map.put("mobilePhone",getValue(usr[3]));
+				map.put("mobilePhone",HNIConverter.convertPhoneNumberToUiFormat(getValue(usr[3])));
 				map.put("race",getValue(usr[5]));
 				map.put("address",getValue(usr[6]));
 				map.put("orders", getValue(usr[7]));	
@@ -101,7 +102,7 @@ public class CustomerDao extends DefaultGenericDAO {
 					Map<String,String> map=new HashMap<String,String>();
 					map.put("firstName",getValue(usr[0]));
 					map.put("lastName",getValue(usr[1]));
-					map.put("mobilePhone",getValue(usr[3]));
+					map.put("mobilePhone",HNIConverter.convertPhoneNumberToUiFormat(getValue(usr[3])));
 					map.put("race",getValue(usr[5]));
 					map.put("address",getValue(usr[6]));
 					map.put("orders", getValue(usr[7]));	
