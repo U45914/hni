@@ -139,21 +139,27 @@ public class UserOnboardingController extends AbstractBaseController {
 	@Path("/activate/{userType}/{invitationCode}")
 	@Produces({ MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "", notes = "", response = Map.class, responseContainer = "")
-	public Map<String, String> activateNGO(@PathParam("userType") String userType, @PathParam("invitationCode") String invitationCode) throws JsonParseException, JsonMappingException, IOException {
+	public Map<String, String> activateNGO(@PathParam("userType") String userType,
+			@PathParam("invitationCode") String invitationCode)
+			throws JsonParseException, JsonMappingException, IOException {
 		Map<String, String> map = new HashMap<>();
 		map.put(RESPONSE, ERROR);
 		List<Invitation> invitations = (List<Invitation>) userOnBoardingService.validateInvitationCode(invitationCode);
-		
+
 		if (!invitations.isEmpty()) {
 			map.put(RESPONSE, SUCCESS);
 			map.put(ORG_ID, invitations.get(0).getOrganizationId());
 			map.put(USER_NAME, invitations.get(0).getEmail());
-			if(invitations.get(0).getData()!=null){
-				map.put(FIRST_NAME, (String) mapper.readValue(invitations.get(0).getData(), Map.class).get("name"));
+			Map<String, String> data = new HashMap<>();
+
+			if (invitations.get(0).getData() != null) {
+				data = mapper.readValue(invitations.get(0).getData(), Map.class);
+				map.put(FIRST_NAME, data.get("name"));
 			}
-			if(userType!=null && userType.equalsIgnoreCase("client") && invitations.get(0).getData()!=null){
-				map.put("userActivationCode", (String) mapper.readValue(invitations.get(0).getData(), Map.class).get("activationCode"));
+			if (userType != null && userType.equalsIgnoreCase("client") && !data.isEmpty()) {
+				map.put("dependants", data.get("dependants"));
 			}
+
 			return map;
 		}
 		return map;
