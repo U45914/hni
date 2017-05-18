@@ -74,4 +74,14 @@ public class DefaultUserDAO extends AbstractDAO<User> implements UserDAO {
 		return tableType.get(type);
 		 
 	 }
+
+	@Override
+	public String findUserState(Long userId) {
+		try {
+			Query q = em.createNativeQuery("SELECT address.state from user_address userAddress INNER JOIN addresses address ON userAddress.address_id = address.id where userAddress.user_id = :userId").setParameter("userId", userId);
+			return (String) q.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
 }
