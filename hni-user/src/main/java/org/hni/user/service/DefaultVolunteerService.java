@@ -1,11 +1,13 @@
 package org.hni.user.service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 
 import org.hni.admin.service.converter.HNIValidator;
+import org.hni.admin.service.dto.VolunteerDto;
 import org.hni.common.service.AbstractService;
 import org.hni.user.dao.AddressDAO;
 import org.hni.user.dao.VolunteerDao;
@@ -38,6 +40,16 @@ public class DefaultVolunteerService extends AbstractService<Volunteer> implemen
 	@Override
 	public Volunteer getVolunteerDetails(Long volunteerId) {
 		return volunteerDao.get(volunteerId);
+	}
+
+	@Override
+	public List<VolunteerDto> getAllVolunteers() {
+		return volunteerDao.getAllVolunteers();
+	}
+
+	@Override
+	public List<VolunteerDto> getVolunteerByState(String state) {
+		return volunteerDao.getVolunteerByState(state);
 	}
 
 /*	
