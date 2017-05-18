@@ -42,4 +42,14 @@ public class DefaultActivationCodeDAO extends AbstractDAO<ActivationCode> implem
 		}
 	}
 
+	@Override
+	public String getNextActivationCode() {
+		try {
+			Query q = em.createQuery("SELECT max(x.activationCode) FROM ActivationCode x ");
+            return  (String)q.getSingleResult();
+		} catch(NoResultException e) {
+			return null;
+		}
+	}
+
 }

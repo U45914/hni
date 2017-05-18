@@ -238,8 +238,7 @@ public class UserServiceController extends AbstractBaseController {
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Path("/register")
 	@ApiOperation(value = "register a customer", notes = "An update occurs if the ID field is specified", response = User.class, responseContainer = "")
-	public Response registerUser(User user, @HeaderParam("user-type") String type, @HeaderParam("invite-code") String invitaionCode, 
-			@HeaderParam("act-code") String activationCode) throws JsonProcessingException {
+	public Response registerUser(User user, @HeaderParam("user-type") String type, @HeaderParam("invite-code") String invitaionCode) throws JsonProcessingException {
 		Map<String, String> userResponse = new HashMap<>();
 		boolean validPassword = false;
 		validPassword = CheckPassword.passwordCheck(user);
@@ -250,10 +249,9 @@ public class UserServiceController extends AbstractBaseController {
 			Long userRole = convertUserTypeToRole(type);
 			User u = orgUserService.register(setPassword(user), userRole);
 			if (u != null && u.getId()!=null) {
-				if(type.equalsIgnoreCase("client") && StringUtils.isNotEmpty(activationCode) && activationCodeService.validate(activationCode)) {
-					ActivationCode activationCodeEnity = activationCodeService.getByActivationCode(activationCode);
-					activationCodeEnity.setUser(u);
-					activationCodeService.update(activationCodeEnity);
+				if(type.equalsIgnoreCase("client")) {
+					Integer dependentClient = Integer.valueOf(user.getAdditionalInfo().get("dependants").toString());
+					activationCodeService.saveActivationCodes(user, dependentClient);					
 				}
 				UserPartialData userProfileTempInfo = new UserPartialData();
 				userProfileTempInfo.setUserId(u.getId());

@@ -3,6 +3,7 @@ package org.hni.user.om;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -16,7 +17,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.hni.common.om.Persistable;
 import org.hni.user.om.type.Gender;
@@ -72,7 +72,15 @@ public class User implements Persistable, Serializable {
 	private transient String password;
 	private transient String token;
 	private transient Long organizationId;
+	private transient Map<String, Object> additionalInfo;
 
+	public Map<String, Object> getAdditionalInfo() {
+		return additionalInfo;
+	}
+
+	public void setAdditionalInfo(Map<String, Object> additionalInfo) {
+		this.additionalInfo = additionalInfo;
+	}
 	public User() {
 	}
 

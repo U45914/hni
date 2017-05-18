@@ -9,4 +9,5 @@ import org.hni.user.om.User;
 public interface ActivationCodeDAO extends BaseDAO<ActivationCode> {
     ActivationCode getByActivationCode(String actCode);
     List<ActivationCode> getByUser(User user);
+    String getNextActivationCode();
 }
