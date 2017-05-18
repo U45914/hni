@@ -38,6 +38,11 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.hni</groupId>
+			<artifactId>hni-sms-service</artifactId>
+			<version>${project.version}</version>
+		</dependency>	
+		<dependency>
 			<groupId>org.redisson</groupId>
 			<artifactId>redisson</artifactId>
 			<version>3.1.0</version>

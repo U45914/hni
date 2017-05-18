@@ -63,10 +63,11 @@
         <module>hni-schema</module>
         <module>hni-admin-service</module>
         <module>hni-provider</module>
+        <module>hni-sms-service</module>
         <module>hni-order</module>
         <module>hni-payment</module>
         <module>hni-card-loader</module>
-    </modules>
+  </modules>
     <build>
         <plugins>
             <plugin>

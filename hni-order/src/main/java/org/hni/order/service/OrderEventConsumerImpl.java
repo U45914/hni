@@ -1,18 +1,19 @@
 package org.hni.order.service;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
 import org.hni.order.om.Order;
 import org.hni.order.om.OrderItem;
 import org.hni.order.om.rs.OrderConfirmedMessage;
 import org.hni.order.service.rs.client.SlackWebHookClient;
+import org.hni.sms.service.provider.PushMessageService;
 import org.redisson.api.RRemoteService;
 import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 
 /**
  * This implementation of OrderEventConsumer registers itself as a Redission remote service.
@@ -30,6 +31,9 @@ public class OrderEventConsumerImpl implements OrderEventConsumer {
     private LockingService<RedissonClient> redissonClient;
     @Inject
     private SlackWebHookClient slackWebHookClient;
+    
+    @Inject
+    private PushMessageService pushMessageService;
 
     @PostConstruct
     private void register() {
@@ -57,5 +61,7 @@ public class OrderEventConsumerImpl implements OrderEventConsumer {
                         order.getOrderDate().getTime());
         OrderConfirmedMessage message = new OrderConfirmedMessage(attachment);
         slackWebHookClient.postMessage(message);
+        pushMessageService.createPushMessageAndSend(order);
+        
     }
 }
