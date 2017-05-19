@@ -13,11 +13,9 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -33,6 +31,8 @@ public class SMSUserMessageController extends AbstractBaseController {
 
     @Inject
     private EventRouter eventRouter;
+    
+    
 
     @POST
     @Produces(MediaType.TEXT_HTML)
@@ -42,14 +42,29 @@ public class SMSUserMessageController extends AbstractBaseController {
             , response = Provider.class
             , responseContainer = "")
     public String respondToMessageHTML(MultivaluedMap<String, String> params) {
-    	String authKey = params.get("authKey").get(0);
-    	String phoneNumber = params.get("phoneNumber").get(0);
-    	String sessionId = params.get("sessionId").get(0);
-    	String userMessage = params.get("userMessage").get(0);
-    	String testMode = params.get("testMode").get(0);
-        logger.info("HTML/Received a message, auth_key={}, phonenumber={}, sessionid={}, " +
-                "usertext={}, textmode={}", authKey, phoneNumber, sessionId,userMessage,testMode );
-        final Event event = Event.createEvent("text/html", phoneNumber, userMessage);
+    	String toCountry = params.get("ToCountry").get(0);
+    	String toState = params.get("ToState").get(0);
+    	String smsMessageSid = params.get("SmsMessageSid").get(0);
+    	String numMedia = params.get("NumMedia").get(0);
+    	String toCity = params.get("ToCity").get(0);
+    	String fromZip = params.get("FromZip").get(0);
+    	String smsSid = params.get("SmsSid").get(0); 
+    	String fromState = params.get("FromState").get(0);
+    	String smsStatus = params.get("SmsStatus").get(0);
+    	String fromCity = params.get("FromCity").get(0);
+    	String body = params.get("Body").get(0); 
+    	String fromCountry = params.get("FromCountry").get(0);
+    	String toNum = params.get("To").get(0);
+    	String toZip = params.get("ToZip").get(0);
+    	String numSegments = params.get("NumSegments").get(0);
+    	String messageSid = params.get("MessageSid").get(0);
+    	String accountSid = params.get("AccountSid").get(0);
+    	String fromNum	 = params.get("From").get(0);
+    	String apiVersion = params.get("ApiVersion").get(0);
+        logger.info("HTML/Received a message, toCountry={}, toState={}, smsMessageSid={}, " +
+                "numMedia={}, toCity={},fromZip={}, smsSid={},fromState={}, smsStatus={},fromCity={}, toCity={},body={}, fromCountry={},toNum={}, toZip={},numSegments={}, messageSid={},accountSid={}, toCity={} ,fromNum={}, apiVersion={}"
+                + "", toCountry, toState, smsMessageSid,numMedia,toCity,fromZip,smsSid,fromState,smsStatus,fromCity,body,fromCountry,toNum,toZip,numSegments,messageSid,accountSid,fromNum,apiVersion );
+        final Event event = Event.createEvent("text/html", fromNum, body);
         return String.format("<html><body>%s</body></html>", eventRouter.handleEvent(event));
     }
 
@@ -61,14 +76,29 @@ public class SMSUserMessageController extends AbstractBaseController {
             , response = Provider.class
             , responseContainer = "")
     public String respondToMessage(MultivaluedMap<String, String> params) {
-    	String authKey = params.get("authKey").get(0);
-    	String phoneNumber = params.get("phoneNumber").get(0);
-    	String sessionId = params.get("sessionId").get(0);
-    	String userMessage = params.get("userMessage").get(0);
-    	String testMode = params.get("testMode").get(0);
-        logger.info("PLAIN/Received a message, auth_key={}, phonenumber={}, sessionid={}, " +
-                "usertext={}, textmode={}", authKey, phoneNumber, sessionId,userMessage,testMode );
-        final Event event = Event.createEvent("text/html", phoneNumber, userMessage);
+    	String toCountry = params.get("ToCountry").get(0);
+    	String toState = params.get("ToState").get(0);
+    	String smsMessageSid = params.get("SmsMessageSid").get(0);
+    	String numMedia = params.get("NumMedia").get(0);
+    	String toCity = params.get("ToCity").get(0);
+    	String fromZip = params.get("FromZip").get(0);
+    	String smsSid = params.get("SmsSid").get(0); 
+    	String fromState = params.get("FromState").get(0);
+    	String smsStatus = params.get("SmsStatus").get(0);
+    	String fromCity = params.get("FromCity").get(0);
+    	String body = params.get("Body").get(0); 
+    	String fromCountry = params.get("FromCountry").get(0);
+    	String toNum = params.get("To").get(0);
+    	String toZip = params.get("ToZip").get(0);
+    	String numSegments = params.get("NumSegments").get(0);
+    	String messageSid = params.get("MessageSid").get(0);
+    	String accountSid = params.get("AccountSid").get(0);
+    	String fromNum	 = params.get("From").get(0);
+    	String apiVersion = params.get("ApiVersion").get(0);
+        logger.info("PLAIN/Received a message, toCountry={}, toState={}, smsMessageSid={}, " +
+                "numMedia={}, toCity={},fromZip={}, smsSid={},fromState={}, smsStatus={},fromCity={}, toCity={},body={}, fromCountry={},toNum={}, toZip={},numSegments={}, messageSid={},accountSid={}, toCity={} ,fromNum={}, apiVersion={}"
+                + "", toCountry, toState, smsMessageSid,numMedia,toCity,fromZip,smsSid,fromState,smsStatus,fromCity,body,fromCountry,toNum,toZip,numSegments,messageSid,accountSid,fromNum,apiVersion );
+        final Event event = Event.createEvent("text/html", fromNum, body);
         try {
             return eventRouter.handleEvent(event);
         } catch (Exception ex) {
@@ -84,14 +114,29 @@ public class SMSUserMessageController extends AbstractBaseController {
             , response = Provider.class
             , responseContainer = "")
     public Map<String, Object> respondToMessageJson(MultivaluedMap<String, String> params) {
-    	String authKey = params.get("authKey").get(0);
-    	String phoneNumber = params.get("phoneNumber").get(0);
-    	String sessionId = params.get("sessionId").get(0);
-    	String userMessage = params.get("userMessage").get(0);
-    	String testMode = params.get("testMode").get(0);
-        logger.info("JSON/Received a message, auth_key={}, phonenumber={}, sessionid={}, " +
-                "usertext={}, textmode={}", authKey, phoneNumber, sessionId,userMessage,testMode );
-        final Event event = Event.createEvent("text/html", phoneNumber, userMessage);
+    	String toCountry = params.get("ToCountry").get(0);
+    	String toState = params.get("ToState").get(0);
+    	String smsMessageSid = params.get("SmsMessageSid").get(0);
+    	String numMedia = params.get("NumMedia").get(0);
+    	String toCity = params.get("ToCity").get(0);
+    	String fromZip = params.get("FromZip").get(0);
+    	String smsSid = params.get("SmsSid").get(0); 
+    	String fromState = params.get("FromState").get(0);
+    	String smsStatus = params.get("SmsStatus").get(0);
+    	String fromCity = params.get("FromCity").get(0);
+    	String body = params.get("Body").get(0); 
+    	String fromCountry = params.get("FromCountry").get(0);
+    	String toNum = params.get("To").get(0);
+    	String toZip = params.get("ToZip").get(0);
+    	String numSegments = params.get("NumSegments").get(0);
+    	String messageSid = params.get("MessageSid").get(0);
+    	String accountSid = params.get("AccountSid").get(0);
+    	String fromNum	 = params.get("From").get(0);
+    	String apiVersion = params.get("ApiVersion").get(0);
+        logger.info("JSON/Received a message, toCountry={}, toState={}, smsMessageSid={}, " +
+                "numMedia={}, toCity={},fromZip={}, smsSid={},fromState={}, smsStatus={},fromCity={}, toCity={},body={}, fromCountry={},toNum={}, toZip={},numSegments={}, messageSid={},accountSid={}, toCity={} ,fromNum={}, apiVersion={}"
+                + "", toCountry, toState, smsMessageSid,numMedia,toCity,fromZip,smsSid,fromState,smsStatus,fromCity,body,fromCountry,toNum,toZip,numSegments,messageSid,accountSid,fromNum,apiVersion );
+        final Event event = Event.createEvent("text/html", fromNum, body);
         Map<String, Object> res = new HashMap();
         try {
             final String returnMessage = eventRouter.handleEvent(event);
@@ -112,5 +157,4 @@ public class SMSUserMessageController extends AbstractBaseController {
         }
         return res;
     }
-
 }

@@ -37,7 +37,7 @@ public class PushMessageService {
 		//TODO : we have offer here, prepare message and send it to the volunteers
 		//TODO : get the list of volunteers based on availability.
 		String state = userDAO.findUserState(order.getUser().getId()); 
-		List<VolunteerDto> availableVolunteersByState= volunteerService.getVolunteerByState(state);
+		List<VolunteerDto> availableVolunteersByState= volunteerService.getVolunteerByState(state,true);
 		SmsProvider smsProvider = SmsServiceLoader.providers.get(state);
 		
 		if(!availableVolunteersByState.isEmpty()){

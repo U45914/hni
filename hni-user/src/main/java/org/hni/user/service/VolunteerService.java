@@ -9,5 +9,5 @@ import org.hni.user.om.Volunteer;
 public interface VolunteerService extends BaseService<Volunteer> {
 	 Volunteer getVolunteerDetails(Long volunteerId);
 	 List<VolunteerDto> getAllVolunteers();
-	 List<VolunteerDto> getVolunteerByState(String state);
+	 List<VolunteerDto> getVolunteerByState(String state, boolean flag);
 }
