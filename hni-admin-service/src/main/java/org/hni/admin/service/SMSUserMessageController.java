@@ -42,8 +42,8 @@ public class SMSUserMessageController extends AbstractBaseController {
             , response = Provider.class
             , responseContainer = "")
     public String respondToMessageHTML(MultivaluedMap<String, String> params) {
-    	String body = getKeyValue(params, "Body");
-    	String fromNum	 = getKeyValue(params, "fromNum");
+    	String body = getQueryParamValue(params, "Body");
+    	String fromNum	 = getQueryParamValue(params, "fromNum");
         logger.info("HTML/Received a message, body={}, fromNum={}",body,fromNum);
         final Event event = Event.createEvent("text/html", fromNum, body);
         return String.format("<html><body>%s</body></html>", eventRouter.handleEvent(event));
@@ -57,8 +57,8 @@ public class SMSUserMessageController extends AbstractBaseController {
             , response = Provider.class
             , responseContainer = "")
     public String respondToMessage(MultivaluedMap<String, String> params) {
-    	String body = getKeyValue(params, "Body");
-    	String fromNum	 = getKeyValue(params, "fromNum");
+    	String body = getQueryParamValue(params, "Body");
+    	String fromNum	 = getQueryParamValue(params, "fromNum");
         logger.info("PLAIN/Received a message, body={}, fromNum={}",body,fromNum);
         final Event event = Event.createEvent("text/plain", fromNum, body);
         try {
@@ -76,8 +76,8 @@ public class SMSUserMessageController extends AbstractBaseController {
             , response = Provider.class
             , responseContainer = "")
     public Map<String, Object> respondToMessageJson(MultivaluedMap<String, String> params) {
-    	String body = getKeyValue(params, "Body");
-    	String fromNum	 = getKeyValue(params, "fromNum");
+    	String body = getQueryParamValue(params, "Body");
+    	String fromNum	 = getQueryParamValue(params, "fromNum");
         logger.info("JSON/Received a message, body={}, fromNum={}",body,fromNum);
         final Event event = Event.createEvent("text/plain", fromNum, body);
         Map<String, Object> res = new HashMap();
@@ -101,7 +101,7 @@ public class SMSUserMessageController extends AbstractBaseController {
         return res;
     }
     
-    private String getKeyValue(MultivaluedMap<String, String> params, String key){
+    private String getQueryParamValue(MultivaluedMap<String, String> params, String key){
     	return params.get(key).get(0);
     }
 }
