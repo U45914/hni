@@ -669,6 +669,7 @@ CREATE TABLE IF NOT EXISTS `volunteer` (
   `kids` int(11) NOT NULL,
   `employer` varchar(100) NOT NULL,
   `non_profit` char(1) NOT NULL COMMENT 'Yes or No',
+  `available_for_place_order` tinyint(3) DEFAULT 0 NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT ;
 
@@ -695,3 +696,17 @@ CREATE TABLE IF NOT EXISTS `reports` (
   `role` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT ;
+
+-- -----------------------------------------------------
+-- Table `sms_provider`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `sms_provider` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `provider` VARCHAR(255) NOT NULL,
+  `long_code` VARCHAR(40) NOT NULL,
+  `short_code` VARCHAR(20) NULL,
+  `state_code` VARCHAR(2) NOT NULL,
+  `description` TEXT NULL,
+  `created` DATETIME NULL,
+  PRIMARY KEY (`id`)
+  )  ENGINE=InnoDB  DEFAULT ;

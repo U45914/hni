@@ -1,23 +1,42 @@
-/**
- * 
- */
 package org.hni.sms.service.provider.om;
 
+import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import org.hni.common.om.Persistable;
 import org.hni.sms.service.provider.ServiceProvider;
 
 /**
  * @author Rahul
  *
  */
-public class SmsProvider {
+@Entity
+@Table(name="sms_provider")
+public class SmsProvider  implements Serializable, Persistable  {
 
+	private static final long serialVersionUID = -7881695070129357979L;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "id")
 	private Integer id;
+	
+	@Column(name="provider") 
+	@Enumerated(EnumType.STRING)
 	private ServiceProvider providerName;
-	private String longCode;
-	private String shortCode;
-	private String stateCode;
-	private String description;
-	private String created;
+	@Column(name="long_code") private String longCode;
+	@Column(name="short_code")private String shortCode;
+	@Column(name="state_code")private String stateCode;
+	@Column(name="description")private String description;
+	@Column(name="created")private String created;
 
 	public Integer getId() {
 		return id;
