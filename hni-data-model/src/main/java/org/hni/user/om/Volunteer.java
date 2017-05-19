@@ -58,9 +58,12 @@ public class Volunteer implements Persistable, Serializable  {
 	
 	@Column(name = "employer")
 	private String employer;
-	
+
 	@Column(name = "non_profit")
 	private String nonProfit;
+	
+	@Column( name = "available_for_place_order")
+	private Boolean available;
 	
 	@Transient
 	private Address address;
@@ -190,6 +193,15 @@ public class Volunteer implements Persistable, Serializable  {
 
 	public void setNonProfit(String nonProfit) {
 		this.nonProfit = nonProfit;
+	}
+	
+	
+	public Boolean getAvailable() {
+		return available;
+	}
+
+	public void setAvailable(Boolean available) {
+		this.available = available;
 	}
 
 	public Address getAddress() {
