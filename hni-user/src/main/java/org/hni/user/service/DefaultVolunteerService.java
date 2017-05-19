@@ -48,8 +48,8 @@ public class DefaultVolunteerService extends AbstractService<Volunteer> implemen
 	}
 
 	@Override
-	public List<VolunteerDto> getVolunteerByState(String state) {
-		return volunteerDao.getVolunteerByState(state);
+	public List<VolunteerDto> getVolunteerByState(String state, boolean flag) {
+		return volunteerDao.getVolunteerByState(state, flag);
 	}
 
 /*	

@@ -10,6 +10,6 @@ public interface VolunteerDao  extends BaseDAO<Volunteer>  {
 	
 	Volunteer getByUserId(Long userId);
 	List<VolunteerDto> getAllVolunteers();
-	List<VolunteerDto> getVolunteerByState(String state);
+	List<VolunteerDto> getVolunteerByState(String state, boolean flag);
 
 }
