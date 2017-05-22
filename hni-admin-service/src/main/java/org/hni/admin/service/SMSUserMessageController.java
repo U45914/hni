@@ -3,6 +3,7 @@ package org.hni.admin.service;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
+import org.hni.common.Constants;
 import org.hni.common.exception.HNIException;
 import org.hni.events.service.EventRouter;
 import org.hni.events.service.om.Event;
@@ -31,8 +32,6 @@ public class SMSUserMessageController extends AbstractBaseController {
 
     @Inject
     private EventRouter eventRouter;
-    
-    
 
     @POST
     @Produces(MediaType.TEXT_HTML)
@@ -42,11 +41,14 @@ public class SMSUserMessageController extends AbstractBaseController {
             , response = Provider.class
             , responseContainer = "")
     public String respondToMessageHTML(MultivaluedMap<String, String> params) {
-    	String body = getQueryParamValue(params, "Body");
-    	String fromNum	 = getQueryParamValue(params, "fromNum");
-        logger.info("HTML/Received a message, body={}, fromNum={}",body,fromNum);
-        final Event event = Event.createEvent("text/html", fromNum, body);
-        return String.format("<html><body>%s</body></html>", eventRouter.handleEvent(event));
+    	String body = getQueryParamValue(params, Constants.MSG_BODY);
+    	String fromNum = getQueryParamValue(params, Constants.MSG_FROM);
+    	String fromState = getQueryParamValue(params, Constants.MSG_FROM_STATE);
+        
+    	logger.info("HTML/Received a message, body={}, fromNum={}, fromState={}", body, fromNum, fromState);
+        final Event event = Event.createEvent("text/html", parsePhoneNumber(fromNum), body);
+        
+        return String.format(Constants.MSG_RESPONSE_FORMAT, eventRouter.handleEvent(event));
     }
 
     @POST
@@ -57,12 +59,16 @@ public class SMSUserMessageController extends AbstractBaseController {
             , response = Provider.class
             , responseContainer = "")
     public String respondToMessage(MultivaluedMap<String, String> params) {
-    	String body = getQueryParamValue(params, "Body");
-    	String fromNum	 = getQueryParamValue(params, "fromNum");
-        logger.info("PLAIN/Received a message, body={}, fromNum={}",body,fromNum);
-        final Event event = Event.createEvent("text/plain", fromNum, body);
+    	String body = getQueryParamValue(params, Constants.MSG_BODY);
+    	String fromNum	 = getQueryParamValue(params, Constants.MSG_FROM);
+    	String fromState = getQueryParamValue(params, Constants.MSG_FROM_STATE);
+    	
+    	logger.info("HTML/Received a message, body={}, fromNum={}, fromState={}", body, fromNum, fromState);
+        
+        final Event event = Event.createEvent("text/plain", parsePhoneNumber(fromNum), body);
+        
         try {
-            return eventRouter.handleEvent(event);
+            return String.format(Constants.MSG_RESPONSE_FORMAT, eventRouter.handleEvent(event));
         } catch (Exception ex) {
             throw new HNIException("Something went wrong. Please try again later.", Response.Status.INTERNAL_SERVER_ERROR);
         }
@@ -79,8 +85,8 @@ public class SMSUserMessageController extends AbstractBaseController {
     	String body = getQueryParamValue(params, "Body");
     	String fromNum	 = getQueryParamValue(params, "fromNum");
         logger.info("JSON/Received a message, body={}, fromNum={}",body,fromNum);
-        final Event event = Event.createEvent("text/plain", fromNum, body);
-        Map<String, Object> res = new HashMap();
+        final Event event = Event.createEvent("text/plain", parsePhoneNumber(fromNum), body);
+        Map<String, Object> res = new HashMap<>();
         try {
             final String returnMessage = eventRouter.handleEvent(event);
             String[] output = {returnMessage};
@@ -103,5 +109,9 @@ public class SMSUserMessageController extends AbstractBaseController {
     
     private String getQueryParamValue(MultivaluedMap<String, String> params, String key){
     	return params.get(key).get(0);
+    }
+    
+    private String parsePhoneNumber(String phoneNumber) {
+    	return phoneNumber != null ? phoneNumber.replace("%2B1", "") : phoneNumber;
     }
 }

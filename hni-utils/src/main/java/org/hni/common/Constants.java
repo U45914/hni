@@ -12,6 +12,19 @@ public class Constants {
 	public static final Long USER = HNIRoles.USER.getRole();  
 	public static final Long CLIENT = HNIRoles.CLIENT.getRole();
 	
+	// Constants for messaging service
+	public static final String MSG_FROM = "From";
+	public static final String MSG_TO_COUNTRY = "ToCountry";
+	public static final String MSG_SID = "SmsMessageSid";
+	public static final String MSG_FROM_ZIP = "FromZip";
+	public static final String MSG_FROM_STATE = "FromState";
+	public static final String MSG_BODY = "Body";
+	public static final String MSG_FROM_COUNTRY = "FromCountry";
+	public static final String MSG_TO = "To";
+	
+	public static final String MSG_RESPONSE_FORMAT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response><Message>%s</Message></Response>";
+	
+	
 	//Service
 	public static final String SUCCESS = "success";
 	public static final String ERROR = "error";
