@@ -65,6 +65,7 @@ import org.hni.organization.om.HniServices;
 import org.hni.user.om.Address;
 import org.hni.user.om.BoardMember;
 import org.hni.user.om.BrandPartner;
+import org.hni.user.om.Client;
 import org.hni.user.om.Endrosement;
 import org.hni.user.om.LocalPartner;
 import org.hni.user.om.Ngo;
@@ -77,6 +78,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class HNIConverter {
+
+	private static final String RESOURCE = "resource";
 
 	private static final String MEAL_QTY = "mealQty";
 
@@ -142,7 +145,8 @@ public class HNIConverter {
 		ngo.setFoodStampAssist(serviceNode.has(FOOD_STAMP) ? serviceNode.get(FOOD_STAMP).asInt() : 0);
 		ngo.setFoodBank(serviceNode.has(FOOD_BANK_SELECT) ? serviceNode.get(FOOD_BANK_SELECT).asInt() : 0);
 
-		ngo.setResourcesToClients(1);
+		//ngo.setResourcesToClients(1);
+		ngo.setResourcesToClients(getResourceToClients(serviceNode));
 		ngo.setIndividualsServedDaily(clientNode.has(INDIVIDUALS_SERVED_DAILY) ? clientNode.get(INDIVIDUALS_SERVED_DAILY).asInt() : 0);
 		ngo.setIndividualsServedMonthly(clientNode.has(INDIVIDUALS_SERVED_MONTHLY) ? clientNode.get(INDIVIDUALS_SERVED_MONTHLY).asInt() :0);
 		ngo.setIndividualsServedAnnually(clientNode.has(INDIVIDUALS_SERVED_ANNUALLY) ? clientNode.get(INDIVIDUALS_SERVED_ANNUALLY).asInt() :0);
@@ -157,6 +161,34 @@ public class HNIConverter {
 		
 
 		return ngo;
+	}
+
+	private static String getResourceToClients(JsonNode serviceNode) {
+		String resource = null;
+		if (serviceNode.has(RESOURCE) && serviceNode.get(RESOURCE).isArray()) {
+			Iterator<JsonNode> resourceIterator = serviceNode.get(RESOURCE).iterator();
+			while(resourceIterator.hasNext()) {
+				String temp = resourceIterator.next().asText();
+				if (resource == null) {
+					resource = temp;
+				} else {
+					resource += "," + temp;
+				}
+			}
+		} 
+		return resource;
+	}
+	
+	private static ArrayNode setResourceToClients(ArrayNode resourceArrayNode, String resources) {
+		
+		if (resources != null) {
+			String[] resourceArray = resources.split(",");
+			for (String res : resourceArray) {
+				resourceArrayNode.add(res);
+			}
+		}
+		
+		return resourceArrayNode;
 	}
 
 	/**
@@ -464,6 +496,12 @@ public class HNIConverter {
 		service.put(FOOD_BANK_SELECT, ngo.getFoodBank());
 		service.put(FOOD_STAMP, ngo.getFoodStampAssist());
 		service.put(FOOD_BANK_SELECT, ngo.getFoodBank());
+		
+		ArrayNode resourceArray = service.putArray(RESOURCE);
+		
+		setResourceToClients(resourceArray, ngo.getResourcesToClients());
+		
+		
 		parentJSON.set(SERVICE, service);
 
 		ObjectNode client = mapper.createObjectNode();
@@ -758,4 +796,32 @@ public class HNIConverter {
 		}
 		return  phone;
 	}
+
+public static Client processFoodPreference(Client client) {
+		
+		String foodPreference = null;
+		List<Integer> foodPreferenceList = client.getFoodPreferenceList();
+		if (foodPreferenceList != null && !foodPreferenceList.isEmpty()) {
+			for (Integer preference : foodPreferenceList) {
+				if (foodPreference == null) {
+					foodPreference = String.valueOf(preference);
+				} else {
+					foodPreference += "," + preference.toString();
+				}
+			}
+		}
+		client.setFoodPreference(foodPreference);
+		return client;
+	}
+
+public static List<Integer> getFoodPreferenceList(String foodPreference) {
+	List<Integer> foodPreferenceList = new ArrayList<Integer>();
+	if(foodPreference != null){
+		String[] resourceArray = foodPreference.split(",");
+		for (String res : resourceArray) {
+			foodPreferenceList.add(Integer.parseInt(res));
+		}
+	}
+	return foodPreferenceList;
+}
 }

@@ -1,18 +1,18 @@
 package org.hni.user.om;
 
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-
-import static javax.persistence.GenerationType.IDENTITY;
-
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import org.hni.common.om.Persistable;
 
@@ -117,7 +117,7 @@ public class Client implements Persistable, Serializable {
 	@Column(name = "meals_per_day")
 	private Integer mealsPerDay;
 	@Column(name = "food_preference")
-	private Integer foodPreference;
+	private String foodPreference;
 	@Column(name = "food_source", length = 50)
 	private String foodSource;
 	@Column(name = "cook", length = 1)
@@ -161,6 +161,8 @@ public class Client implements Persistable, Serializable {
 	@Column(name = "ethinicity")
 	private Integer ethnicity;
 	
+	transient private List<Integer> foodPreferenceList = new ArrayList<>();
+	
 	public Client() {
 	}
 
@@ -187,7 +189,7 @@ public class Client implements Persistable, Serializable {
 			Integer dollarSpendFood, Integer dollarSpendClothes,
 			Integer dollarSpendEntertainment, Integer dollarSpendTransport,
 			Integer dollarSpendSavings, Integer mealsPerDay,
-			Integer foodPreference, String foodSource, boolean cook,
+			String foodPreference, String foodSource, boolean cook,
 			Integer travelForFoodDistance, Integer travalForFoodTime,
 			boolean subFoodProgram, String subFoodProgramEntity,
 			Integer subFoodProgramDuration, Integer subFoodProgramRenew,
@@ -664,11 +666,11 @@ public class Client implements Persistable, Serializable {
 	}
 
 	
-	public Integer getFoodPreference() {
+	public String getFoodPreference() {
 		return this.foodPreference;
 	}
 
-	public void setFoodPreference(Integer foodPreference) {
+	public void setFoodPreference(String foodPreference) {
 		this.foodPreference = foodPreference;
 	}
 
@@ -857,6 +859,14 @@ public class Client implements Persistable, Serializable {
 
 	public void setEthnicity(Integer ethnicity) {
 		this.ethnicity = ethnicity;
+	}
+
+	public List<Integer> getFoodPreferenceList() {
+		return foodPreferenceList;
+	}
+
+	public void setFoodPreferenceList(List<Integer> foodPreferenceList) {
+		this.foodPreferenceList = foodPreferenceList;
 	}
 	
 
