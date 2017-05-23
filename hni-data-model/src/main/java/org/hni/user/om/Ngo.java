@@ -60,7 +60,7 @@ public class Ngo implements Persistable, Serializable {
 	private Integer foodBank;
 	
 	@Column(name = "resources_to_clients")
-	private Integer resourcesToClients;
+	private String resourcesToClients;
 	
 	@Column(name = "ind_serv_daily")
 	private Integer individualsServedDaily;
@@ -192,11 +192,11 @@ public class Ngo implements Persistable, Serializable {
 		this.foodBank = foodBank;
 	}
 
-	public Integer getResourcesToClients() {
+	public String getResourcesToClients() {
 		return resourcesToClients;
 	}
 
-	public void setResourcesToClients(Integer resourcesToClients) {
+	public void setResourcesToClients(String resourcesToClients) {
 		this.resourcesToClients = resourcesToClients;
 	}
 

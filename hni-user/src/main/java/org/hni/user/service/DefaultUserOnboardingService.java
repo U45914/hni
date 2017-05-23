@@ -268,6 +268,7 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 		}
 		
 		HNIValidator.validateClient(client, error);
+		HNIConverter.processFoodPreference(client);
 		if(error!=null && error.isEmpty()) {
 			clientDAO.save(client);
 			if (client.getId() != null) {
@@ -298,6 +299,7 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 			Client client = clientDAO.get((Object)id.intValue());
 			client.setAddress(getAddress(user.getAddresses()));
 			client.setUser(user);
+			client.setFoodPreferenceList(HNIConverter.getFoodPreferenceList(client.getFoodPreference()));
 			response.put("response", client);
 		}
 		
