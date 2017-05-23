@@ -81,8 +81,10 @@ public class UserOnboardingController extends AbstractBaseController {
 			org.setCreated(new Date());
 			boolean ors = organizationService.isAlreadyExists(org);
 			if (!ors) {
+				Map<String, String> additional = new HashMap<>();
+				additional.put("phone", org.getPhone());
 				Organization organization = organizationService.save(org);
-				String UUID = userOnBoardingService.buildInvitationAndSave(organization.getId(), getLoggedInUser().getId(), organization.getEmail(), null);
+				String UUID = userOnBoardingService.buildInvitationAndSave(organization.getId(), getLoggedInUser().getId(), organization.getEmail(),mapper.writeValueAsString(additional));
 				if(UUID == null){
 					map.put(ERROR_MSG, "A user with same email address already exist");
 					return map;
@@ -150,6 +152,7 @@ public class UserOnboardingController extends AbstractBaseController {
 			map.put(RESPONSE, SUCCESS);
 			map.put(ORG_ID, invitations.get(0).getOrganizationId());
 			map.put(USER_NAME, invitations.get(0).getEmail());
+			map.put(DATA, invitations.get(0).getData());
 			Map<String, String> data = new HashMap<>();
 
 			if (invitations.get(0).getData() != null) {
