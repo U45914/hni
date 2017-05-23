@@ -87,6 +87,7 @@ public class DefaultActivationCodeService extends AbstractService<ActivationCode
 			actCode.setUser(user);
 			actCode.setMealsAuthorized(180L);
 			actCode.setMealsRemaining(180L);
+			actCode.setEnabled(true); 
 			actCode.setOrganizationId(user.getOrganizationId());
 			actCode.setCreated(new Date());
 			activationCodeDao.save(actCode);
