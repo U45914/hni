@@ -17,6 +17,7 @@ import org.hni.provider.om.ProviderLocation;
 import org.hni.provider.service.ProviderLocationService;
 import org.hni.security.om.ActivationCode;
 import org.hni.security.service.ActivationCodeService;
+import org.hni.sms.service.provider.PushMessageService;
 import org.hni.user.dao.UserDAO;
 import org.hni.user.om.Address;
 import org.hni.user.om.User;
@@ -99,6 +100,9 @@ public class DefaultOrderProcessor implements OrderProcessor {
     @Inject
     private LockingService<RedissonClient> redissonClient;
 
+    @Inject
+    private PushMessageService pushMessageService;
+    
     @PostConstruct
     void init() {
         if (eventRouter.getRegistered(EventName.MEAL) != this) {
@@ -304,6 +308,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
             finalOrder.setStatus(OrderStatus.OPEN);
             final Order savedOrder = orderService.save(finalOrder);
             partialOrderDAO.delete(order);
+            savedOrder.setUser(order.getUser());
             invokeRemoteOrderEventConsumer(savedOrder);
             LOGGER.info("Successfully created order {}", finalOrder.getId());
             output = REPLY_ORDER_COMPLETE;
@@ -390,6 +395,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
         RRemoteService remoteService = redissonClient.getNativeClient().getRemoteService();
         try {
             // invoke the remote service
+        	pushMessageService.createPushMessageAndSend(order);
             OrderEventConsumerAsync orderEventConsumer = remoteService.get(OrderEventConsumerAsync.class, REDISSON_REMOTE_INVOCATION_OPTION);
             orderEventConsumer.process(order);
         } catch (RemoteServiceAckTimeoutException ex) {

@@ -61,7 +61,7 @@ public class OrderEventConsumerImpl implements OrderEventConsumer {
                         order.getOrderDate().getTime());
         OrderConfirmedMessage message = new OrderConfirmedMessage(attachment);
         slackWebHookClient.postMessage(message);
-        pushMessageService.createPushMessageAndSend(order);
+        //pushMessageService.createPushMessageAndSend(order);
         
     }
 }

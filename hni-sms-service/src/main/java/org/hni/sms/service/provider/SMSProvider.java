@@ -6,6 +6,7 @@ package org.hni.sms.service.provider;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.hni.sms.service.provider.twilio.TwilioSmsProvider;
@@ -23,7 +24,8 @@ public class SMSProvider {
 	@Inject
 	private TwilioSmsProvider twilioSmsProvider;
 	
-	public SMSProvider() {
+	@PostConstruct
+	public void loadSMSProviders() {
 		smsServiceProviders.put(ServiceProvider.TWILIO, twilioSmsProvider);
 	}
 	
