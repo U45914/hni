@@ -38,6 +38,7 @@ public class AbstractBaseController {
 	protected static final String ERROR = "error";
 	protected static final String RESPONSE = "response";
 	protected static final String USER_NAME = "userName";
+	protected static final String DATA = "data";
 	protected final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 	@Inject
 	protected OrganizationUserService organizationUserService;
