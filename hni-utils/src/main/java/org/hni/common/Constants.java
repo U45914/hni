@@ -158,4 +158,6 @@ public class Constants {
 	public static final String SERVICE = "service";
 
 	public static final String OVERVIEW = "overview";
+	
+	public static final Integer ACTIVATION_CODE_START_INDEX = 100001;
 }

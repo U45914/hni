@@ -1,5 +1,6 @@
 package org.hni.security.dao;
 
+import org.hni.common.Constants;
 import org.hni.common.dao.AbstractDAO;
 import org.hni.security.om.ActivationCode;
 import org.hni.user.om.User;
@@ -46,7 +47,11 @@ public class DefaultActivationCodeDAO extends AbstractDAO<ActivationCode> implem
 	public String getNextActivationCode() {
 		try {
 			Query q = em.createQuery("SELECT max(x.activationCode) FROM ActivationCode x ");
-            return  (String)q.getSingleResult();
+			String result = (String) q.getSingleResult();
+			if (result == null) {
+				result = Constants.ACTIVATION_CODE_START_INDEX.toString();;
+			}
+            return  result;
 		} catch(NoResultException e) {
 			return null;
 		}

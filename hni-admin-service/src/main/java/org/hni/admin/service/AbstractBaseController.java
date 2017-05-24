@@ -129,6 +129,7 @@ public class AbstractBaseController {
 	
 	protected String getInitialData(User user, Long role) throws JsonProcessingException {
 		String initialProfileData = "{}";
+		user.setMobilePhone(HNIConverter.convertPhoneNumberToUiFormat(user.getMobilePhone()));
 		if (role.equals(HNIRoles.NGO_ADMIN.getRole()) && role.equals(HNIRoles.NGO.getRole())) {
 			ObjectNode parentJSON = mapper.createObjectNode();
 			ObjectNode overViewNode = mapper.createObjectNode();
