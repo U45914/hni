@@ -243,8 +243,8 @@ public class HNIConverter {
 		
 						BrandPartner brandPartner = new BrandPartner();
 						brandPartner.setNgoId(ngo_id);
-						if (brandPartnerJSON.has(PHONE_NUMBER)) {
-							brandPartner.setPhone(String.valueOf(brandPartnerJSON.get(PHONE_NUMBER).asText()));
+						if (brandPartnerJSON.has(WEBSITE)) {
+							brandPartner.setPhone(String.valueOf(brandPartnerJSON.get(WEBSITE).asText()));
 						}
 						brandPartner.setCompany(brandPartnerJSON.get(COMPANY).asText());
 						brandPartner.setCreated(new Date());
@@ -276,8 +276,8 @@ public class HNIConverter {
 
 				LocalPartner localPartner = new LocalPartner();
 				localPartner.setNgoId(ngoId);
-				if (localPartnerJSON.has(PHONE_NUMBER)) {
-					localPartner.setPhone(String.valueOf(localPartnerJSON.get(PHONE_NUMBER).asText()));
+				if (localPartnerJSON.has(WEBSITE)) {
+					localPartner.setPhone(String.valueOf(localPartnerJSON.get(WEBSITE).asText()));
 				}
 				localPartner.setCompany(localPartnerJSON.get(COMPANY).asText());
 				localPartner.setCreated(new Date());
@@ -551,7 +551,7 @@ public class HNIConverter {
 		brandPartners.forEach(bp -> {
 			ObjectNode brandPartnerJSON = mapper.createObjectNode();
 			brandPartnerJSON.put(COMPANY, bp.getCompany());
-			brandPartnerJSON.put(PHONE_NUMBER, bp.getPhone());
+			brandPartnerJSON.put(WEBSITE, bp.getPhone());
 			brandPartnerJSONArray.add(brandPartnerJSON);
 		});
 		stakeHolderNode.set(BRAND_PARTNERS, brandPartnerJSONArray);
@@ -571,7 +571,7 @@ public class HNIConverter {
 		localPartners.forEach(lp -> {
 			ObjectNode localPartnerJSON = mapper.createObjectNode();
 			localPartnerJSON.put(COMPANY, lp.getCompany());
-			localPartnerJSON.put(PHONE_NUMBER, lp.getPhone());
+			localPartnerJSON.put(WEBSITE, lp.getPhone());
 			localPartnerJSONArray.add(localPartnerJSON);
 		});
 		stakeHolderNode.set(LOCAL_PARTNERS, localPartnerJSONArray);
