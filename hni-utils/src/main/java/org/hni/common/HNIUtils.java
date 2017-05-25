@@ -1,10 +1,17 @@
 package org.hni.common;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import org.apache.shiro.crypto.hash.Hash;
+import org.apache.shiro.crypto.hash.SimpleHash;
+import org.apache.shiro.util.ByteSource;
+import org.apache.shiro.util.SimpleByteSource;
 
 public class HNIUtils {
 	public static String getUUID() {
@@ -61,4 +68,20 @@ public class HNIUtils {
 		header.put("label", label);
 		return header;
 	}
+	
+	public static String getHash(String authCode, Object salt) {
+		ByteSource slt = new SimpleByteSource(org.apache.commons.codec.binary.Base64.decodeBase64((String) salt));
+		Hash h = new SimpleHash("SHA-256", authCode, slt, 1024);
+		Base64.Encoder enc = Base64.getEncoder();
+		return new String(enc.encode(h.getBytes()));
+	}
+
+	public static String getSalt() {
+		byte[] salt = new byte[16];
+		SecureRandom random = new SecureRandom();
+		random.nextBytes(salt);
+		Base64.Encoder enc = Base64.getEncoder();
+		return enc.encodeToString(salt);
+	}
+	
 }

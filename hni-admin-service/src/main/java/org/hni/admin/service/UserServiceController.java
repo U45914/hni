@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -22,6 +23,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
@@ -39,6 +41,7 @@ import org.hni.passwordvalidater.CheckPassword;
 import org.hni.security.dao.RoleDAO;
 import org.hni.security.om.ActivationCode;
 import org.hni.security.service.ActivationCodeService;
+import org.hni.security.utils.HNISecurityUtils;
 import org.hni.user.om.Client;
 import org.hni.user.om.Ngo;
 import org.hni.user.om.Report;
@@ -444,5 +447,50 @@ public class UserServiceController extends AbstractBaseController {
 		response.put(Constants.RESPONSE, Constants.SUCCESS);
 		return Response.ok(response).build();
 
+	}
+	
+	
+	@GET
+	@Path("/change/password")
+	@Produces({ MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Create new security question for user to change password", notes = "", response = Map.class, responseContainer = "")
+	public Response changePasswordInit(Map<String, String> credentialInfo) {
+		_LOGGER.info("Request reached to change user password init");
+		Map<String, String> response = new HashMap<>();
+		User user = getLoggedInUser();
+		if (user != null) {
+			String key = UUID.randomUUID().toString();
+			response.put("skey", key);
+			Map<String, String> securityQuestion = HNISecurityUtils.getSecurityMathQuestion();
+			response.put("question", securityQuestion.get("question"));
+			putValueToDataStore(user.getId() + "_" + key, securityQuestion.get("answer"));
+			
+		} else {
+			response.put(Constants.RESPONSE, "You must be logged in for accessing this resource");
+			return Response.status(Status.UNAUTHORIZED).entity(response).build();
+		}
+		_LOGGER.info("Request completed for change user password init");
+		return Response.ok().entity(response).build();
+	}
+	
+	@POST
+	@Path("/change/password")
+	@Produces({ MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Changes user password with new password", notes = "", response = Map.class, responseContainer = "")
+	public Response changePassword(Map<String, String> credentialInfo) {
+		_LOGGER.info("Request reached to change user password");
+		Map<String, String> response = new HashMap<>();
+		User user = getLoggedInUser();
+		if (user != null) {
+			String sKey = credentialInfo.get("sKey");
+			String answer = getValueFromDataStore(user.getId() + "_" + sKey);
+			
+			response = userService.changePasswordFor(user, credentialInfo, answer);
+		} else {
+			response.put(Constants.RESPONSE, "You must be logged in for accessing this resource");
+			return Response.status(Status.UNAUTHORIZED).entity(response).build();
+		}
+		_LOGGER.info("Request completed for change user password");
+		return Response.ok().entity(response).build();
 	}
 }

@@ -2,7 +2,9 @@ package org.hni.admin.service;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -40,6 +42,7 @@ public class AbstractBaseController {
 	protected static final String USER_NAME = "userName";
 	protected static final String DATA = "data";
 	protected final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+	private static Map<String, String> tempDataStore = new HashMap<>();
 	@Inject
 	protected OrganizationUserService organizationUserService;
 
@@ -175,4 +178,13 @@ public class AbstractBaseController {
 		return user;
 	}
 
+	public String getValueFromDataStore(String key) {
+		
+		return tempDataStore.get(key);
+	}
+	
+	public String putValueToDataStore(String key, String value) {
+		
+		return tempDataStore.put(key, value);
+	}
 }
