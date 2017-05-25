@@ -765,27 +765,7 @@ public class HNIConverter {
 		return parentJSON;
 	}
 
-	public static String convertPhoneNumberToUiFormat(String phone) {
-		try {
-			if (phone != null) {
-				StringBuilder sb = new StringBuilder();
-				phone = phone.trim().replace("-", "");
-				sb.append(phone.substring(0, 3));
-				sb.append("-");
-				sb.append(phone.substring(3, 6));
-				sb.append("-");
-				sb.append(phone.substring(6));
-				return sb.toString();
-			} else {
-				return phone;
-			}
-		} catch (Exception e) {
-			logger.error("Exception while converting phone number to UI format "+ phone, e);
-		}
 		
-		return phone;
-	}
-	
 	public static String convertPhoneNumberFromUiFormat(String phone) {
 		try {
 			if (phone != null) {
