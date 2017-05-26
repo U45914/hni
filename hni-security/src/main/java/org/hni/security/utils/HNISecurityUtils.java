@@ -18,8 +18,8 @@ public class HNISecurityUtils extends HNIUtils{
 	
 	public static Map<String, String> getSecurityMathQuestion() {
 		Map<String, String> question = new HashMap<>(3);
-		int op1 = rand.nextInt(2);
-		int op2 = rand.nextInt(3);
+		int op1 = rand.nextInt(9);
+		int op2 = rand.nextInt(9);
 		int ans = op1 + op2;
 		StringBuilder sb = new StringBuilder();
 		

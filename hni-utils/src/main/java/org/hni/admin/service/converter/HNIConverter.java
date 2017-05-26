@@ -769,13 +769,15 @@ public class HNIConverter {
 		try {
 			if (phone != null) {
 				StringBuilder sb = new StringBuilder();
-				phone = phone.trim().replace("-", "");
-				sb.append(phone.substring(0, 3));
-				sb.append("-");
-				sb.append(phone.substring(3, 6));
-				sb.append("-");
-				sb.append(phone.substring(6));
-				return sb.toString();
+				phone = phone.trim().replaceAll("-", "");
+				if (!phone.isEmpty()) {
+					sb.append(phone.substring(0, 3));
+					sb.append("-");
+					sb.append(phone.substring(3, 6));
+					sb.append("-");
+					sb.append(phone.substring(6));
+					return sb.toString();
+				}
 			} else {
 				return phone;
 			}
