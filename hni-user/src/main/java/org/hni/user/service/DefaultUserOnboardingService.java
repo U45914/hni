@@ -283,7 +283,6 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 	public Map<String, Object> getUserProfiles(String type, Long userId) {
 		Long id = findIdByType(userId,type);
 		User user = userDao.get(userId);
-		user.setMobilePhone(HNIConverter.convertPhoneNumberToUiFormat(user.getMobilePhone()));
 		
 		Map<String,Object> response = new HashMap<>();
 		

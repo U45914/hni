@@ -77,7 +77,6 @@ public class UserSecurityController extends AbstractBaseController {
 			subject.login(userPasswordToken);
 			logger.info("Attempt to auth uyser " + userPasswordToken.getUsername());
 			User user = organizationUserService.byEmailAddress(userPasswordToken.getUsername());
-			user.setMobilePhone(HNIConverter.convertPhoneNumberToUiFormat(user.getMobilePhone()));
 			logger.info("user is authenticated");
 			Set<OrganizationUserRolePermission> permissions = userTokenService.getUserOrganizationRolePermissions(user, organizationId);
 			String permissionObject = mapPermissionsToString(permissions);

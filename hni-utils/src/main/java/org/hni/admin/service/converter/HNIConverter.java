@@ -780,7 +780,7 @@ public class HNIConverter {
 				return phone;
 			}
 		} catch (Exception e) {
-			logger.error("Exception while converting phone number to UI format "+ phone, e);
+				logger.error("Exception while converting phone number to UI format "+ phone, e);
 		}
 		
 		return phone;
