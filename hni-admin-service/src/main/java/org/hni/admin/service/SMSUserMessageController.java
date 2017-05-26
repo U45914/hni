@@ -112,6 +112,11 @@ public class SMSUserMessageController extends AbstractBaseController {
     }
     
     private String parsePhoneNumber(String phoneNumber) {
-    	return phoneNumber != null ? phoneNumber.replace("%2B1", "") : phoneNumber;
+    	if (phoneNumber != null) {
+    		phoneNumber = phoneNumber.replace("%2B1", "");
+    		phoneNumber = phoneNumber.replace("+1", "");
+    	}
+    	
+    	return phoneNumber;
     }
 }
