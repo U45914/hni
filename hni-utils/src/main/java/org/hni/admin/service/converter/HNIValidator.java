@@ -44,9 +44,7 @@ public class HNIValidator {
 		if (ngo.getFoodBank() == null) {
 			errors.put("Ngo -> foodBank", "cannot be null");
 		}
-		if (ngo.getResourcesToClients() == null) {
-			errors.put("Ngo -> resourcesToClients", "cannot be null");
-		}
+	
 		if (ngo.getIndividualsServedDaily() == null) {
 			errors.put("Ngo -> individualsServedDaily", "cannot be null");
 		}
