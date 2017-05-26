@@ -769,7 +769,7 @@ public class HNIConverter {
 		try {
 			if (phone != null) {
 				StringBuilder sb = new StringBuilder();
-				phone = phone.trim().replace("-", "");
+				phone = phone.trim().replaceAll("-", "");
 				if (!phone.isEmpty()) {
 					sb.append(phone.substring(0, 3));
 					sb.append("-");
