@@ -25,7 +25,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.util.ThreadContext;
 import org.hni.admin.service.converter.HNIConverter;
@@ -39,7 +38,6 @@ import org.hni.organization.om.UserOrganizationRole;
 import org.hni.organization.service.OrganizationUserService;
 import org.hni.passwordvalidater.CheckPassword;
 import org.hni.security.dao.RoleDAO;
-import org.hni.security.om.ActivationCode;
 import org.hni.security.service.ActivationCodeService;
 import org.hni.security.utils.HNISecurityUtils;
 import org.hni.user.om.Client;
@@ -454,7 +452,7 @@ public class UserServiceController extends AbstractBaseController {
 	@Path("/change/password")
 	@Produces({ MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "Create new security question for user to change password", notes = "", response = Map.class, responseContainer = "")
-	public Response changePasswordInit(Map<String, String> credentialInfo) {
+	public Response changePasswordInit() {
 		_LOGGER.info("Request reached to change user password init");
 		Map<String, String> response = new HashMap<>();
 		User user = getLoggedInUser();
