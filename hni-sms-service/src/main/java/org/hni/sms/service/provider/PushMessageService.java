@@ -73,13 +73,13 @@ public class PushMessageService {
 
 		builder.append(userName);
 		
-		builder.append("Order Item : ");
+		builder.append(" Order Item : ");
 		OrderItem orderItem = order.getOrderItems().iterator().next();
 		builder.append(orderItem.getMenuItem().getName());
-		builder.append("Total Price : ");
+		builder.append(" Total Price : $");
 		builder.append(order.getSubTotal());
 		// Below items to be checked before final changes
-		builder.append("www.hungernotimpossible.com");
+		builder.append(" www.hungernotimpossible.com");
 
 		return builder.toString();
 
