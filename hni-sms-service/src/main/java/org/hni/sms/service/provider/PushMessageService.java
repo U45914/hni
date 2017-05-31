@@ -45,10 +45,11 @@ public class PushMessageService {
 		List<VolunteerDto> volunteersList = volunteerService.getVolunteerByState(state, true);
 
 		SmsProvider smsProvider = SmsServiceLoader.getProviders().get(state);
-
-		if (!volunteersList.isEmpty()) {
-			for (VolunteerDto volunteer : volunteersList) {
-				provider.get(smsProvider.getProviderName()).sendMessage(prepareMessage(volunteer, order, smsProvider));
+		if(volunteersList != null){
+			if (!volunteersList.isEmpty()) {
+				for (VolunteerDto volunteer : volunteersList) {
+					provider.get(smsProvider.getProviderName()).sendMessage(prepareMessage(volunteer, order, smsProvider));
+				}
 			}
 		}
 	}

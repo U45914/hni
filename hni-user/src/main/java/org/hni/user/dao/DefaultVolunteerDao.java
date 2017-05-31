@@ -41,7 +41,7 @@ public class DefaultVolunteerDao extends AbstractDAO<Volunteer> implements Volun
 	@Override
 	public List<VolunteerDto> getAllVolunteers() {
 		List<VolunteerDto> listOfVolunteers = new ArrayList<>();
-		Query query = em.createNativeQuery("SELECT volunteer.id, volunteer.user_id, user.mobile_phone, user.first_name, user.last_name FROM Volunteer volunteer LEFT JOIN users user ON user.id=volunteer.user_id LEFT JOIN user_address userAddress ON userAddress.user_id=user.id LEFT JOIN addresses address ON userAddress.address_id=address.id"); 
+		Query query = em.createNativeQuery("SELECT vol.id, vol.user_id, user.mobile_phone, user.first_name, user.last_name FROM volunteer vol  LEFT JOIN users user ON user.id=vol.user_id LEFT JOIN user_address userAddress ON userAddress.user_id=user.id LEFT JOIN addresses address ON userAddress.address_id=address.id"); 
 		List<Object[]> volunteerList = query.getResultList();
 		if(volunteerList.isEmpty())
 			return null;
@@ -61,9 +61,9 @@ public class DefaultVolunteerDao extends AbstractDAO<Volunteer> implements Volun
 	@Override
 	public List<VolunteerDto> getVolunteerByState(String state, boolean flag) {
 		List<VolunteerDto> listOfVolunteers = new ArrayList<>();
-		Query query = em.createNativeQuery("SELECT volunteer.id, volunteer.user_id, user.mobile_phone, user.first_name, user.last_name FROM Volunteer volunteer LEFT JOIN users user ON user.id=volunteer.user_id LEFT JOIN user_address userAddress ON userAddress.user_id=user.id LEFT JOIN addresses address ON userAddress.address_id=address.id WHERE address.state= :state AND volunteer.available_for_place_order = :flag")
-						.setParameter("state", state)
-						.setParameter("flag", flag);
+		Query query = em.createNativeQuery("SELECT vol.id, vol.user_id, user.mobile_phone, user.first_name, user.last_name FROM volunteer vol  LEFT JOIN users user ON user.id=vol.user_id LEFT JOIN user_address userAddress ON userAddress.user_id=user.id LEFT JOIN addresses address ON userAddress.address_id=address.id WHERE address.state= :state AND vol.available_for_place_order = :flag")
+				.setParameter("state", state)
+				.setParameter("flag", flag);
 		List<Object[]> volunteerList = query.getResultList();
 		if(volunteerList.isEmpty())
 			return null;
