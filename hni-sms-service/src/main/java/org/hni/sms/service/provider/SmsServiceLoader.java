@@ -30,5 +30,11 @@ public class SmsServiceLoader {
 	public static Map<String, SmsProvider> getProviders() {
 		return providers;
 	}
+	
+
+	public List<SmsProvider> getSmsProvidersByState(String stateCode) {
+		
+		return smsServiceLoaderDao.getAllProviderBySate(stateCode);
+	}
 
 }

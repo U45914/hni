@@ -21,6 +21,8 @@ import org.hni.common.email.service.EmailComponent;
 import org.hni.organization.om.Organization;
 import org.hni.organization.om.UserOrganizationRole;
 import org.hni.organization.service.OrganizationService;
+import org.hni.sms.service.provider.SmsServiceLoader;
+import org.hni.sms.service.provider.om.SmsProvider;
 import org.hni.user.dao.UserDAO;
 import org.hni.user.om.Invitation;
 import org.hni.user.om.User;
@@ -68,6 +70,9 @@ public class UserOnboardingController extends AbstractBaseController {
 	@Inject
 	private UserPartialCreateService userPartialCreateService;
 	
+	@Inject
+	private SmsServiceLoader smsServiceLoader;
+	
 	@POST
 	@Path("/ngo/invite")
 	@Produces({ MediaType.APPLICATION_JSON }) 
@@ -113,7 +118,11 @@ public class UserOnboardingController extends AbstractBaseController {
 			String message = userInfo.get("invitationMessage");
 			String activationCode = userInfo.get("activationCode");
 			Long organizationId;
-			
+			if(userType.equalsIgnoreCase("client")) {
+				List<SmsProvider> smsProviders = smsServiceLoader.getSmsProvidersByState(userInfo.get("state"));
+				
+				message = formatInvitationMessageWithPhoneNumber(message, smsProviders);
+			}	
 			List<UserOrganizationRole> userOrganizationRoles = (List<UserOrganizationRole>) organizationUserService.getUserOrganizationRoles(getLoggedInUser());
 			if (!userOrganizationRoles.isEmpty()) {
 				organizationId = userOrganizationRoles.get(0).getId().getOrgId();
@@ -124,7 +133,7 @@ public class UserOnboardingController extends AbstractBaseController {
 			
 			String UUID = userOnBoardingService.buildInvitationAndSave(organizationId, getLoggedInUser().getId(), userInfo.get("email"), mapper.writeValueAsString(userInfo));
 			if (UUID != null) {
-				emailComponent.sendEmail(userInfo.get("email"), UUID, userType, message, activationCode,mapper.writeValueAsString(userInfo));
+				emailComponent.sendEmail(userInfo.get("email"), UUID, userType, message, activationCode, mapper.writeValueAsString(userInfo));
 			} else {
 				map.put(RESPONSE, ERROR);
 				map.put("message", "A user with " + userInfo.get("email") + " already exists");
@@ -135,6 +144,14 @@ public class UserOnboardingController extends AbstractBaseController {
 			_LOGGER.error("Serializing User object:"+e.getMessage(), e);
 		}
 		return map;
+	}
+
+	private String formatInvitationMessageWithPhoneNumber(String message, List<SmsProvider> smsProviders) {
+		message = message != null ? message : "";
+		if (smsProviders != null && !smsProviders.isEmpty()) {
+			message += "<br /><b> Please use this number for your future requests " + smsProviders.get(0).getLongCode() + "</b>";
+		}
+		return message;
 	}
 
 	@GET

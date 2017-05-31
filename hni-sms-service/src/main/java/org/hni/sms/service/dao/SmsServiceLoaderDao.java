@@ -33,6 +33,16 @@ public class SmsServiceLoaderDao extends AbstractDAO<SmsProvider> {
 		}
 	
 	}
+
+
+	public List<SmsProvider> getAllProviderBySate(String stateCode) {
+		try {
+			Query q = em.createQuery("SELECT x FROM SmsProvider x where x.stateCode =:stateCode").setParameter("stateCode", stateCode);
+			return q.getResultList();
+		} catch(NoResultException e) {
+			return Collections.emptyList();
+		}
+	}
     
     
 }
