@@ -49,6 +49,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
     public static String MSG_STATUS = "STATUS";
     public static String MSG_MEAL = "MEAL";
     public static String MSG_ORDER = "ORDER";
+    public static String MSG_HUNGRY = "HUNGRY";
     public static String MSG_CONFIRM = "CONFIRM";
     public static String MSG_REDO = "REDO";
 
@@ -165,7 +166,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
     }
 
     private String requestingMeal(User user, String request, PartialOrder order) {
-        if (request.equalsIgnoreCase(MSG_MEAL) || request.equalsIgnoreCase(MSG_ORDER)) {
+        if (request.equalsIgnoreCase(MSG_MEAL) || request.equalsIgnoreCase(MSG_ORDER) || request.equalsIgnoreCase(MSG_HUNGRY)) {
             order.setTransactionPhase(TransactionPhase.PROVIDING_ADDRESS);
             return REPLY_ORDER_GET_STARTED + REPLY_ORDER_REQUEST_ADDRESS;
         } else {
