@@ -16,6 +16,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.hni.admin.service.converter.HNIConverter;
 import org.hni.common.Constants;
 import org.hni.common.email.service.EmailComponent;
 import org.hni.organization.om.Organization;
@@ -146,15 +147,6 @@ public class UserOnboardingController extends AbstractBaseController {
 		return map;
 	}
 
-	private String formatInvitationMessageWithPhoneNumber(String message, List<SmsProvider> smsProviders) {
-		message = message != null ? message : "";
-		if (smsProviders != null && !smsProviders.isEmpty()) {
-			message += "<br /> Once you have completed the registration, you will be able to text to this number everyday from June 1st to September 1st to order meals: <b>(314) 300-0305</b>."+
-					"<br /><br />To place an order text: <b>HUNGRY</b> "+
-				"<br /><br />For questions email hunger@notimpossiblelabs.com";
-		}
-		return message;
-	}
 
 	@GET
 	@Path("/activate/{userType}/{invitationCode}")

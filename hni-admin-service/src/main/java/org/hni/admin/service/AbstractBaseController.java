@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,6 +19,7 @@ import org.hni.admin.service.converter.HNIConverter;
 import org.hni.common.Constants;
 import org.hni.organization.service.OrganizationUserService;
 import org.hni.security.utils.HNISecurityUtils;
+import org.hni.sms.service.provider.om.SmsProvider;
 import org.hni.type.HNIRoles;
 import org.hni.user.om.Address;
 import org.hni.user.om.Client;
@@ -185,5 +187,25 @@ public class AbstractBaseController {
 	public String putValueToDataStore(String key, String value) {
 		
 		return tempDataStore.put(key, value);
+	}
+	
+	protected String formatInvitationMessageWithPhoneNumber(String message, List<SmsProvider> smsProviders) {
+		message = message != null ? message : "";
+		String phoneNumber = "314-300-0305";
+		if (smsProviders != null && !smsProviders.isEmpty()) {
+			phoneNumber = smsProviders.get(0).getLongCode();
+			try {
+				phoneNumber = HNIConverter.convertPhoneNumberToUiFormat(phoneNumber);
+			} catch (Exception e) {
+				
+			}
+		}
+		
+		message += "<br /> Once you have completed the registration, you will be able to text to this number everyday from June 1st to September 1st to order meals: <b>" +
+				phoneNumber
+				+ "</b>."+
+				"<br /><br />To place an order text: <b>HUNGRY</b> "+
+			"<br /><br />For questions email hunger@notimpossiblelabs.com";
+		return message;
 	}
 }
