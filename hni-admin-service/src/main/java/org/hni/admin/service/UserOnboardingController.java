@@ -149,7 +149,9 @@ public class UserOnboardingController extends AbstractBaseController {
 	private String formatInvitationMessageWithPhoneNumber(String message, List<SmsProvider> smsProviders) {
 		message = message != null ? message : "";
 		if (smsProviders != null && !smsProviders.isEmpty()) {
-			message += "<br /><b> Please use this number for your future requests " + smsProviders.get(0).getLongCode() + "</b>";
+			message += "<br /> Once you have completed the registration, you will be able to text to this number everyday from June 1st to September 1st to order meals: <b>(314) 300-0305</b>."+
+					"<br /><br />To place an order text: <b>HUNGRY</b> "+
+				"<br /><br />For questions email hunger@notimpossiblelabs.com";
 		}
 		return message;
 	}
