@@ -23,7 +23,7 @@ public class SmsServiceLoader {
 		List<SmsProvider> providerList = new ArrayList();
 		providerList = smsServiceLoaderDao.getAllProvider();	
 		for (SmsProvider provider : providerList) {
-			providers.put(provider.getStateCode(),provider);
+			providers.put(provider.getStateCode().toUpperCase(),provider);
 		}
 	}
 	

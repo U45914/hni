@@ -53,7 +53,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
     public static String MSG_CONFIRM = "CONFIRM";
     public static String MSG_REDO = "REDO";
 
-    public static String REPLY_NOT_CURRENTLY_ORDERING = "You're not currently ordering, please respond with MEAL to place an order.";
+    public static String REPLY_NOT_CURRENTLY_ORDERING = "You're not currently ordering, please respond with HUNGRY to place an order.";
     public static String REPLY_ORDER_CANCELLED = "You've cancelled your order.";
     public static String REPLY_ORDER_GET_STARTED = "Yes! Let's get started to order a meal for you. ";
     public static String REPLY_ORDER_REQUEST_ADDRESS = "Reply with your location (e.g. #3 Smith St. 72758) or ENDMEAL to quit";
@@ -68,12 +68,12 @@ public class DefaultOrderProcessor implements OrderProcessor {
     public static String REPLY_ORDER_PENDING = "Your order is still open, please respond with STATUS in 5 minutes to check again.";
     public static String REPLY_ORDER_READY = "Your order has been placed and should be ready to pick up shortly from %s at %s %s.";
     public static String REPLY_ORDER_CLOSED = "Your order has been marked as closed.";
-    public static String REPLY_ORDER_NOT_FOUND = "I can't find a recent order for you, please reply MEAL to place an order.";
+    public static String REPLY_ORDER_NOT_FOUND = "I can't find a recent order for you, please reply HUNGRY to place an order.";
 
     public static String REPLY_ORDER_ITEM = "%d) %s from %s %s %s. ";
     public static String REPLY_ORDER_CHOICE = "Reply %s to choose your meal. ";
 
-    public static String REPLY_NO_UNDERSTAND = "I don't understand that. Reply with MEAL to place an order.";
+    public static String REPLY_NO_UNDERSTAND = "I don't understand that. Reply with HUNGRY to place an order.";
     public static String REPLY_INVALID_INPUT = "Invalid input! ";
     public static String REPLY_EXCEPTION_REGISTER_FIRST = "You will need to reply with REGISTER to sign up first.";
     public static String REPLY_MAX_ORDERS_REACHED = "You've reached the maximum number of orders for today. Please come back tomorrow.";
@@ -396,7 +396,11 @@ public class DefaultOrderProcessor implements OrderProcessor {
         RRemoteService remoteService = redissonClient.getNativeClient().getRemoteService();
         try {
             // invoke the remote service
-        	pushMessageService.createPushMessageAndSend(order);
+        	try{
+        		pushMessageService.createPushMessageAndSend(order);
+        	} catch(Exception e){
+        		LOGGER.error("No providers found for this order", e);
+        	}
             OrderEventConsumerAsync orderEventConsumer = remoteService.get(OrderEventConsumerAsync.class, REDISSON_REMOTE_INVOCATION_OPTION);
             orderEventConsumer.process(order);
         } catch (RemoteServiceAckTimeoutException ex) {
