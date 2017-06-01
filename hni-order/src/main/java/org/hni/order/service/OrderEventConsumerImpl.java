@@ -35,7 +35,7 @@ public class OrderEventConsumerImpl implements OrderEventConsumer {
     @Inject
     private PushMessageService pushMessageService;
 
-    @PostConstruct
+    //@PostConstruct
     private void register() {
         RRemoteService remoteService = redissonClient.getNativeClient().getRemoteService();
         remoteService.register(OrderEventConsumer.class, this, CONCURRENT_INVOCATION_NUMBER);
