@@ -45,7 +45,7 @@ public class RegisterService extends AbstractRegistrationService<User> {
 	public static String REPLY_AUTHCODE_ADDED = "I've added the authorization code to your family account.";
 	public static String REPLY_AUTHCODE_ADDITIONAL = " If you have additional family members to register, enter the authorization codes now, one at a time.";
 	
-    public static String REPLY_REGISTRATION_COMPLETE = "Ok. You're all set up for yourself. When you need a meal just text MEAL back to this number. ";
+    public static String REPLY_REGISTRATION_COMPLETE = "Ok. You're all set up for yourself. When you need a meal just text HUNGRY back to this number. ";
     public static String REPLY_EXCEPTION_START_OVER = "Oops, an error occured. Please start over again.";
     
     @Inject
