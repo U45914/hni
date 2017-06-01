@@ -40,11 +40,11 @@ public class PushMessageService {
 
 	public void createPushMessageAndSend(Order order) {
 
-		String state = userDAO.findUserState(order.getUser().getId());
+		String state = order.getProviderLocation().getAddress().getState();
 
 		List<VolunteerDto> volunteersList = volunteerService.getVolunteerByState(state, true);
 
-		SmsProvider smsProvider = SmsServiceLoader.getProviders().get(state);
+		SmsProvider smsProvider = SmsServiceLoader.getProviders().get(state.toUpperCase());
 		if(volunteersList != null){
 			if (!volunteersList.isEmpty()) {
 				for (VolunteerDto volunteer : volunteersList) {
