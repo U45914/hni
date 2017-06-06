@@ -22,15 +22,7 @@ public class CustomerDao extends DefaultGenericDAO {
 		Long role = HNIRoles.CLIENT.getRole();
 
 		List<Object[]> user = em
-				//.createNativeQuery("select distinct u.first_name,u.last_name,u.gender_code,u.mobile_phone,u.email,c.race,ad.address_line1, COUNT(o.id)  as ordCount from users u LEFT JOIN user_organization_role x ON u.id=x.user_id LEFT JOIN `client` c ON c.user_id=u.id LEFT JOIN user_address uad ON uad.user_id=u.id LEFT JOIN addresses ad ON ad.id=uad.address_id LEFT JOIN orders o ON o.user_id=u.id where x.role_id=:roleId")
-				.createNativeQuery("SELECT u.first_name,u.last_name,u.gender_code,u.mobile_phone,u.email,c.race,ad.address_line1, COUNT(o.id) AS ordCount "
-						+ "FROM client c "
-						+ "LEFT JOIN users u ON u.id = c.user_id "
-						+ "LEFT JOIN user_organization_role uor ON u.id=uor.user_id "
-						+ "LEFT JOIN user_address uad ON u.id=uad.user_id "
-						+ "LEFT JOIN addresses ad ON ad.id=uad.address_id "
-						+ "LEFT JOIN orders o ON o.user_id=u.id "
-						+ "WHERE uor.role_id=:roleId GROUP BY c.id")
+				.createNativeQuery("SELECT u.first_name,u.last_name,u.gender_code,u.mobile_phone,u.email, c.race, a.address_line1, COUNT(o.id) AS ordCount FROM users u LEFT JOIN user_organization_role uor ON uor.user_id = u.id LEFT JOIN client c ON c.user_id = u.id LEFT JOIN user_address ua ON ua.user_id = u.id LEFT JOIN addresses a ON a.id = ua.address_id LEFT JOIN orders o ON o.user_id=u.id WHERE uor.role_id = :roleId group by u.id;")
 				.setParameter("roleId", role).getResultList();
 		for (Object[] u : user) {
 			Map<String,String> map=new HashMap<String,String>();
@@ -111,5 +103,15 @@ public class CustomerDao extends DefaultGenericDAO {
 			}
 		}
 		return customers;
+	}
+	
+	public Map<String,Integer> getCustomerOrderCount(){
+		Query q = em.createNativeQuery("SELECT COUNT(*) FROM client UNION SELECT COUNT(*) FROM orders");
+		List<Integer> totalCount = q.getResultList();
+		Map<String,Integer> map=new HashMap<String,Integer>();
+		map.put("totalClient", totalCount.get(0));
+		map.put("totalOrders", totalCount.get(1));
+		return map;
+		
 	}
 }
