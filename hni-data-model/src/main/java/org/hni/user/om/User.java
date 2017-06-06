@@ -3,6 +3,7 @@ package org.hni.user.om;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -61,6 +62,9 @@ public class User implements Persistable, Serializable {
 	private String hashedSecret;
 	@Column(name = "salt")
 	private String salt;
+	
+	private transient String organizationName;
+	
 	@ManyToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
 	@JoinTable(name = "user_address", joinColumns = { @JoinColumn(name = "user_id", nullable = false, updatable = false) }, inverseJoinColumns = { @JoinColumn(name = "address_id",  referencedColumnName = "id", nullable = false, updatable = false) })	
 	private Set<Address> addresses = new HashSet<>(0);
@@ -68,7 +72,15 @@ public class User implements Persistable, Serializable {
 	private transient String password;
 	private transient String token;
 	private transient Long organizationId;
+	private transient Map<String, Object> additionalInfo;
 
+	public Map<String, Object> getAdditionalInfo() {
+		return additionalInfo;
+	}
+
+	public void setAdditionalInfo(Map<String, Object> additionalInfo) {
+		this.additionalInfo = additionalInfo;
+	}
 	public User() {
 	}
 
@@ -172,6 +184,14 @@ public class User implements Persistable, Serializable {
 
 	public void setSalt(String salt) {
 		this.salt = salt;
+	}
+	
+	public String getOrganizationName() {
+		return organizationName;
+	}
+
+	public void setOrganizationName(String organizationName) {
+		this.organizationName = organizationName;
 	}
 
 	public String getToken() {

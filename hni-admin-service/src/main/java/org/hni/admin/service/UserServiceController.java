@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -22,8 +23,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.util.ThreadContext;
 import org.hni.admin.service.converter.HNIConverter;
@@ -37,8 +38,8 @@ import org.hni.organization.om.UserOrganizationRole;
 import org.hni.organization.service.OrganizationUserService;
 import org.hni.passwordvalidater.CheckPassword;
 import org.hni.security.dao.RoleDAO;
-import org.hni.security.om.ActivationCode;
 import org.hni.security.service.ActivationCodeService;
+import org.hni.security.utils.HNISecurityUtils;
 import org.hni.user.om.Client;
 import org.hni.user.om.Ngo;
 import org.hni.user.om.Report;
@@ -55,7 +56,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import io.swagger.annotations.Api;
@@ -239,15 +239,21 @@ public class UserServiceController extends AbstractBaseController {
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Path("/register")
 	@ApiOperation(value = "register a customer", notes = "An update occurs if the ID field is specified", response = User.class, responseContainer = "")
-	public Response registerUser(User user, @HeaderParam("user-type") String type, @HeaderParam("invite-code") String invitaionCode, 
-			@HeaderParam("act-code") String activationCode) throws JsonProcessingException {
+	public Response registerUser(User user, @HeaderParam("user-type") String type, @HeaderParam("invite-code") String invitaionCode) throws JsonProcessingException {
 		Map<String, String> userResponse = new HashMap<>();
 		boolean validPassword = false;
 		validPassword = CheckPassword.passwordCheck(user);
 		if (validPassword == true) {
+			
+			user.setMobilePhone(HNIConverter.convertPhoneNumberFromUiFormat(user.getMobilePhone()));
+			
 			Long userRole = convertUserTypeToRole(type);
 			User u = orgUserService.register(setPassword(user), userRole);
-			if (u != null) {
+			if (u != null && u.getId()!=null) {
+				if(type.equalsIgnoreCase("client")) {
+					Integer dependentClient = Integer.valueOf(user.getAdditionalInfo().get("dependants").toString());
+					activationCodeService.saveActivationCodes(user, dependentClient);					
+				}
 				UserPartialData userProfileTempInfo = new UserPartialData();
 				userProfileTempInfo.setUserId(u.getId());
 				userProfileTempInfo.setLastUpdated(new Date());
@@ -257,11 +263,6 @@ public class UserServiceController extends AbstractBaseController {
 				userProfileTempInfo.setData(getInitialData(user, userRole));
 				// Saving user data to userProfileTable for user profile redirection
 				userPartialCreateService.save(userProfileTempInfo);
-				if(type.equalsIgnoreCase("client") && StringUtils.isNotEmpty(activationCode) && activationCodeService.validate(activationCode)) {
-					ActivationCode activationCodeEnity = activationCodeService.getByActivationCode(activationCode);
-					activationCodeEnity.setUser(u);
-					activationCodeService.update(activationCodeEnity);
-				}
 				userOnBoardingService.finalizeRegistration(invitaionCode);
 				userResponse.put(SUCCESS, "Account has been created successfully");
 			} else {
@@ -295,7 +296,7 @@ public class UserServiceController extends AbstractBaseController {
 			User user = getLoggedInUser();
 			user.setFirstName(client.getUser().getFirstName());
 			user.setLastName(client.getUser().getLastName());
-			user.setMobilePhone(client.getUser().getMobilePhone());
+			user.setMobilePhone(HNIConverter.convertPhoneNumberFromUiFormat(client.getUser().getMobilePhone()));
 			
 			user.setAddresses(getAddressSet(user.getAddresses(), client.getAddress()));
 			
@@ -328,10 +329,9 @@ public class UserServiceController extends AbstractBaseController {
 		try{
 			user.setFirstName(volunteer.getUser().getFirstName());
 			user.setLastName(volunteer.getUser().getLastName());
-			user.setMobilePhone(volunteer.getUser().getMobilePhone());
+			user.setMobilePhone(HNIConverter.convertPhoneNumberFromUiFormat(volunteer.getUser().getMobilePhone()));
 			
 			user.setAddresses(getAddressSet(user.getAddresses(), volunteer.getAddress()));
-			user.setMobilePhone(volunteer.getUser().getMobilePhone());
 			user.setGender(volunteer.getUser().getGender());
 			userService.update(user);
 			
@@ -445,5 +445,50 @@ public class UserServiceController extends AbstractBaseController {
 		response.put(Constants.RESPONSE, Constants.SUCCESS);
 		return Response.ok(response).build();
 
+	}
+	
+	
+	@GET
+	@Path("/change/password")
+	@Produces({ MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Create new security question for user to change password", notes = "", response = Map.class, responseContainer = "")
+	public Response changePasswordInit() {
+		_LOGGER.info("Request reached to change user password init");
+		Map<String, String> response = new HashMap<>();
+		User user = getLoggedInUser();
+		if (user != null) {
+			String key = UUID.randomUUID().toString();
+			response.put("skey", key);
+			Map<String, String> securityQuestion = HNISecurityUtils.getSecurityMathQuestion();
+			response.put("question", securityQuestion.get("question"));
+			putValueToDataStore(user.getId() + "_" + key, securityQuestion.get("answer"));
+			
+		} else {
+			response.put(Constants.RESPONSE, "You must be logged in for accessing this resource");
+			return Response.status(Status.UNAUTHORIZED).entity(response).build();
+		}
+		_LOGGER.info("Request completed for change user password init");
+		return Response.ok().entity(response).build();
+	}
+	
+	@POST
+	@Path("/change/password")
+	@Produces({ MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Changes user password with new password", notes = "", response = Map.class, responseContainer = "")
+	public Response changePassword(Map<String, String> credentialInfo) {
+		_LOGGER.info("Request reached to change user password");
+		Map<String, String> response = new HashMap<>();
+		User user = getLoggedInUser();
+		if (user != null) {
+			String sKey = credentialInfo.get("sKey");
+			String answer = getValueFromDataStore(user.getId() + "_" + sKey);
+			
+			response = userService.changePasswordFor(user, credentialInfo, answer);
+		} else {
+			response.put(Constants.RESPONSE, "You must be logged in for accessing this resource");
+			return Response.status(Status.UNAUTHORIZED).entity(response).build();
+		}
+		_LOGGER.info("Request completed for change user password");
+		return Response.ok().entity(response).build();
 	}
 }

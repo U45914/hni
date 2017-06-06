@@ -142,9 +142,9 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 			ngo = ngoGenericDAO.update(Ngo.class ,ngo);
 		}
 		else{
-		Invitation invitation = invitationDAO.getInvitedBy(user.getEmail());
-		ngo.setCreatedBy(invitation.getInvitedBy());
-		ngo = ngoGenericDAO.save(Ngo.class ,ngo);
+			Invitation invitation = invitationDAO.getInvitedBy(user.getEmail());
+			ngo.setCreatedBy(invitation.getInvitedBy());
+			ngo = ngoGenericDAO.save(Ngo.class ,ngo);
 		}
 		user.setAddresses(HNIConverter.getAddressSet(onboardData));
 		userDao.update(user);
@@ -268,6 +268,7 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 		}
 		
 		HNIValidator.validateClient(client, error);
+		HNIConverter.processFoodPreference(client);
 		if(error!=null && error.isEmpty()) {
 			clientDAO.save(client);
 			if (client.getId() != null) {
@@ -297,6 +298,7 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 			Client client = clientDAO.get((Object)id.intValue());
 			client.setAddress(getAddress(user.getAddresses()));
 			client.setUser(user);
+			client.setFoodPreferenceList(HNIConverter.getFoodPreferenceList(client.getFoodPreference()));
 			response.put("response", client);
 		}
 		
@@ -324,6 +326,10 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 		Map<String, String> response = new HashMap<>();
 		
 		int volunteerId = findIdByType(((Long)ThreadContext.get(Constants.USERID)), "volunteer").intValue();
+		Volunteer volunteer = volunteerDao.get((long) volunteerId);
+		volunteer.setAvailable(availableJSON.get("available").asBoolean());
+		volunteerDao.update(volunteer);
+		
 		List<VolunteerAvailability> volunteerAvailabilities = volunteerAvailabilityDAO.getVolunteerAvailabilityByVolunteerId(volunteerId);
 		if(!volunteerAvailabilities.isEmpty()){
 			for (VolunteerAvailability volunteerAvailability : volunteerAvailabilities) {
@@ -411,8 +417,13 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 	public ObjectNode getVolunteerAvailability(Long userId) {
 		if(userId>0){
 			int volunteerId = findIdByType(((Long)ThreadContext.get(Constants.USERID)), "volunteer").intValue();
+			
 			List<VolunteerAvailability> volunteerAvailabilities = volunteerAvailabilityDAO.getVolunteerAvailabilityByVolunteerId(volunteerId);
 			ObjectNode availableJSON = new ObjectMapper().createObjectNode();
+			
+			Volunteer volunteer = volunteerDao.get((long) volunteerId);
+			availableJSON.put("available", volunteer.getAvailable());
+			
 			for (VolunteerAvailability volunteerAvailability : volunteerAvailabilities) {
 				if(volunteerAvailability.getTimeline()==1){
 					availableJSON.set("shiftOne", commaSeperatedStringToJSONArray(volunteerAvailability.getWeekday()));

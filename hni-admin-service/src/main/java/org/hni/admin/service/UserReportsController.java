@@ -1,6 +1,5 @@
 package org.hni.admin.service;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,7 +10,6 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -25,8 +23,6 @@ import org.hni.common.DateUtils;
 import org.hni.common.HNIUtils;
 import org.hni.order.om.Order;
 import org.hni.order.service.OrderService;
-import org.hni.organization.om.Organization;
-import org.hni.provider.om.Provider;
 import org.hni.user.om.User;
 import org.hni.user.om.Volunteer;
 import org.hni.user.service.UserReportService;

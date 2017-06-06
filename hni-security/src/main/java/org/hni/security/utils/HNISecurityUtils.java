@@ -1,30 +1,39 @@
 package org.hni.security.utils;
 
-import java.security.SecureRandom;
-import java.util.Base64;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
-import org.apache.shiro.authc.SaltedAuthenticationInfo;
-import org.apache.shiro.crypto.hash.Hash;
-import org.apache.shiro.crypto.hash.SimpleHash;
-import org.apache.shiro.util.ByteSource;
-import org.apache.shiro.util.SimpleByteSource;
-
+import org.hni.common.HNIUtils;
 
 
-public class HNISecurityUtils {
 
-	public static String getHash(String authCode, Object salt) {
-		ByteSource slt = new SimpleByteSource(org.apache.commons.codec.binary.Base64.decodeBase64((String) salt));
-		Hash h = new SimpleHash("SHA-256", authCode, slt, 1024);
-		Base64.Encoder enc = Base64.getEncoder();
-		return new String(enc.encode(h.getBytes()));
+public class HNISecurityUtils extends HNIUtils{
+	
+	final List<String> OPERATORS = Arrays.asList(new String[] {"+", "-"});
+	
+	static Random rand = new Random(2);
+	
+	public static Map<String, String> getSecurityMathQuestion() {
+		Map<String, String> question = new HashMap<>(3);
+		int op1 = rand.nextInt(9);
+		int op2 = rand.nextInt(9);
+		int ans = op1 + op2;
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append(op1);
+		sb.append(" ");
+		sb.append(" + ");
+		sb.append(" ");
+		sb.append(op2);
+		sb.append(" = ");
+		
+		question.put("question", sb.toString());
+		question.put("answer", String.valueOf(ans));
+		
+		return question;
 	}
 
-	public static String getSalt() {
-		byte[] salt = new byte[16];
-		SecureRandom random = new SecureRandom();
-		random.nextBytes(salt);
-		Base64.Encoder enc = Base64.getEncoder();
-		return enc.encodeToString(salt);
-	}
 }

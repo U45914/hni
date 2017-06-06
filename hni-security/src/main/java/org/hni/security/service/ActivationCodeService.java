@@ -28,4 +28,12 @@ public interface ActivationCodeService extends BaseService<ActivationCode> {
 	 * @return
 	 */
 	List<ActivationCode> getByUser(User user);
+	
+	/**
+	 * Create a 6 digit activation code, Saving ActivationCode entries to database
+	 * @param user
+	 * @param dependentClient
+	 * @return
+	 */
+	List<ActivationCode> saveActivationCodes(User user, int dependentClient);
 }

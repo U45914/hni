@@ -1,6 +1,7 @@
 package org.hni.user.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
@@ -42,5 +43,7 @@ public interface UserService extends BaseService<User> {
 	default User register(User user, Long userType) {
 		return user;
 	}
+
+	Map<String, String> changePasswordFor(User user, Map<String, String> credentialInfo, String answer);
 
 }

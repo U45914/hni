@@ -60,6 +60,8 @@ public class EmailComponent {
 	@Value("#{hniProperties['mail.template.footer']}")
 	private String emailFooterTemplate;
 	
+	private ObjectMapper mapper = new ObjectMapper();
+	
 	public boolean sendEmail(String receiverEmail, String UUID, String userType, String invitationMessage, String activationCode,String data)
 			throws AddressException, MessagingException, JsonParseException, JsonMappingException, IOException {
 		Properties props = new Properties();
@@ -78,32 +80,23 @@ public class EmailComponent {
 		Message message = new MimeMessage(session);
 		message.setFrom(new InternetAddress(fromAddress, fromName));
 		message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(receiverEmail));
-		message.setSubject(capitalize(userType)+" "+emailSubTemplate);
+		
+		message.setSubject(capitalize(getInviteName(userType))+" " + emailSubTemplate);
 		
 		//message.setText(getEmailText(userType, UUID, invitationMessage, activationCode,data));
-		String contentText =getEmailText(userType, UUID, invitationMessage, activationCode,data);
+		String contentText = getEmailText(userType, UUID, invitationMessage, activationCode, data);
 		MimeMultipart multipart = new MimeMultipart("related");
 
         // first part (the html)
         BodyPart messageBodyPart = new MimeBodyPart();
-        String htmlText = "<p>"+contentText+"</p><br><img src=\"cid:footer\">";
+        String htmlText = "<p>"+contentText+"</p><br><img width=\"100%\" src=\"cid:footer\">";
         messageBodyPart.setContent(htmlText, "text/html");
         multipart.addBodyPart(messageBodyPart);
 
-        // second part (the image)
-       // messageBodyPart = new MimeBodyPart();
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         if (classLoader == null) {
             classLoader = EmailComponent.class.getClassLoader();
         }
-        //DataSource fds = new URLDataSource(classLoader.getResource("image/not_impossible_logo.png"));
-        
-       // messageBodyPart.setDataHandler(new DataHandler(fds));
-      //  messageBodyPart.setHeader("Content-ID", "<header>");
-        
-        
-        // add image to the multipart
-        //multipart.addBodyPart(messageBodyPart);
         
         messageBodyPart = new MimeBodyPart();
         DataSource footerDs = new URLDataSource(classLoader.getResource("image/not_impossible_logo.png"));
@@ -119,34 +112,37 @@ public class EmailComponent {
 	
 	private String getEmailText(String userType, String code,String invitationMessage, String activationCode,String data) throws JsonParseException, JsonMappingException, IOException {
 		StringBuilder emailTextBuilder = new StringBuilder(50);
-		ObjectMapper mapper = new ObjectMapper();
-		Map<String,String> dataMap = null;
-		if(data!=null){
-		dataMap = (Map) mapper.readValue(data, Map.class);
-		emailTextBuilder.append("Dear "+dataMap.get("name")+",");
+
+		Map<String, String> dataMap = null;
+		if (data != null) {
+			dataMap = (Map) mapper.readValue(data, Map.class);
+			emailTextBuilder.append("Hi " + dataMap.get("name") + ",");
+		} else {
+			emailTextBuilder.append("Hi " + getInviteName(userType) + ",");
 		}
-		else{
-			emailTextBuilder.append(getInviteName(userType));
-		}
+		
 		emailTextBuilder.append(emailBodyTemplate);
+		
 		if (invitationMessage != null && !invitationMessage.isEmpty()) {
-			emailTextBuilder.append("\n\n"+invitationMessage);
+			emailTextBuilder.append("<br/><br/>" + invitationMessage);
 		}
 		if (activationCode != null && !activationCode.isEmpty()) {
-			emailTextBuilder.append("\n\n Activation Code : "+ activationCode);
+			emailTextBuilder.append("<br/><br/> Activation Code : " + activationCode);
 		}
-		emailTextBuilder.append("\n\n");
+		emailTextBuilder.append("<br/><br/>");
 		emailTextBuilder.append(emailFooterTemplate);
-		return String.format(emailTextBuilder.toString(), activateURL + userType + "/" + code);
+		return String.format(emailTextBuilder.toString(), getInviteName(userType), activateURL + userType + "/" + code);
 	}
 	
 	private String getInviteName(String type) {
 		if ("ngo".equalsIgnoreCase(type)) {
-			return "Dear NGO,";
-		} else if ("volunteer".equalsIgnoreCase("type")) {
-			return "Dear Volunteer,";
-		} else {
-			return "Dear User,";
+			return "NGO";
+		} else if ("volunteer".equalsIgnoreCase(type)) {
+			return "Volunteer";
+		} else if ("Client".equalsIgnoreCase(type)) {
+			return "Participant";
+		}else {
+			return "User";
 		}
 		
 	}

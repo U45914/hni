@@ -1,5 +1,11 @@
 package org.hni.security.service;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.inject.Inject;
+
 import org.apache.commons.codec.binary.Base64;
 import org.hni.common.service.AbstractService;
 import org.hni.security.dao.ActivationCodeDAO;
@@ -11,10 +17,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
-import javax.inject.Inject;
-
 @Component
 @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 public class DefaultActivationCodeService extends AbstractService<ActivationCode> implements ActivationCodeService {
@@ -24,6 +26,8 @@ public class DefaultActivationCodeService extends AbstractService<ActivationCode
 	private static final int LARGE_BASE = 100000;
 	private static final int LARGE_PRIME = 999983;
 	private static final int OFFSET = 151647;
+	private static Integer ACTIVATION_CODE_START_IDX = 0;
+	private static boolean NEXT_ACTIVATION_CODE = false; 
 	
 	@Inject
 	public DefaultActivationCodeService(ActivationCodeDAO activationCodeDao) {
@@ -70,4 +74,25 @@ public class DefaultActivationCodeService extends AbstractService<ActivationCode
         return new String(Base64.encodeBase64(authCodeStr));
 	}
 
+	@Override
+	public List<ActivationCode> saveActivationCodes(User user, int dependentClient) {		
+		List<ActivationCode> activationCodes = new ArrayList<>(dependentClient + 1);
+		for (int i = 0; i <= dependentClient; i++) {
+			ActivationCode actCode = new ActivationCode();
+			if(!NEXT_ACTIVATION_CODE){
+				ACTIVATION_CODE_START_IDX = Integer.parseInt(activationCodeDao.getNextActivationCode());
+				NEXT_ACTIVATION_CODE = true;
+			}
+			actCode.setActivationCode(Integer.toString(++ACTIVATION_CODE_START_IDX));
+			actCode.setUser(user);
+			actCode.setMealsAuthorized(180L);
+			actCode.setMealsRemaining(180L);
+			actCode.setEnabled(true); 
+			actCode.setOrganizationId(user.getOrganizationId());
+			actCode.setCreated(new Date());
+			activationCodeDao.save(actCode);
+			activationCodes.add(actCode);
+		}
+		return activationCodes;
+	}
 }

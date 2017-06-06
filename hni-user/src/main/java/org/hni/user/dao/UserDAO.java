@@ -14,4 +14,6 @@ public interface UserDAO extends BaseDAO<User> {
 	User byEmailAddress(String emailAddress);
 	
 	Long findTypeIdByUser(Long userId,String type);
+	
+	String findUserState(Long userId);
 }

@@ -1,6 +1,7 @@
 package org.hni.events.service;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -95,5 +96,12 @@ public class CustomerService extends AbstractService<User> implements UserServic
     public User byEmailAddress(String emailAddress) {
         return userDao.byEmailAddress(emailAddress);
     }
+
+
+	@Override
+	public Map<String, String> changePasswordFor(User user, Map<String, String> credentialInfo, String answer) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

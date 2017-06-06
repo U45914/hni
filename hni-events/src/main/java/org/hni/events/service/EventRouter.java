@@ -79,6 +79,7 @@ public class EventRouter {
             case "REGISTER":
                 return EventName.REGISTER;
             // Support multiple Keywords for ordering
+            case "HUNGRY":
             case "MEAL":
             case "ORDER":
                 return EventName.MEAL;

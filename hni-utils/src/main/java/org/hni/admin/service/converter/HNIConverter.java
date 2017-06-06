@@ -10,6 +10,7 @@ import static org.hni.common.Constants.BRKFST_CHK;
 import static org.hni.common.Constants.BRKFST_QTY;
 import static org.hni.common.Constants.CLIENT_NODE;
 import static org.hni.common.Constants.COMPANY;
+import static org.hni.common.Constants.CONTACT_PERSON;
 import static org.hni.common.Constants.DINNER_AVAILABILTY;
 import static org.hni.common.Constants.DINNER_CHK;
 import static org.hni.common.Constants.DINNER_QTY;
@@ -64,6 +65,7 @@ import org.hni.organization.om.HniServices;
 import org.hni.user.om.Address;
 import org.hni.user.om.BoardMember;
 import org.hni.user.om.BrandPartner;
+import org.hni.user.om.Client;
 import org.hni.user.om.Endrosement;
 import org.hni.user.om.LocalPartner;
 import org.hni.user.om.Ngo;
@@ -76,6 +78,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class HNIConverter {
+
+	private static final String RESOURCE = "resource";
 
 	private static final String MEAL_QTY = "mealQty";
 
@@ -132,7 +136,8 @@ public class HNIConverter {
 		ngo.setFte(overviewNode.has(EMPLOYEES) ? overviewNode.get(EMPLOYEES).asInt() : 0);
 		ngo.setOverview(overviewNode.has(OVERVIEW) ? overviewNode.get(OVERVIEW).asText(): "");
 		ngo.setMission(overviewNode.has(MISSION) ? overviewNode.get(MISSION).asText(): "");
-
+		ngo.setContactName(overviewNode.has(CONTACT_PERSON) ? overviewNode.get(CONTACT_PERSON).asText(): "");
+		
 		ngo.setMonthlyBudget(serviceNode.has(MONTHLY_BUDGET) ? serviceNode.get(MONTHLY_BUDGET).asInt() : 0);
 		ngo.setOperatingCost(serviceNode.has(OPERATING_COST) ? serviceNode.get(OPERATING_COST).asInt() : 0);
 		ngo.setPersonalCost(serviceNode.has(PERSONAL_COST) ? serviceNode.get(PERSONAL_COST).asInt() : 0);
@@ -140,7 +145,8 @@ public class HNIConverter {
 		ngo.setFoodStampAssist(serviceNode.has(FOOD_STAMP) ? serviceNode.get(FOOD_STAMP).asInt() : 0);
 		ngo.setFoodBank(serviceNode.has(FOOD_BANK_SELECT) ? serviceNode.get(FOOD_BANK_SELECT).asInt() : 0);
 
-		ngo.setResourcesToClients(1);
+		//ngo.setResourcesToClients(1);
+		ngo.setResourcesToClients(getResourceToClients(serviceNode));
 		ngo.setIndividualsServedDaily(clientNode.has(INDIVIDUALS_SERVED_DAILY) ? clientNode.get(INDIVIDUALS_SERVED_DAILY).asInt() : 0);
 		ngo.setIndividualsServedMonthly(clientNode.has(INDIVIDUALS_SERVED_MONTHLY) ? clientNode.get(INDIVIDUALS_SERVED_MONTHLY).asInt() :0);
 		ngo.setIndividualsServedAnnually(clientNode.has(INDIVIDUALS_SERVED_ANNUALLY) ? clientNode.get(INDIVIDUALS_SERVED_ANNUALLY).asInt() :0);
@@ -155,6 +161,34 @@ public class HNIConverter {
 		
 
 		return ngo;
+	}
+
+	private static String getResourceToClients(JsonNode serviceNode) {
+		String resource = null;
+		if (serviceNode.has(RESOURCE) && serviceNode.get(RESOURCE).isArray()) {
+			Iterator<JsonNode> resourceIterator = serviceNode.get(RESOURCE).iterator();
+			while(resourceIterator.hasNext()) {
+				String temp = resourceIterator.next().asText();
+				if (resource == null) {
+					resource = temp;
+				} else {
+					resource += "," + temp;
+				}
+			}
+		} 
+		return resource;
+	}
+	
+	private static ArrayNode setResourceToClients(ArrayNode resourceArrayNode, String resources) {
+		
+		if (resources != null) {
+			String[] resourceArray = resources.split(",");
+			for (String res : resourceArray) {
+				resourceArrayNode.add(res);
+			}
+		}
+		
+		return resourceArrayNode;
 	}
 
 	/**
@@ -209,8 +243,8 @@ public class HNIConverter {
 		
 						BrandPartner brandPartner = new BrandPartner();
 						brandPartner.setNgoId(ngo_id);
-						if (brandPartnerJSON.has(PHONE_NUMBER)) {
-							brandPartner.setPhone(String.valueOf(brandPartnerJSON.get(PHONE_NUMBER).asText()));
+						if (brandPartnerJSON.has(WEBSITE)) {
+							brandPartner.setPhone(String.valueOf(brandPartnerJSON.get(WEBSITE).asText()));
 						}
 						brandPartner.setCompany(brandPartnerJSON.get(COMPANY).asText());
 						brandPartner.setCreated(new Date());
@@ -242,8 +276,8 @@ public class HNIConverter {
 
 				LocalPartner localPartner = new LocalPartner();
 				localPartner.setNgoId(ngoId);
-				if (localPartnerJSON.has(PHONE_NUMBER)) {
-					localPartner.setPhone(String.valueOf(localPartnerJSON.get(PHONE_NUMBER).asText()));
+				if (localPartnerJSON.has(WEBSITE)) {
+					localPartner.setPhone(String.valueOf(localPartnerJSON.get(WEBSITE).asText()));
 				}
 				localPartner.setCompany(localPartnerJSON.get(COMPANY).asText());
 				localPartner.setCreated(new Date());
@@ -448,6 +482,8 @@ public class HNIConverter {
 		overview.put(WEBSITE, ngo.getWebsite());
 		overview.put(OVERVIEW, ngo.getOverview());
 		overview.put(MISSION, ngo.getMission());
+		
+		overview.put(CONTACT_PERSON, ngo.getContactName());
 		overview.put(EMPLOYEES, ngo.getFte());
 		
 		parentJSON.set(OVERVIEW, overview);
@@ -460,6 +496,12 @@ public class HNIConverter {
 		service.put(FOOD_BANK_SELECT, ngo.getFoodBank());
 		service.put(FOOD_STAMP, ngo.getFoodStampAssist());
 		service.put(FOOD_BANK_SELECT, ngo.getFoodBank());
+		
+		ArrayNode resourceArray = service.putArray(RESOURCE);
+		
+		setResourceToClients(resourceArray, ngo.getResourcesToClients());
+		
+		
 		parentJSON.set(SERVICE, service);
 
 		ObjectNode client = mapper.createObjectNode();
@@ -509,7 +551,7 @@ public class HNIConverter {
 		brandPartners.forEach(bp -> {
 			ObjectNode brandPartnerJSON = mapper.createObjectNode();
 			brandPartnerJSON.put(COMPANY, bp.getCompany());
-			brandPartnerJSON.put(PHONE_NUMBER, bp.getPhone());
+			brandPartnerJSON.put(WEBSITE, bp.getPhone());
 			brandPartnerJSONArray.add(brandPartnerJSON);
 		});
 		stakeHolderNode.set(BRAND_PARTNERS, brandPartnerJSONArray);
@@ -529,7 +571,7 @@ public class HNIConverter {
 		localPartners.forEach(lp -> {
 			ObjectNode localPartnerJSON = mapper.createObjectNode();
 			localPartnerJSON.put(COMPANY, lp.getCompany());
-			localPartnerJSON.put(PHONE_NUMBER, lp.getPhone());
+			localPartnerJSON.put(WEBSITE, lp.getPhone());
 			localPartnerJSONArray.add(localPartnerJSON);
 		});
 		stakeHolderNode.set(LOCAL_PARTNERS, localPartnerJSONArray);
@@ -723,4 +765,65 @@ public class HNIConverter {
 		return parentJSON;
 	}
 
+	public static String convertPhoneNumberToUiFormat(String phone) {
+		try {
+			if (phone != null) {
+				StringBuilder sb = new StringBuilder();
+				phone = phone.trim().replaceAll("-", "");
+				if (!phone.isEmpty()) {
+					sb.append(phone.substring(0, 3));
+					sb.append("-");
+					sb.append(phone.substring(3, 6));
+					sb.append("-");
+					sb.append(phone.substring(6));
+					return sb.toString();
+				}
+			} else {
+				return phone;
+			}
+		} catch (Exception e) {
+				logger.error("Exception while converting phone number to UI format "+ phone, e);
+		}
+		
+		return phone;
+	}
+	
+	public static String convertPhoneNumberFromUiFormat(String phone) {
+		try {
+			if (phone != null) {
+				return phone.replaceAll("-", "");
+			}
+		} catch (Exception e) {
+			logger.error("Exception while converting phone number from UI format "+ phone, e);
+		}
+		return  phone;
+	}
+
+public static Client processFoodPreference(Client client) {
+		
+		String foodPreference = null;
+		List<Integer> foodPreferenceList = client.getFoodPreferenceList();
+		if (foodPreferenceList != null && !foodPreferenceList.isEmpty()) {
+			for (Integer preference : foodPreferenceList) {
+				if (foodPreference == null) {
+					foodPreference = String.valueOf(preference);
+				} else {
+					foodPreference += "," + preference.toString();
+				}
+			}
+		}
+		client.setFoodPreference(foodPreference);
+		return client;
+	}
+
+public static List<Integer> getFoodPreferenceList(String foodPreference) {
+	List<Integer> foodPreferenceList = new ArrayList<Integer>();
+	if(foodPreference != null){
+		String[] resourceArray = foodPreference.split(",");
+		for (String res : resourceArray) {
+			foodPreferenceList.add(Integer.parseInt(res));
+		}
+	}
+	return foodPreferenceList;
+}
 }

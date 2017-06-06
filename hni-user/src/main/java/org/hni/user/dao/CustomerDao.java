@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.persistence.Query;
 
+import org.hni.admin.service.converter.HNIConverter;
 import org.hni.common.dao.DefaultGenericDAO;
 import org.hni.type.HNIRoles;
 import org.hni.user.om.User;
@@ -21,14 +22,21 @@ public class CustomerDao extends DefaultGenericDAO {
 		Long role = HNIRoles.CLIENT.getRole();
 
 		List<Object[]> user = em
-				.createNativeQuery(
-						"select distinct u.first_name,u.last_name,u.gender_code,u.mobile_phone,u.email,c.race,ad.address_line1, COUNT(o.id)  as ordCount from users u LEFT JOIN user_organization_role x ON u.id=x.user_id LEFT JOIN `client` c ON c.user_id=u.id LEFT JOIN user_address uad ON uad.user_id=u.id LEFT JOIN addresses ad ON ad.id=uad.address_id LEFT JOIN orders o ON o.user_id=u.id where x.role_id=:roleId")
+				//.createNativeQuery("select distinct u.first_name,u.last_name,u.gender_code,u.mobile_phone,u.email,c.race,ad.address_line1, COUNT(o.id)  as ordCount from users u LEFT JOIN user_organization_role x ON u.id=x.user_id LEFT JOIN `client` c ON c.user_id=u.id LEFT JOIN user_address uad ON uad.user_id=u.id LEFT JOIN addresses ad ON ad.id=uad.address_id LEFT JOIN orders o ON o.user_id=u.id where x.role_id=:roleId")
+				.createNativeQuery("SELECT u.first_name,u.last_name,u.gender_code,u.mobile_phone,u.email,c.race,ad.address_line1, COUNT(o.id) AS ordCount "
+						+ "FROM client c "
+						+ "LEFT JOIN users u ON u.id = c.user_id "
+						+ "LEFT JOIN user_organization_role uor ON u.id=uor.user_id "
+						+ "LEFT JOIN user_address uad ON u.id=uad.user_id "
+						+ "LEFT JOIN addresses ad ON ad.id=uad.address_id "
+						+ "LEFT JOIN orders o ON o.user_id=u.id "
+						+ "WHERE uor.role_id=:roleId GROUP BY c.id")
 				.setParameter("roleId", role).getResultList();
 		for (Object[] u : user) {
 			Map<String,String> map=new HashMap<String,String>();
 			map.put("firstName",getValue(u[0]));
 			map.put("lastName",getValue(u[1]));
-			map.put("mobilePhone",getValue(u[3]));
+			map.put("mobilePhone",HNIConverter.convertPhoneNumberToUiFormat(getValue(u[3])));
 			map.put("race",getValue(u[5]));
 			map.put("address",getValue(u[6]));
 			map.put("orders", getValue(u[7]));	
@@ -57,7 +65,7 @@ public class CustomerDao extends DefaultGenericDAO {
 				Map<String,String> map=new HashMap<String,String>();
 				map.put("firstName",getValue(usr[0]));
 				map.put("lastName",getValue(usr[1]));
-				map.put("mobilePhone",getValue(usr[3]));
+				map.put("mobilePhone",HNIConverter.convertPhoneNumberToUiFormat(getValue(usr[3])));
 				map.put("race",getValue(usr[5]));
 				map.put("address",getValue(usr[6]));
 				map.put("orders", getValue(usr[7]));	
@@ -94,7 +102,7 @@ public class CustomerDao extends DefaultGenericDAO {
 					Map<String,String> map=new HashMap<String,String>();
 					map.put("firstName",getValue(usr[0]));
 					map.put("lastName",getValue(usr[1]));
-					map.put("mobilePhone",getValue(usr[3]));
+					map.put("mobilePhone",HNIConverter.convertPhoneNumberToUiFormat(getValue(usr[3])));
 					map.put("race",getValue(usr[5]));
 					map.put("address",getValue(usr[6]));
 					map.put("orders", getValue(usr[7]));	

@@ -19,6 +19,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
+import org.hni.admin.service.converter.HNIConverter;
 import org.hni.common.Constants;
 import org.hni.common.exception.HNIException;
 import org.hni.common.om.Role;
@@ -85,6 +86,10 @@ public class UserSecurityController extends AbstractBaseController {
 			if (!permissions.isEmpty()) {
 				if (!orgUserRole.getRoleId().equals(1L)) {
 					user.setOrganizationId(permissions.iterator().next().getOrganizationId());
+					Organization organization = organizationService.get(user.getOrganizationId());
+					setOrganizationName(user, organization);
+				} else {
+					setOrganizationName(user, null);
 				}
 			}
 			roleName = getRoleName(orgUserRole.getRoleId());
@@ -94,6 +99,18 @@ public class UserSecurityController extends AbstractBaseController {
 		} catch (IncorrectCredentialsException ice) {
 			logger.error("couldn't auth user:", ice.getMessage());
 			return new AuthenticationResult(HttpStatus.UNAUTHORIZED.value(), String.format("{\"error\":\"Invalid username or password supplied %s\"}", ice.getMessage()));
+		}
+	}
+
+	/**
+	 * @param user
+	 * @param organization
+	 */
+	private void setOrganizationName(User user, Organization organization) {
+		if (organization != null) {
+			user.setOrganizationName(organization.getName());
+		} else {
+			user.setOrganizationName("Hunger Not Impossible");
 		}
 	}
 

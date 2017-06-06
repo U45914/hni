@@ -16,11 +16,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang3.StringUtils;
+import org.hni.admin.service.converter.HNIConverter;
 import org.hni.common.Constants;
 import org.hni.common.email.service.EmailComponent;
 import org.hni.organization.om.Organization;
+import org.hni.organization.om.UserOrganizationRole;
 import org.hni.organization.service.OrganizationService;
+import org.hni.sms.service.provider.SmsServiceLoader;
+import org.hni.sms.service.provider.om.SmsProvider;
 import org.hni.user.dao.UserDAO;
 import org.hni.user.om.Invitation;
 import org.hni.user.om.User;
@@ -68,6 +71,9 @@ public class UserOnboardingController extends AbstractBaseController {
 	@Inject
 	private UserPartialCreateService userPartialCreateService;
 	
+	@Inject
+	private SmsServiceLoader smsServiceLoader;
+	
 	@POST
 	@Path("/ngo/invite")
 	@Produces({ MediaType.APPLICATION_JSON }) 
@@ -81,8 +87,10 @@ public class UserOnboardingController extends AbstractBaseController {
 			org.setCreated(new Date());
 			boolean ors = organizationService.isAlreadyExists(org);
 			if (!ors) {
+				Map<String, String> additional = new HashMap<>();
+				additional.put("phone", org.getPhone());
 				Organization organization = organizationService.save(org);
-				String UUID = userOnBoardingService.buildInvitationAndSave(organization.getId(), getLoggedInUser().getId(), organization.getEmail(), null);
+				String UUID = userOnBoardingService.buildInvitationAndSave(organization.getId(), getLoggedInUser().getId(), organization.getEmail(),mapper.writeValueAsString(additional));
 				if(UUID == null){
 					map.put(ERROR_MSG, "A user with same email address already exist");
 					return map;
@@ -108,18 +116,25 @@ public class UserOnboardingController extends AbstractBaseController {
 		Map<String, String> map = new HashMap<>();
 		map.put(RESPONSE, ERROR);
 		try {
-			String orgId = userInfo.get("orgId");
 			String message = userInfo.get("invitationMessage");
 			String activationCode = userInfo.get("activationCode");
 			Long organizationId;
-			if (StringUtils.isNotEmpty(orgId)) {
-				organizationId = Long.valueOf(orgId);
+			if(userType.equalsIgnoreCase("client")) {
+				List<SmsProvider> smsProviders = smsServiceLoader.getSmsProvidersByState(userInfo.get("state"));
+				
+				message = formatInvitationMessageWithPhoneNumber(message, smsProviders);
+			}	
+			List<UserOrganizationRole> userOrganizationRoles = (List<UserOrganizationRole>) organizationUserService.getUserOrganizationRoles(getLoggedInUser());
+			if (!userOrganizationRoles.isEmpty()) {
+				organizationId = userOrganizationRoles.get(0).getId().getOrgId();
 			} else {
-				organizationId = getLoggedInUser().getOrganizationId() != null ? getLoggedInUser().getOrganizationId() : 1;
+				// Sets org to super user - hack
+				organizationId = 1L;
 			}
+			
 			String UUID = userOnBoardingService.buildInvitationAndSave(organizationId, getLoggedInUser().getId(), userInfo.get("email"), mapper.writeValueAsString(userInfo));
 			if (UUID != null) {
-				emailComponent.sendEmail(userInfo.get("email"), UUID, userType, message, activationCode,mapper.writeValueAsString(userInfo));
+				emailComponent.sendEmail(userInfo.get("email"), UUID, userType, message, activationCode, mapper.writeValueAsString(userInfo));
 			} else {
 				map.put(RESPONSE, ERROR);
 				map.put("message", "A user with " + userInfo.get("email") + " already exists");
@@ -132,22 +147,33 @@ public class UserOnboardingController extends AbstractBaseController {
 		return map;
 	}
 
+
 	@GET
-	@Path("/activate/{ngo}/{invitationCode}")
+	@Path("/activate/{userType}/{invitationCode}")
 	@Produces({ MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "", notes = "", response = Map.class, responseContainer = "")
-	public Map<String, String> activateNGO(@PathParam("userType") String userType, @PathParam("invitationCode") String invitationCode) throws JsonParseException, JsonMappingException, IOException {
+	public Map<String, String> activateNGO(@PathParam("userType") String userType,
+			@PathParam("invitationCode") String invitationCode)
+			throws JsonParseException, JsonMappingException, IOException {
 		Map<String, String> map = new HashMap<>();
 		map.put(RESPONSE, ERROR);
 		List<Invitation> invitations = (List<Invitation>) userOnBoardingService.validateInvitationCode(invitationCode);
-		
+
 		if (!invitations.isEmpty()) {
 			map.put(RESPONSE, SUCCESS);
 			map.put(ORG_ID, invitations.get(0).getOrganizationId());
 			map.put(USER_NAME, invitations.get(0).getEmail());
-			if(invitations.get(0).getData()!=null){
-				map.put(FIRST_NAME, (String) mapper.readValue(invitations.get(0).getData(), Map.class).get("name"));
+			map.put(DATA, invitations.get(0).getData());
+			Map<String, String> data = new HashMap<>();
+
+			if (invitations.get(0).getData() != null) {
+				data = mapper.readValue(invitations.get(0).getData(), Map.class);
+				map.put(FIRST_NAME, data.get("name"));
 			}
+			if (userType != null && userType.equalsIgnoreCase("client") && !data.isEmpty()) {
+				map.put("dependants", data.get("dependants"));
+			}
+
 			return map;
 		}
 		return map;
@@ -203,7 +229,7 @@ public class UserOnboardingController extends AbstractBaseController {
 			 
 			Map<String, String> errors = userOnBoardingService.ngoSave((ObjectNode) objectNode, getLoggedInUser());
 			 if(errors!=null && errors.isEmpty()){
-			map.put(RESPONSE, SUCCESS);
+				 map.put(RESPONSE, SUCCESS);
 			 }
 			 else{
 				 if(map!=null)
