@@ -22,7 +22,15 @@ public class CustomerDao extends DefaultGenericDAO {
 		Long role = HNIRoles.CLIENT.getRole();
 
 		List<Object[]> user = em
-				.createNativeQuery("SELECT u.first_name,u.last_name,u.gender_code,u.mobile_phone,u.email, c.race, a.address_line1, COUNT(o.id) AS ordCount FROM users u LEFT JOIN user_organization_role uor ON uor.user_id = u.id LEFT JOIN client c ON c.user_id = u.id LEFT JOIN user_address ua ON ua.user_id = u.id LEFT JOIN addresses a ON a.id = ua.address_id LEFT JOIN orders o ON o.user_id=u.id WHERE uor.role_id = :roleId group by u.id;")
+				.createNativeQuery("SELECT u.first_name,u.last_name,u.gender_code,u.mobile_phone,u.email, c.race, a.address_line1, COUNT(o.id) AS ordCount "
+						+ "FROM users u "
+						+ "LEFT JOIN user_organization_role uor ON uor.user_id = u.id "
+						+ "LEFT JOIN client c ON c.user_id = u.id "
+						+ "LEFT JOIN user_address ua ON ua.user_id = u.id "
+						+ "LEFT JOIN addresses a ON a.id = ua.address_id "
+						+ "LEFT JOIN orders o ON o.user_id=u.id "
+						+ "WHERE uor.role_id = :roleId "
+						+ "group by u.id;")
 				.setParameter("roleId", role).getResultList();
 		for (Object[] u : user) {
 			Map<String,String> map=new HashMap<String,String>();
@@ -105,13 +113,28 @@ public class CustomerDao extends DefaultGenericDAO {
 		return customers;
 	}
 	
-	public Map<String,Integer> getCustomerOrderCount(){
-		Query q = em.createNativeQuery("SELECT COUNT(*) FROM client UNION SELECT COUNT(*) FROM orders");
-		List<Integer> totalCount = q.getResultList();
-		Map<String,Integer> map=new HashMap<String,Integer>();
-		map.put("totalClient", totalCount.get(0));
-		map.put("totalOrders", totalCount.get(1));
-		return map;
+	public Map<String, Object> getCustomerOrderCount(){
+		Long role = HNIRoles.CLIENT.getRole();
+		Query q = em.createNativeQuery("SELECT cast( ("
+				+ "SELECT count(*) "
+				+ "FROM user_organization_role "
+				+ "where role_id= :role) as UNSIGNED) as participant, cast( ("
+				+ "Select COUNT(*) as orders "
+				+ "FROM orders) as UNSIGNED) as totalOrder "
+				+ "from dual; ")
+				    .setParameter("role", role);
 		
+		List<Object[]> totalCount = q.getResultList();
+
+		Object[] result = totalCount.get(0);
+		
+		Map<String, Object> map = new HashMap<>();
+		
+		if (result.length == 2) {
+			map.put("totalClient", result[0]);
+			map.put("totalOrders", result[1]);
+		}
+		
+		return map;
 	}
 }

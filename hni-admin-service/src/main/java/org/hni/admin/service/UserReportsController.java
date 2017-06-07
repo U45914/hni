@@ -245,11 +245,11 @@ public class UserReportsController extends AbstractBaseController {
 		User user = getLoggedInUser();
 		Map<String, Object> response = new HashMap<>();
 		try {
-			Map<String,Integer> count =  userReportService.getCustomersOrderCount();
+			Map<String, Object> count =  userReportService.getCustomersOrderCount();
 			response.put("data", count);
 			response.put(Constants.RESPONSE, Constants.SUCCESS);
 		} catch (Exception e) {
-			_LOGGER.error("Error in get participant and order totall:" + e.getMessage(), e);
+			_LOGGER.error("Error in get participant and order total:" + e.getMessage(), e);
 			response.put(Constants.RESPONSE, Constants.ERROR);
 		}
 
