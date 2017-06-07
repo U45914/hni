@@ -18,5 +18,5 @@ public interface UserReportService {
 	public List<Map> getAllCustomersEnrolledByNgo(User user);
 	public List<Volunteer> getAllVolunteers(Long userId);
 	public List<ObjectNode> getAllProviders(User user);
-	
+	public Map<String, Object> getCustomersOrderCount();	
 }
