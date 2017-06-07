@@ -54,4 +54,9 @@ public class UserReportsServiceImpl implements UserReportService {
 		return ngoGenericDAO.getAllProviders(user);
 	}
 
+	@Override
+	public Map<String, Object> getCustomersOrderCount() {
+		return customerDao.getCustomerOrderCount();
+	}
+
 }

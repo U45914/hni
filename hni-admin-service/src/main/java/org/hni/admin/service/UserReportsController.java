@@ -78,8 +78,8 @@ public class UserReportsController extends AbstractBaseController {
 
 		Map<String, Object> response = new HashMap<>();
 		try {
-			List<Map> customers = userReportService.getAllCustomersByRole();
 			response.put("headers", HNIUtils.getReportHeaders(60));
+			List<Map> customers = userReportService.getAllCustomersByRole();
 			response.put("data", customers);
 			response.put(Constants.RESPONSE, Constants.SUCCESS);
 		} catch (Exception e) {
@@ -230,6 +230,26 @@ public class UserReportsController extends AbstractBaseController {
 			response.put(Constants.RESPONSE, Constants.SUCCESS);
 		} catch (Exception e) {
 			_LOGGER.error("Error in get Provider Service:" + e.getMessage(), e);
+			response.put(Constants.RESPONSE, Constants.ERROR);
+		}
+
+		return Response.ok(response).build();
+
+	}
+	@GET
+	@Path("/get/customers/all/orders")
+	@Produces({ MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Service for getting total customers and orders ", notes = "", response = List.class, responseContainer = "")
+	public Response getAllParticipantsAndOrders() {
+
+		User user = getLoggedInUser();
+		Map<String, Object> response = new HashMap<>();
+		try {
+			Map<String, Object> count =  userReportService.getCustomersOrderCount();
+			response.put("data", count);
+			response.put(Constants.RESPONSE, Constants.SUCCESS);
+		} catch (Exception e) {
+			_LOGGER.error("Error in get participant and order total:" + e.getMessage(), e);
 			response.put(Constants.RESPONSE, Constants.ERROR);
 		}
 

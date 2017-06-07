@@ -51,7 +51,9 @@
                                 /api/v1/onboard/activate/** = anon    
                                 /api/v1/onboard/validate/** = anon 
                                 /api/v1/users/register = anon
-                                 
+                                
+                                /api/v1/reports/view/get/customers/all/orders = anon
+                                
                                 /api/v1/swagger.json = anon            
                                 /api/v1/usermessage = anon 
                                 /api/v1/help/** = anon           
