@@ -75,10 +75,9 @@ public class DefaultActivationCodeService extends AbstractService<ActivationCode
 	}
 
 	@Override
-	public List<ActivationCode> saveActivationCodes(User user, int dependentClient) {
-		int dependentClientActivated = (dependentClient + 1)*2;
-		List<ActivationCode> activationCodes = new ArrayList<>(dependentClientActivated);
-		for (int i = 0; i < dependentClientActivated; i++) {
+	public List<ActivationCode> saveActivationCodes(User user, int dependentClient) {		
+		List<ActivationCode> activationCodes = new ArrayList<>(dependentClient + 1);
+		for (int i = 0; i <= dependentClient; i++) {
 			ActivationCode actCode = new ActivationCode();
 			if(!NEXT_ACTIVATION_CODE){
 				ACTIVATION_CODE_START_IDX = Integer.parseInt(activationCodeDao.getNextActivationCode());
