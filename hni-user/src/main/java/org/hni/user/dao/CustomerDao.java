@@ -120,7 +120,7 @@ public class CustomerDao extends DefaultGenericDAO {
 				+ "FROM user_organization_role "
 				+ "where role_id= :role) as UNSIGNED) as participant, cast( ("
 				+ "Select COUNT(*) as orders "
-				+ "FROM orders) as UNSIGNED) as totalOrder "
+				+ "FROM order_items) as UNSIGNED) as totalOrder "
 				+ "from dual; ")
 				    .setParameter("role", role);
 		
