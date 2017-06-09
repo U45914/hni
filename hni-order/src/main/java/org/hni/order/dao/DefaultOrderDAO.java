@@ -4,6 +4,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -97,6 +100,25 @@ public class DefaultOrderDAO extends AbstractDAO<Order> implements OrderDAO {
 			return q.getResultList();
 		} catch (NoResultException e) {
 			return Collections.emptyList();
+		}
+	}
+
+	@Override
+	public Map<String, Object> getOrderSummary(Long userId) {
+		try {
+			Query q = em.createNativeQuery("SELECT SUM(meals_authorized) as total, SUM(meals_remaining) as remaining FROM activation_codes WHERE user_id = :userId")
+					.setParameter("userId", userId);
+			List<Object[]> result = q.getResultList();
+			Object[] obj = result.get(0);
+			Map<String, Object> map = new HashMap<>();
+			if(obj.length == 2){
+				map.put("total", obj[0]);
+				map.put("remaining", obj[1]);
+			}
+			return map;
+			
+		} catch (NoResultException e) {
+			return null;
 		}
 	}
 	

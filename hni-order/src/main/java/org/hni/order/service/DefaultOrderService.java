@@ -6,6 +6,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -206,5 +207,10 @@ public class DefaultOrderService extends AbstractService<Order> implements Order
 		List<ActivationCode> list = activationCodeService.getByUser(user);
 		logger.debug("hasActiveActivationCodes size=" + list.size());
 		return (list.size() > 0);
+	}
+
+	@Override
+	public Map<String, Object> getOrderSummary(Long userId) {
+		return orderDao.getOrderSummary(userId);
 	}
 }

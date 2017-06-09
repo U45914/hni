@@ -2,6 +2,8 @@ package org.hni.order.service;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Map;
+
 import org.hni.common.service.BaseService;
 import org.hni.order.om.Order;
 import org.hni.provider.om.Provider;
@@ -83,4 +85,6 @@ public interface OrderService extends BaseService<Order> {
 	 * @return
 	 */
 	public boolean hasActiveActivationCodes(User user);
+	
+	public Map<String, Object> getOrderSummary(Long userId);
 }
