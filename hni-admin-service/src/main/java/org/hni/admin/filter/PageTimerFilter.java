@@ -30,6 +30,7 @@ public class PageTimerFilter implements Filter {
 			String queryString = (null == ((HttpServletRequest) request).getQueryString()) ? "" : "?"
 					+ ((HttpServletRequest) request).getQueryString();
 			logger.info(String.format("[%d ms] - %s%s", System.currentTimeMillis() - start, url, queryString));
+			logger.info(String.format("[%d ms] - %s %s %d", System.currentTimeMillis(), request.getRemoteAddr(), request.getRemoteHost(), request.getRemotePort()));
 		}
 	}
 
