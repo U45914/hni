@@ -3,6 +3,7 @@ package org.hni.order.dao;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Map;
 
 import org.hni.common.dao.BaseDAO;
 import org.hni.order.om.Order;
@@ -22,5 +23,7 @@ public interface OrderDAO extends BaseDAO<Order> {
 	Collection<Order> with(OrderStatus orderStatus);
 
 	Collection<Order> with(Provider provider, OrderStatus orderStatus);
+	
+	Map<String, Object> getOrderSummary(Long userId);
 
 }

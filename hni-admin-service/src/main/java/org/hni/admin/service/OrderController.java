@@ -2,6 +2,8 @@ package org.hni.admin.service;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.ws.rs.DELETE;
@@ -185,7 +187,29 @@ public class OrderController extends AbstractBaseController {
 		}
 		return orderService.get(new User(id), start, end);
 	}
-
+	
+	@GET
+	@Path("/my/summary")
+	@Produces({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = "Returns the order summary for a customer"
+	, notes = "accepted date formats yyyy-mm-dd, yyyy/mm/dd, mm-dd-yyyy, mm/dd/yyyy"
+	, response = Map.class
+	, responseContainer = "")
+	public Response getOrderSummary() {
+		User user = getLoggedInUser();
+		Map<String, Object> response = new HashMap<>();
+		try {
+			if(user!=null){
+				Map<String, Object> count =  orderService.getOrderSummary(user.getId());
+				response.put("data", count);
+				response.put(Constants.RESPONSE, Constants.SUCCESS);
+			}
+		} catch (Exception e) {
+			logger.error("Error in retrieving order summary:" + e.getMessage(), e);
+			response.put(Constants.RESPONSE, Constants.ERROR);
+		}
+		return Response.ok(response).build();
+	}
 	private String serializeOrderToJson(Order order) {
 		try {
 			String json = mapper.writeValueAsString(JsonView.with(order)

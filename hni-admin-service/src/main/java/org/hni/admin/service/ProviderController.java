@@ -2,15 +2,19 @@ package org.hni.admin.service;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+
 import org.apache.commons.lang3.StringUtils;
 import org.hni.common.Constants;
 import org.hni.common.exception.HNIException;
+import org.hni.provider.om.NearByProviderDto;
 import org.hni.provider.om.Provider;
 import org.hni.provider.om.ProviderLocation;
 import org.hni.provider.service.ProviderLocationService;
 import org.hni.provider.service.ProviderService;
 import org.hni.user.dao.AddressDAO;
+import org.hni.user.dao.UserDAO;
 import org.hni.user.om.Address;
+import org.hni.user.om.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -26,7 +30,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+
 import java.util.Collection;
+import java.util.List;
 
 @Api(value = "/providers", description = "Operations on Providers and ProviderLocations")
 @Component
@@ -40,6 +46,8 @@ public class ProviderController extends AbstractBaseController {
     private ProviderLocationService providerLocationService;
     @Inject
     private AddressDAO addressDao;
+    @Inject
+    private UserDAO userDao;
 
     @GET
     @Path("/{id}")
@@ -234,5 +242,24 @@ public class ProviderController extends AbstractBaseController {
             return providerLocation;
         }
         throw new HNIException("You must have elevated permissions to do this.");
+    }
+    
+    @GET
+    @Path("/nearbyProviders")
+    @Produces({MediaType.APPLICATION_JSON})
+    @ApiOperation(value = "Returns a list of nearby providers"
+            , notes = ""
+            , response = NearByProviderDto.class
+            , responseContainer = "")
+    public List<NearByProviderDto> getNearByProviders() {
+        	User user = getLoggedInUser();
+        	if(user != null){
+        		String customerState = userDao.findUserState(user.getId());
+        		if (!StringUtils.isBlank(customerState)) {
+        			return providerLocationService.getNearbyProviders(customerState);
+        		}
+        		throw new HNIException("Error retrieving address state!");
+        	}
+        	throw new HNIException("You must have elevated permissions to do this.");
     }
 }

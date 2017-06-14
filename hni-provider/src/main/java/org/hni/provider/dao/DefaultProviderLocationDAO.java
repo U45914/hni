@@ -1,12 +1,15 @@
 package org.hni.provider.dao;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.hni.common.dao.AbstractDAO;
+import org.hni.provider.om.NearByProviderDto;
 import org.hni.provider.om.Provider;
 import org.hni.provider.om.ProviderLocation;
 import org.hni.user.om.Address;
@@ -58,6 +61,28 @@ public class DefaultProviderLocationDAO extends AbstractDAO<ProviderLocation> im
 		} catch(NoResultException e) {
 			return Collections.emptyList();
 		}
+	}
+
+	@Override
+	public List<NearByProviderDto> getNearbyProviders(String customerState) {
+		List<NearByProviderDto> providersNearBy = new ArrayList<>(); 
+		Query q = em.createNativeQuery("SELECT p.name, plh.dow, plh.open_hour, plh.close_hour "
+				+ "FROM provider_location_hours plh "
+				+ "LEFT JOIN provider_locations pl ON plh.provider_location_id = pl.id "
+				+ "LEFT JOIN providers p ON pl.provider_id = p.id "
+				+ "LEFT JOIN addresses a ON pl.address_id = a.id "
+				+ "WHERE a.state = :state group by p.id")
+					.setParameter("state", customerState);
+		List<Object[]> providers = q.getResultList();
+		for(Object[] obj : providers){
+			NearByProviderDto nearByProviderDto = new NearByProviderDto();
+			nearByProviderDto.setProviderName(obj[0].toString());
+			nearByProviderDto.setDow(obj[1].toString());
+			nearByProviderDto.setOpenHour(Long.parseLong(obj[2].toString()));
+			nearByProviderDto.setCloseHour(Long.parseLong(obj[3].toString()));
+			providersNearBy.add(nearByProviderDto);
+		}
+		return providersNearBy;
 	}
 
 }

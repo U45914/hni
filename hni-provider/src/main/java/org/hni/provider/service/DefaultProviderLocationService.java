@@ -2,6 +2,7 @@ package org.hni.provider.service;
 
 import org.hni.common.service.AbstractService;
 import org.hni.provider.dao.ProviderLocationDAO;
+import org.hni.provider.om.NearByProviderDto;
 import org.hni.provider.om.Provider;
 import org.hni.provider.om.ProviderLocation;
 import org.hni.user.om.Address;
@@ -11,7 +12,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
+
 import java.util.Collection;
+import java.util.List;
 
 @Service
 @Transactional(propagation = Propagation.REQUIRED)
@@ -42,5 +45,11 @@ public class DefaultProviderLocationService extends AbstractService<ProviderLoca
     public Collection<ProviderLocation> providersNearCustomer(Address customerAddress, int itemsPerPage, double distance, double radius) {
         return providerLocationDao.providersNearCustomer(customerAddress, itemsPerPage);
     }
+
+	@Override
+	public List<NearByProviderDto> getNearbyProviders(String customerState) {
+		 return providerLocationDao.getNearbyProviders(customerState);
+		
+	}
 
 }
