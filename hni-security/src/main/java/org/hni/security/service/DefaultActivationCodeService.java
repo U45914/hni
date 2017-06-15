@@ -76,7 +76,7 @@ public class DefaultActivationCodeService extends AbstractService<ActivationCode
 
 	@Override
 	public List<ActivationCode> saveActivationCodes(User user, int dependentClient) {
-		int dependentClientActivated = (dependentClient + 1)*2;
+		int dependentClientActivated = (dependentClient + 1) * 2;
 		List<ActivationCode> activationCodes = new ArrayList<>(dependentClientActivated);
 		for (int i = 0; i < dependentClientActivated; i++) {
 			ActivationCode actCode = new ActivationCode();

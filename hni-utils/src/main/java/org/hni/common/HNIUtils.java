@@ -84,4 +84,31 @@ public class HNIUtils {
 		return enc.encodeToString(salt);
 	}
 	
+	public static boolean isPositiveNumeric(String text) {
+		boolean isValid = false;
+		try {
+			Integer val = Integer.parseInt(text);
+			if (Integer.signum(val.intValue()) != -1) {
+				isValid = true;
+			} 
+		} catch (Exception e) {
+			// Nothing to do with exception
+		}
+		
+		return isValid;
+	}
+	
+	public static boolean isPositiveNumeric(Integer num) {
+		return Integer.signum(num) != -1;
+	}
+	
+	public static Integer getNumber(String text) {
+		try {
+			return Integer.parseInt(text);
+		} catch (Exception e) {
+			// Nothing to do with exception
+			return null;
+		}
+	}
+	
 }

@@ -1,12 +1,14 @@
 package org.hni.security.utils;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
 import org.hni.common.HNIUtils;
+import org.hni.user.om.User;
 
 
 
@@ -34,6 +36,14 @@ public class HNISecurityUtils extends HNIUtils{
 		question.put("answer", String.valueOf(ans));
 		
 		return question;
+	}
+	
+	public static User setHashSecret(User user, String password) {
+		user.setCreated(new Date());
+		user.setSalt(HNISecurityUtils.getSalt());
+		user.setHashedSecret(HNISecurityUtils.getHash(password, user.getSalt()));
+		
+		return user;
 	}
 
 }

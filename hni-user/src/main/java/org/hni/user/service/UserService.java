@@ -45,5 +45,6 @@ public interface UserService extends BaseService<User> {
 	}
 
 	Map<String, String> changePasswordFor(User user, Map<String, String> credentialInfo, String answer);
+	
 
 }

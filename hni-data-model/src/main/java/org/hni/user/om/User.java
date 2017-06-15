@@ -2,6 +2,7 @@ package org.hni.user.om;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -75,7 +76,7 @@ public class User implements Persistable, Serializable {
 	private transient Map<String, Object> additionalInfo;
 
 	public Map<String, Object> getAdditionalInfo() {
-		return additionalInfo;
+		return additionalInfo != null ? additionalInfo : new HashMap<>();
 	}
 
 	public void setAdditionalInfo(Map<String, Object> additionalInfo) {
