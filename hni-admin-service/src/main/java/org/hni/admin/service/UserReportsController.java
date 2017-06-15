@@ -242,7 +242,6 @@ public class UserReportsController extends AbstractBaseController {
 	@ApiOperation(value = "Service for getting total customers and orders ", notes = "", response = List.class, responseContainer = "")
 	public Response getAllParticipantsAndOrders() {
 
-		User user = getLoggedInUser();
 		Map<String, Object> response = new HashMap<>();
 		try {
 			Map<String, Object> count =  userReportService.getCustomersOrderCount();
