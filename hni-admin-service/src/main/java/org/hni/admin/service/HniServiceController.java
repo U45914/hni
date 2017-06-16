@@ -33,6 +33,8 @@ public class HniServiceController extends AbstractBaseController {
 	private static final String VOLUNTEER_INSTRUCTION_PDF = "volunteer-guide.pdf";
 	private static final String FILE_PATH_CLIENT_FAQ = "instructions/HNI_FAQ.pdf";
 	private static final String CLIENT_FAQ_PDF = "HungerNotImpossibleFrequentlyAskedQuestions.pdf";
+	private static final String FILE_PATH_PRIVACY_POLICY = "instructions/HNI_Privacy_Policy.pdf";
+	private static final String HNI_PRIVACY_POLICY = "HungerNotImpossiblePrivacyPolicy.pdf";
 
 	@GET
 	@Path("/volunteer/instruction/pdf")
@@ -68,6 +70,27 @@ public class HniServiceController extends AbstractBaseController {
 		File file = new File(footerDs.getName());
 			ResponseBuilder response = Response.ok((Object) file);
 			response.header("Content-Disposition", "inline; filename=\" " + CLIENT_FAQ_PDF + "\"");
+			return response.build();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return Response.noContent().build();
+	}
+	
+	@GET
+	@Path("/privacy/policy/pdf")
+	@Produces("application/pdf")
+	public Response getPrivacyPolicyPdf() {
+		try {
+			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+	        if (classLoader == null) {
+	            classLoader = HniServiceController.class.getClassLoader();
+	        }
+	        DataSource footerDs = new URLDataSource(classLoader.getResource(FILE_PATH_PRIVACY_POLICY));
+		File file = new File(footerDs.getName());
+			ResponseBuilder response = Response.ok((Object) file);
+			response.header("Content-Disposition", "inline; filename=\" " + HNI_PRIVACY_POLICY + "\"");
 			return response.build();
 		} catch (Exception e) {
 			e.printStackTrace();
