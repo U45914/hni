@@ -3,6 +3,7 @@
  */
 package org.hni.sms.service.provider.twilio;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -29,20 +30,18 @@ public class TwilioSmsProvider implements Provider {
 	}
 
 	@Override
-	public SmsMessage sendMessage(SmsMessage message) {
-		//Response messageResponse = client.pushMessage(formatMessageForPush(message));
-		//System.out.println(messageResponse);
-		client.sendMessageWithTwilio(message);
-		return null;
+	public String sendMessage(SmsMessage message) {
+		return client.sendMessageWithTwilio(message);
 	}
 
 	@Override
-	public List<SmsMessage> sendBulkMessage(List<SmsMessage> messages) {
+	public List<String> sendBulkMessage(List<SmsMessage> messages) {
+		List<String> sids = new ArrayList<>();
 		for (SmsMessage message : messages) {
-			sendMessage(message);
+			sids.add(sendMessage(message));
 		}
 		
-		return null;
+		return sids;
 	}
 
 	@Override

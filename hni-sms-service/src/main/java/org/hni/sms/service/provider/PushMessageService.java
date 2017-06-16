@@ -65,14 +65,19 @@ public class PushMessageService {
 		return message;
 	}
 
+	private SmsMessage createMessageObject(String message, String from, String to) {
+		SmsMessage messageObject = new SmsMessage();
+		messageObject.setToNumber("+1" + to);
+		messageObject.setFromNumber("+1" + from);
+		messageObject.setText(message);
+		
+		return messageObject;
+	}
 	private String getMessageText(Order order) {
-
 		StringBuilder builder = new StringBuilder();
 		builder.append("Please place the order for ");
 		String userName = order.getUser().getFirstName() + " " + order.getUser().getLastName().substring(0, 1).toUpperCase() + ".";
-
-		builder.append(userName);
-		
+		builder.append(userName);		
 		builder.append(" Order Item : ");
 		OrderItem orderItem = order.getOrderItems().iterator().next();
 		builder.append(orderItem.getMenuItem().getName());
@@ -80,8 +85,15 @@ public class PushMessageService {
 		builder.append(order.getSubTotal());
 		// Below items to be checked before final changes
 		builder.append(" www.hungernotimpossible.com");
-
+		
 		return builder.toString();
 
+	}
+	
+	public boolean sendMessage(String message, String from, String to) {
+		
+		provider.get(ServiceProvider.TWILIO).sendMessage(createMessageObject(message, from, to));
+		
+		return false;
 	}
 }

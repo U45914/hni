@@ -14,8 +14,8 @@ import org.hni.sms.service.model.SmsMessage;
 public interface Provider {
 
 	SmsMessage receiveMessage();
-	SmsMessage sendMessage(SmsMessage message);
-	List<SmsMessage> sendBulkMessage(List<SmsMessage> messages);
+	String sendMessage(SmsMessage message);
+	List<String> sendBulkMessage(List<SmsMessage> messages);
 	boolean getSendStatus(String messageId);
 	
 }

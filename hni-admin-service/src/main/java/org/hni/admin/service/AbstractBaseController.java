@@ -197,7 +197,7 @@ public class AbstractBaseController {
 			try {
 				phoneNumber = HNIConverter.convertPhoneNumberToUiFormat(phoneNumber);
 			} catch (Exception e) {
-				
+				// TODO: Find alternative solution for phone number displaying
 			}
 		}
 		

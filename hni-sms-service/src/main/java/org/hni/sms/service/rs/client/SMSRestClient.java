@@ -44,14 +44,15 @@ public class SMSRestClient extends HniWebClient {
     }
     
    
-    public void sendMessageWithTwilio(SmsMessage entity) {
+    public String sendMessageWithTwilio(SmsMessage entity) {
     	Twilio.init(TWILIO_AUTH_USER, TWILIO_API_KEY);
     	Message message = Message.creator(new PhoneNumber(entity.getToNumber()), 
     						new PhoneNumber(entity.getFromNumber()), 
     							entity.getText())
     								.create();
-    	System.out.println(" : "  + message.getSid());
-    	return;
+    	String sid = message.getSid();
+    	LOGGER.info(" Message SID : "  + sid);
+    	return sid;
     }
     
 	@Override

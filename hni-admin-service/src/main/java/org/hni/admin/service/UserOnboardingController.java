@@ -22,6 +22,7 @@ import org.hni.common.email.service.EmailComponent;
 import org.hni.organization.om.Organization;
 import org.hni.organization.om.UserOrganizationRole;
 import org.hni.organization.service.OrganizationService;
+import org.hni.sms.service.provider.PushMessageService;
 import org.hni.sms.service.provider.SmsServiceLoader;
 import org.hni.sms.service.provider.om.SmsProvider;
 import org.hni.user.dao.UserDAO;
@@ -49,7 +50,6 @@ import net.minidev.json.JSONObject;
 @Path("/onboard")
 public class UserOnboardingController extends AbstractBaseController {
 
-
 	private static final String ORG_ID = "orgId";
 
 	private static final Logger _LOGGER = LoggerFactory.getLogger(UserOnboardingController.class);
@@ -64,19 +64,22 @@ public class UserOnboardingController extends AbstractBaseController {
 
 	@Inject
 	private UserDAO userDao;
-	
+
 	@Inject
 	private EmailComponent emailComponent;
 
 	@Inject
 	private UserPartialCreateService userPartialCreateService;
-	
+
 	@Inject
 	private SmsServiceLoader smsServiceLoader;
-	
+
+	@Inject
+	private PushMessageService smsMessageService;
+
 	@POST
 	@Path("/ngo/invite")
-	@Produces({ MediaType.APPLICATION_JSON }) 
+	@Produces({ MediaType.APPLICATION_JSON })
 	@Consumes({ MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "", notes = "", response = Map.class, responseContainer = "")
 	public Map<String, String> sendNGOActivationLink(Organization org) {
@@ -90,64 +93,100 @@ public class UserOnboardingController extends AbstractBaseController {
 				Map<String, String> additional = new HashMap<>();
 				additional.put("phone", org.getPhone());
 				Organization organization = organizationService.save(org);
-				String UUID = userOnBoardingService.buildInvitationAndSave(organization.getId(), getLoggedInUser().getId(), organization.getEmail(),mapper.writeValueAsString(additional));
-				if(UUID == null){
+				String UUID = userOnBoardingService.buildInvitationAndSave(organization.getId(),
+						getLoggedInUser().getId(), organization.getEmail(), mapper.writeValueAsString(additional));
+				if (UUID == null) {
 					map.put(ERROR_MSG, "A user with same email address already exist");
 					return map;
 				}
-				emailComponent.sendEmail(organization.getEmail(), UUID, "ngo" , null, null, null);
+				emailComponent.sendEmail(organization.getEmail(), UUID, "ngo", null, null, null);
 				map.put(RESPONSE, SUCCESS);
 				return map;
 			} else {
 				map.put(ERROR_MSG, "An organization with same email address already exist");
 			}
 		} catch (Exception e) {
-			_LOGGER.error("Serializing User object:"+e.getMessage(), e);
+			_LOGGER.error("Serializing User object:" + e.getMessage(), e);
 		}
 		return map;
 	}
-	
+
 	@POST
 	@Path("/{userType}/user/invite")
-	@Produces({ MediaType.APPLICATION_JSON }) 
+	@Produces({ MediaType.APPLICATION_JSON })
 	@Consumes({ MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "", notes = "", response = Map.class, responseContainer = "")
-	public Map<String, String> sendNGOActivationLinkToUser(@PathParam("userType") String  userType, Map<String, String> userInfo) {
+	public Map<String, String> sendNGOActivationLinkToUser(@PathParam("userType") String userType,
+			Map<String, String> userInfo) {
 		Map<String, String> map = new HashMap<>();
 		map.put(RESPONSE, ERROR);
 		try {
 			String message = userInfo.get("invitationMessage");
 			String activationCode = userInfo.get("activationCode");
 			Long organizationId;
-			if(userType.equalsIgnoreCase("client")) {
-				List<SmsProvider> smsProviders = smsServiceLoader.getSmsProvidersByState(userInfo.get("state"));
-				
-				message = formatInvitationMessageWithPhoneNumber(message, smsProviders);
-			}	
-			List<UserOrganizationRole> userOrganizationRoles = (List<UserOrganizationRole>) organizationUserService.getUserOrganizationRoles(getLoggedInUser());
+
+			List<UserOrganizationRole> userOrganizationRoles = (List<UserOrganizationRole>) organizationUserService
+					.getUserOrganizationRoles(getLoggedInUser());
 			if (!userOrganizationRoles.isEmpty()) {
 				organizationId = userOrganizationRoles.get(0).getId().getOrgId();
 			} else {
 				// Sets org to super user - hack
 				organizationId = 1L;
 			}
-			
-			String UUID = userOnBoardingService.buildInvitationAndSave(organizationId, getLoggedInUser().getId(), userInfo.get("email"), mapper.writeValueAsString(userInfo));
+
+			String hniBaseNumber = null;
+
+			if (userType.equalsIgnoreCase("client")) {
+				List<SmsProvider> smsProviders = smsServiceLoader.getSmsProvidersByState(userInfo.get("state"));
+				hniBaseNumber = getHniPhoneNumber(smsProviders);
+				message = formatInvitationMessageWithPhoneNumber(message, smsProviders);
+			}
+
+			String UUID = userOnBoardingService.buildInvitationAndSave(organizationId, getLoggedInUser().getId(),
+					userInfo.get("email"), mapper.writeValueAsString(userInfo));
 			if (UUID != null) {
-				emailComponent.sendEmail(userInfo.get("email"), UUID, userType, message, activationCode, mapper.writeValueAsString(userInfo));
+				emailComponent.sendEmail(userInfo.get("email"), UUID, userType, message, activationCode,
+						mapper.writeValueAsString(userInfo));
+				sendSmsInvitation(userInfo, userType, hniBaseNumber);
+
 			} else {
 				map.put(RESPONSE, ERROR);
 				map.put("message", "A user with " + userInfo.get("email") + " already exists");
 			}
 			map.put(RESPONSE, SUCCESS);
-			return map;	
+			return map;
 		} catch (Exception e) {
-			_LOGGER.error("Serializing User object:"+e.getMessage(), e);
+			_LOGGER.error("Serializing User object:" + e.getMessage(), e);
 		}
 		return map;
 	}
 
+	private void sendSmsInvitation(Map<String, String> userInfo, String userType, String hniBaseNumber) {
+		try {
+			if (userType.equalsIgnoreCase("client")) {
+				String phone = userInfo.get("phone");
+				if (phone != null) {
+					phone = HNIConverter.convertPhoneNumberFromUiFormat(phone);
+				}
+				StringBuilder messageBuilder = new StringBuilder("Hi ");
+				messageBuilder.append(userInfo.get("name"));
+				messageBuilder.append("\n");
+				messageBuilder.append("Thank you for your interest in becoming a Hunger Not Impossible Participant! "
+						+ "To register with us, please reply ENROLL to this number");
 
+				smsMessageService.sendMessage(messageBuilder.toString(), hniBaseNumber, phone);
+			}
+		} catch (Exception e) {
+			_LOGGER.error("Failed to send SMS Invitation to user , cause : ", e);
+		}
+
+	}
+
+	private String getHniPhoneNumber(List<SmsProvider> smsProviders) {
+		return smsProviders != null && !smsProviders.isEmpty() ? smsProviders.get(0).getLongCode() : null;
+	}
+
+	@SuppressWarnings("unchecked")
 	@GET
 	@Path("/activate/{userType}/{invitationCode}")
 	@Produces({ MediaType.APPLICATION_JSON })
@@ -179,18 +218,18 @@ public class UserOnboardingController extends AbstractBaseController {
 		return map;
 	}
 
-
 	@POST
 	@Path("/{userType}/save")
-	@Produces({MediaType.APPLICATION_JSON})
-	@Consumes({MediaType.APPLICATION_JSON})
+	@Produces({ MediaType.APPLICATION_JSON })
+	@Consumes({ MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "", notes = "", response = Map.class, responseContainer = "")
-	public Map<String,String> savePartialData(JSONObject json , @PathParam("userType") String userType){
-		Map<String,String> response = new HashMap<>();
+	public Map<String, String> savePartialData(JSONObject json, @PathParam("userType") String userType) {
+		Map<String, String> response = new HashMap<>();
 		response.put(RESPONSE, ERROR);
-		if(userType!=null && json != null){
-			UserPartialData userPartialDataUpdate = userPartialCreateService.getUserPartialDataByUserId(getLoggedInUser().getId());
-			if(userPartialDataUpdate==null){
+		if (userType != null && json != null) {
+			UserPartialData userPartialDataUpdate = userPartialCreateService
+					.getUserPartialDataByUserId(getLoggedInUser().getId());
+			if (userPartialDataUpdate == null) {
 				UserPartialData userPartialData = new UserPartialData();
 				userPartialData.setType(userType);
 				userPartialData.setUserId(getLoggedInUser().getId());
@@ -200,8 +239,7 @@ public class UserOnboardingController extends AbstractBaseController {
 				userPartialData.setStatus(Constants.N);
 				userPartialCreateService.save(userPartialData);
 				response.put(RESPONSE, SUCCESS);
-			}
-			else{
+			} else {
 				userPartialDataUpdate.setData(json.toString());
 				userPartialDataUpdate.setLastUpdated(new Date());
 				userPartialCreateService.save(userPartialDataUpdate);
@@ -210,46 +248,39 @@ public class UserOnboardingController extends AbstractBaseController {
 		}
 		return response;
 	}
-	
+
 	@POST
 	@Path("/ngo/ngoSave")
-	@Produces({MediaType.APPLICATION_JSON})
-	@Consumes({MediaType.APPLICATION_JSON})
-	@ApiOperation(value = ""
-	, notes = ""
-	, response = Map.class
-	, responseContainer = "")
-	public Response ngoSave(String onboardDataJson) throws JsonParseException, JsonMappingException, IOException{
+	@Produces({ MediaType.APPLICATION_JSON })
+	@Consumes({ MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "", notes = "", response = Map.class, responseContainer = "")
+	public Response ngoSave(String onboardDataJson) throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
-		
+
 		JsonNode objectNode = mapper.readTree(onboardDataJson);
 		Map<String, String> map = new HashMap<>();
 		map.put(RESPONSE, ERROR);
 		try {
-			 
+
 			Map<String, String> errors = userOnBoardingService.ngoSave((ObjectNode) objectNode, getLoggedInUser());
-			 if(errors!=null && errors.isEmpty()){
-				 map.put(RESPONSE, SUCCESS);
-			 }
-			 else{
-				 if(map!=null)
-					 map.putAll(errors);
-			 }
-			
+			if (errors != null && errors.isEmpty()) {
+				map.put(RESPONSE, SUCCESS);
+			} else {
+				if (map != null)
+					map.putAll(errors);
+			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return Response.ok(map).build();
 	}
-	
+
 	@POST
 	@Path("/validate/username")
-	@Produces({MediaType.APPLICATION_JSON})
-	@Consumes({MediaType.APPLICATION_JSON})
-	@ApiOperation(value = ""
-	, notes = ""
-	, response = Map.class
-	, responseContainer = "")
+	@Produces({ MediaType.APPLICATION_JSON })
+	@Consumes({ MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "", notes = "", response = Map.class, responseContainer = "")
 	public Response isUserNameAvailable(Map<String, String> userNameInfo) {
 		Map<String, String> response = new HashMap<>();
 		response.put("available", "false");
@@ -264,9 +295,7 @@ public class UserOnboardingController extends AbstractBaseController {
 		}
 		return Response.ok(response).build();
 	}
-	
-	
-	
+
 	@GET
 	@Path("/ngo/get/{ngoId}")
 	@Produces({ MediaType.APPLICATION_JSON })
@@ -283,6 +312,5 @@ public class UserOnboardingController extends AbstractBaseController {
 		}
 		return Response.ok(response).build();
 	}
-
 
 }
