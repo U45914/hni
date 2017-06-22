@@ -16,15 +16,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.hni.admin.service.converter.HNIConverter;
 import org.hni.common.Constants;
-import org.hni.common.email.service.EmailComponent;
 import org.hni.organization.om.Organization;
-import org.hni.organization.om.UserOrganizationRole;
-import org.hni.organization.service.OrganizationService;
-import org.hni.sms.service.provider.PushMessageService;
-import org.hni.sms.service.provider.SmsServiceLoader;
-import org.hni.sms.service.provider.om.SmsProvider;
+import org.hni.service.helper.onboarding.UserOnboardingServiceHelper;
 import org.hni.user.dao.UserDAO;
 import org.hni.user.om.Invitation;
 import org.hni.user.om.User;
@@ -60,55 +54,22 @@ public class UserOnboardingController extends AbstractBaseController {
 	private UserOnboardingService userOnBoardingService;
 
 	@Inject
-	private OrganizationService organizationService;
-
-	@Inject
 	private UserDAO userDao;
-
-	@Inject
-	private EmailComponent emailComponent;
 
 	@Inject
 	private UserPartialCreateService userPartialCreateService;
 
 	@Inject
-	private SmsServiceLoader smsServiceLoader;
-
-	@Inject
-	private PushMessageService smsMessageService;
-
+	private UserOnboardingServiceHelper onBoardingServiceHelper;
+	
 	@POST
 	@Path("/ngo/invite")
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Consumes({ MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "", notes = "", response = Map.class, responseContainer = "")
-	public Map<String, String> sendNGOActivationLink(Organization org) {
-		Map<String, String> map = new HashMap<>();
-		map.put(RESPONSE, ERROR);
-		try {
-			org.setCreatedById(getLoggedInUser().getId());
-			org.setCreated(new Date());
-			boolean ors = organizationService.isAlreadyExists(org);
-			if (!ors) {
-				Map<String, String> additional = new HashMap<>();
-				additional.put("phone", org.getPhone());
-				Organization organization = organizationService.save(org);
-				String UUID = userOnBoardingService.buildInvitationAndSave(organization.getId(),
-						getLoggedInUser().getId(), organization.getEmail(), mapper.writeValueAsString(additional));
-				if (UUID == null) {
-					map.put(ERROR_MSG, "A user with same email address already exist");
-					return map;
-				}
-				emailComponent.sendEmail(organization.getEmail(), UUID, "ngo", null, null, null);
-				map.put(RESPONSE, SUCCESS);
-				return map;
-			} else {
-				map.put(ERROR_MSG, "An organization with same email address already exist");
-			}
-		} catch (Exception e) {
-			_LOGGER.error("Serializing User object:" + e.getMessage(), e);
-		}
-		return map;
+	public Response sendNGOActivationLink(Organization org) {
+		_LOGGER.info("Request reached to create NGO invitation and organization creation");
+		return Response.ok().entity(onBoardingServiceHelper.inviteNGO(org, getLoggedInUser())).build();
 	}
 
 	@POST
@@ -116,74 +77,9 @@ public class UserOnboardingController extends AbstractBaseController {
 	@Produces({ MediaType.APPLICATION_JSON })
 	@Consumes({ MediaType.APPLICATION_JSON })
 	@ApiOperation(value = "", notes = "", response = Map.class, responseContainer = "")
-	public Map<String, String> sendNGOActivationLinkToUser(@PathParam("userType") String userType,
-			Map<String, String> userInfo) {
-		Map<String, String> map = new HashMap<>();
-		map.put(RESPONSE, ERROR);
-		try {
-			String message = userInfo.get("invitationMessage");
-			String activationCode = userInfo.get("activationCode");
-			Long organizationId;
-
-			List<UserOrganizationRole> userOrganizationRoles = (List<UserOrganizationRole>) organizationUserService
-					.getUserOrganizationRoles(getLoggedInUser());
-			if (!userOrganizationRoles.isEmpty()) {
-				organizationId = userOrganizationRoles.get(0).getId().getOrgId();
-			} else {
-				// Sets org to super user - hack
-				organizationId = 1L;
-			}
-
-			String hniBaseNumber = null;
-
-			if (userType.equalsIgnoreCase("client")) {
-				List<SmsProvider> smsProviders = smsServiceLoader.getSmsProvidersByState(userInfo.get("state"));
-				hniBaseNumber = getHniPhoneNumber(smsProviders);
-				message = formatInvitationMessageWithPhoneNumber(message, smsProviders);
-			}
-
-			String UUID = userOnBoardingService.buildInvitationAndSave(organizationId, getLoggedInUser().getId(),
-					userInfo.get("email"), mapper.writeValueAsString(userInfo));
-			if (UUID != null) {
-				emailComponent.sendEmail(userInfo.get("email"), UUID, userType, message, activationCode,
-						mapper.writeValueAsString(userInfo));
-				sendSmsInvitation(userInfo, userType, hniBaseNumber);
-
-			} else {
-				map.put(RESPONSE, ERROR);
-				map.put("message", "A user with " + userInfo.get("email") + " already exists");
-			}
-			map.put(RESPONSE, SUCCESS);
-			return map;
-		} catch (Exception e) {
-			_LOGGER.error("Serializing User object:" + e.getMessage(), e);
-		}
-		return map;
-	}
-
-	private void sendSmsInvitation(Map<String, String> userInfo, String userType, String hniBaseNumber) {
-		try {
-			if (userType.equalsIgnoreCase("client")) {
-				String phone = userInfo.get("phone");
-				if (phone != null) {
-					phone = HNIConverter.convertPhoneNumberFromUiFormat(phone);
-				}
-				StringBuilder messageBuilder = new StringBuilder("Hi ");
-				messageBuilder.append(userInfo.get("name"));
-				messageBuilder.append("\n");
-				messageBuilder.append("Thank you for your interest in becoming a Hunger Not Impossible Participant! "
-						+ "To register with us, please reply ENROLL to this number");
-
-				smsMessageService.sendMessage(messageBuilder.toString(), hniBaseNumber, phone);
-			}
-		} catch (Exception e) {
-			_LOGGER.error("Failed to send SMS Invitation to user , cause : ", e);
-		}
-
-	}
-
-	private String getHniPhoneNumber(List<SmsProvider> smsProviders) {
-		return smsProviders != null && !smsProviders.isEmpty() ? smsProviders.get(0).getLongCode() : null;
+	public Response sendNGOActivationLinkToUser(@PathParam("userType") String userType, Invitation inviteRequest) {
+		_LOGGER.info("Request reached to send activation link  for role {0} ", userType);
+		return Response.ok().entity(onBoardingServiceHelper.inviteUser(inviteRequest, getLoggedInUser(), userType)).build();
 	}
 
 	@SuppressWarnings("unchecked")

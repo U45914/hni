@@ -25,4 +25,7 @@ public interface UserOnboardingService extends BaseService<Invitation>{
 	Map<String,String> clientSave(Client client, User user);
 	Map<String, Object> getUserProfiles(String type, Long user);
 	Invitation finalizeRegistration(String activationCode);
+	
+	Invitation createInvitation(Invitation invite);
+	User getUserByEmail(String email);
 }

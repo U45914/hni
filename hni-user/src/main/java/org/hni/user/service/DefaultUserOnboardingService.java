@@ -467,4 +467,28 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 		}
 		return arrayNode;
 	}
+	
+	@Override
+	public Invitation createInvitation(Invitation invite) {
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DAY_OF_MONTH, 5);
+		invite.setExpirationDate(cal.getTime());
+		
+		String UUID = HNIUtils.getUUID();
+		invite.setInvitationCode(UUID);
+		
+		invite.setCreatedDate(new Date());
+		invite.setActivated(0);
+
+		invitationDAO.save(invite);
+		
+		
+		return invite;
+	}
+
+	@Override
+	public User getUserByEmail(String email) {
+		return userDao.byEmailAddress(email);
+	}
+
 }

@@ -34,7 +34,7 @@ public class RegisterService extends AbstractRegistrationService<User> {
 	public static String MSG_PRIVACY = "PRIVACY";
 	public static String MSG_NONE = "NONE";
 
-	public static String REPLY_WELCOME = "Welcome to Hunger Not Impossible! Msg & data rates may apply. "
+	public static String REPLY_WELCOME = "Welcome to Hunger Not Impossible! Msg and data rates may apply. "
 			+ "Information you provide will be kept private. "
 			+ "Reply with PRIVACY to learn more. Let's get you registered. What's your first name?";
 	public static String REPLY_PRIVACY = "HNI respects your privacy and protects your data. "

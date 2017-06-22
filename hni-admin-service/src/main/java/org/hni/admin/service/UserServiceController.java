@@ -192,7 +192,7 @@ public class UserServiceController extends AbstractBaseController {
 	@GET
 	@Path("/organizations")
 	@Produces({ MediaType.APPLICATION_JSON })
-	@ApiOperation(value = "All users for all organizations..yikes!", notes = "", response = User.class, responseContainer = "")
+	@ApiOperation(value = "All users for all organizations..!", notes = "", response = User.class, responseContainer = "")
 	public Collection<User> getUsersByRole(@QueryParam("roleId") Long roleId) {
 		if (SecurityUtils.getSubject().hasRole(Constants.SUPER_USER.toString())) {
 			return orgUserService.byRole(Role.get(roleId));

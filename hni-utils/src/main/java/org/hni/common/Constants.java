@@ -23,7 +23,7 @@ public class Constants {
 	public static final String MSG_TO = "To";
 	
 	public static final String MSG_RESPONSE_FORMAT = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response><Message>%s</Message></Response>";
-	
+	public static final String MSG_FOR_USER_INVITE  = "";
 	
 	//Service
 	public static final String SUCCESS = "success";
@@ -160,4 +160,6 @@ public class Constants {
 	public static final String OVERVIEW = "overview";
 	
 	public static final Integer ACTIVATION_CODE_START_INDEX = 100001;
+	
+	public static final String MESSAGE = "message";
 }
