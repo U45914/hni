@@ -82,7 +82,6 @@ public class UserOnboardingController extends AbstractBaseController {
 		return Response.ok().entity(onBoardingServiceHelper.inviteUser(inviteRequest, getLoggedInUser(), userType)).build();
 	}
 
-	@SuppressWarnings("unchecked")
 	@GET
 	@Path("/activate/{userType}/{invitationCode}")
 	@Produces({ MediaType.APPLICATION_JSON })
@@ -95,19 +94,14 @@ public class UserOnboardingController extends AbstractBaseController {
 		List<Invitation> invitations = (List<Invitation>) userOnBoardingService.validateInvitationCode(invitationCode);
 
 		if (!invitations.isEmpty()) {
+			Invitation invite = invitations.get(0);
+			
 			map.put(RESPONSE, SUCCESS);
-			map.put(ORG_ID, invitations.get(0).getOrganizationId());
-			map.put(USER_NAME, invitations.get(0).getEmail());
-			map.put(DATA, invitations.get(0).getData());
-			Map<String, String> data = new HashMap<>();
-
-			if (invitations.get(0).getData() != null) {
-				data = mapper.readValue(invitations.get(0).getData(), Map.class);
-				map.put(FIRST_NAME, data.get("name"));
-			}
-			if (userType != null && userType.equalsIgnoreCase("client") && !data.isEmpty()) {
-				map.put("dependants", data.get("dependants"));
-			}
+			map.put(ORG_ID, invite.getOrganizationId());
+			map.put(USER_NAME, invite.getEmail());
+			map.put(DATA, invite.getData());
+			map.put(FIRST_NAME, invite.getName());
+			map.put("dependants", invite.getDependantsCount() != null ? String.valueOf(invite.getDependantsCount()) : null);
 
 			return map;
 		}

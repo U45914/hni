@@ -129,8 +129,11 @@ public class UserOnboardingServiceHelper extends AbstractServiceHelper {
 	private void sendSmsInvitation(Invitation inviteRequest, String userRole) {
 
 		if (userRole.equalsIgnoreCase(CLIENT)) {
-			StringBuilder message = new StringBuilder("Welcome to Hunger Not Impossible! Msg & data rates may apply.");
-			message.append("Please reply ENROLL to start your registration process");
+			StringBuilder message = new StringBuilder("Hi ");
+			message.append(inviteRequest.getName());
+			message.append(" ");
+			message.append("Thank you for your interest in becoming a Hunger Not Impossible Participant!"
+					+ " To register with us, please reply ENROLL to this number");
 
 			smsMessageService.sendMessage(message.toString(), HNI_BASE_NUMBER, inviteRequest.getPhone());
 		}
