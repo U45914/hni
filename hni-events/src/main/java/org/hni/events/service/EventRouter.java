@@ -4,6 +4,7 @@ import org.hni.events.service.dao.EventStateDao;
 import org.hni.events.service.om.Event;
 import org.hni.events.service.om.EventName;
 import org.hni.events.service.om.EventState;
+import org.hni.user.service.UserOnboardingService;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,9 @@ public class EventRouter {
 
     @Inject
     private RegisterService registerService;
+    
+    @Inject
+    private UserOnboardingService userOnboardService;
 
     private Map<EventName, EventService> eventServiceMap;
 
@@ -47,6 +51,12 @@ public class EventRouter {
         EventState state = eventStateDao.byPhoneNumber(phoneNumber);
 
         EventName eventName = parseKeyWordToEventName(event.getTextMessage());
+        
+        if(eventName == EventName.REGISTER){
+        	String message = userOnboardService.isValidInvitation(phoneNumber);
+        	if(message != null)
+        		return message;
+        }
         if (eventName == null) {
             if (state == null) {
                 // not a keyword, nor having a in progress workflow

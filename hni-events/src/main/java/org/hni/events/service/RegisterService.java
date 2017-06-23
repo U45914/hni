@@ -38,7 +38,7 @@ public class RegisterService extends AbstractRegistrationService<User> {
 			+ "Information you provide will be kept private. "
 			+ "Reply with PRIVACY to learn more. Let's get you registered. What's your first name?";
 	public static String REPLY_PRIVACY = "HNI respects your privacy and protects your data. "
-			+ "For more details on our privacy please visit http://hungernotimpossible.com/Privacy. "
+			+ "For more details on our privacy please visit http://hungernotimpossible.com/#/agreement-policy "
 			+ "In order to continue the registration. ";
 
 	public static String REPLY_NO_UNDERSTAND = "I didn't understand your last message. ";

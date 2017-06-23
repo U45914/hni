@@ -73,6 +73,9 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 	private UserDAO userDao;
 	
 	@Inject
+	private UserOnboardingDAO userOnboardDao;
+	
+	@Inject
 	private VolunteerAvailabilityDAO volunteerAvailabilityDAO;
 
 	public DefaultUserOnboardingService(BaseDAO<Invitation> dao) {
@@ -261,7 +264,10 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 			Invitation invitedBy = invitationDAO.getInvitedBy(user.getEmail());
 			if (invitedBy != null) {
 				client.setCreatedBy(invitedBy.getInvitedBy());
+			} else {
+				client.setCreatedBy(1L);
 			}
+			
 		} else {
 			client.setId(extClient.getId());
 			client.setCreatedBy(extClient.getCreatedBy());
@@ -479,7 +485,7 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 		
 		invite.setCreatedDate(new Date());
 		invite.setActivated(0);
-
+		invite.setPhone(HNIConverter.convertPhoneNumberFromUiFormat(invite.getPhone()));
 		invitationDAO.save(invite);
 		
 		
@@ -491,4 +497,15 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 		return userDao.byEmailAddress(email);
 	}
 
+
+	@Override
+	public String isValidInvitation(String phoneNumber) {
+		List<Invitation> invitations = userOnboardDao.isValidInvitation(phoneNumber);
+		if(invitations == null || invitations.isEmpty()){
+			return "Unrecognized number! Please register with hungernotimpossible.";
+		}else if(invitations.get(0).getActivated() == 1){
+			return "You have already registered! Please respond with HUNGRY to place an order.";
+		}
+		return null;
+	}
 }

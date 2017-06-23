@@ -33,6 +33,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserOnboardingServiceHelper extends AbstractServiceHelper {
 
+	private static final String _INVITE = "_INVITE";
+
 	private static final String CLIENT = "Client";
 
 	private static final String FAILED_TO_CREATE_A_INVITATION = "Failed to create a invitation";
@@ -63,12 +65,15 @@ public class UserOnboardingServiceHelper extends AbstractServiceHelper {
 		map.put(Constants.RESPONSE, Constants.ERROR);
 		try {
 
-			if (inviteRequest.getOrganizationId() != null) {
+			if (inviteRequest.getOrganizationId() == null) {
 				Long organizationId = getOrganizationId(loggerInUser);
 				inviteRequest.setOrganizationId(String.valueOf(organizationId));
 			}
 
 			if (!isUserExists(inviteRequest.getEmail())) {
+				inviteRequest.setInvitedBy(loggerInUser.getId());
+				inviteRequest.setInvitationType(userRole.toUpperCase() + _INVITE);
+				
 				inviteRequest = userOnBoardingService.createInvitation(inviteRequest);
 				if (inviteRequest.getId() != null) {
 					// Invitation record is been created
