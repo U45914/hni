@@ -99,7 +99,8 @@ public class UserOnboardingController extends AbstractBaseController {
 			map.put(RESPONSE, SUCCESS);
 			map.put(ORG_ID, invite.getOrganizationId());
 			map.put(USER_NAME, invite.getEmail());
-			map.put(DATA, invite.getData());
+			//map.put(DATA, invite.getData());
+			map.put(Constants.PHONE, invite.getPhone());
 			map.put(FIRST_NAME, invite.getName());
 			map.put("dependants", invite.getDependantsCount() != null ? String.valueOf(invite.getDependantsCount()) : null);
 
