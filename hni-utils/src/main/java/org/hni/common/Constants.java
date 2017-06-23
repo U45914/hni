@@ -162,4 +162,5 @@ public class Constants {
 	public static final Integer ACTIVATION_CODE_START_INDEX = 100001;
 	
 	public static final String MESSAGE = "message";
+	public static final String PHONE = "phone";
 }
