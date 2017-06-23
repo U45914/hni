@@ -51,6 +51,8 @@ public class Invitation implements Persistable, Serializable {
 	private String stateCode;
 	@Column(name = "data")
 	private String data;
+	@Column(name = "website")
+	private String website;
 
 	public Long getId() {
 		return id;
@@ -170,6 +172,14 @@ public class Invitation implements Persistable, Serializable {
 
 	public void setData(String data) {
 		this.data = data;
+	}
+
+	public String getWebsite() {
+		return website;
+	}
+
+	public void setWebsite(String website) {
+		this.website = website;
 	}
 
 }
