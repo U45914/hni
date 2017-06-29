@@ -84,6 +84,9 @@ public class UserOnboardingServiceHelper extends AbstractServiceHelper {
 						emailComponent.sendEmail(inviteRequest, userRole,phoneNumber);
 						sendSmsInvitation(inviteRequest, userRole, phoneNumber);
 						map.put(Constants.RESPONSE, Constants.SUCCESS);
+					} else{
+						emailComponent.sendEmail(inviteRequest, userRole,null);
+						map.put(Constants.RESPONSE, Constants.SUCCESS);
 					}
 				} else {
 					map.put(Constants.MESSAGE, FAILED_TO_CREATE_A_INVITATION);
