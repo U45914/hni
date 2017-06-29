@@ -38,6 +38,7 @@ public class PaymentInstrument implements Serializable, Persistable {
 	@Column(name="balance") private Double balance;
 	@Column(name="last_used_datetime") private Date lastUsedDatetime;
 	@Column(name="pin_number") private String pinNumber;
+	@Column(name="state_code") private String stateCode;
 	
 	public PaymentInstrument() {}
 	public PaymentInstrument(Long id) {
@@ -106,6 +107,12 @@ public class PaymentInstrument implements Serializable, Persistable {
 	public void setCardSerialId(String cardSerialId) {
 		this.cardSerialId = cardSerialId;
 	}
+	public String getStateCode() {
+		return stateCode;
+	}
+	public void setStateCode(String stateCode) {
+		this.stateCode = stateCode;
+	}
 	
-
+	
 }

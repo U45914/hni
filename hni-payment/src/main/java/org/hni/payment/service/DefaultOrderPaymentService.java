@@ -74,7 +74,8 @@ public class DefaultOrderPaymentService extends AbstractService<OrderPayment> im
 	 */
 	@Override
 	public Collection<OrderPayment> paymentFor(Order order, Provider provider, Double amount, User user) throws PaymentsExceededException {
-		Collection<PaymentInstrument> providerCards = paymentInstrumentDao.with(provider);
+		String state =  order.getProviderLocation().getAddress().getState();
+		Collection<PaymentInstrument> providerCards = paymentInstrumentDao.with(provider, state);
 		Collection<OrderPayment> orderPayments = new HashSet<>();
 
 		Double total = addOrderAmount(order);
@@ -140,6 +141,7 @@ public class DefaultOrderPaymentService extends AbstractService<OrderPayment> im
 	@Override
 	public Optional<OrderPayment> paymentFor(Order order, User user) throws PaymentsExceededException {
 		Provider provider = order.getProviderLocation().getProvider();
+		String state =  order.getProviderLocation().getAddress().getState();
 		Collection<OrderPayment> existingPayments = paymentsFor(order);
 		BigDecimal totalAmount = BigDecimal.ZERO;
 		for(OrderPayment op : existingPayments) { // if the user is coming back for more payment, then assume any prior card is depleted of funds
@@ -150,7 +152,7 @@ public class DefaultOrderPaymentService extends AbstractService<OrderPayment> im
 				paymentInstrumentDao.save(pi);
 			}
 		}
-		Collection<PaymentInstrument> providerCards = paymentInstrumentDao.with(provider);
+		Collection<PaymentInstrument> providerCards = paymentInstrumentDao.with(provider,state);
 		for(PaymentInstrument paymentInstrument : providerCards) {
 			if ( lockingService.acquireLock(lockingKey(paymentInstrument), DEFAULT_CARD_LOCKOUT_MINS)  ) {
 				logger.info("locking card "+lockingKey(paymentInstrument));

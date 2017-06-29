@@ -8,5 +8,5 @@ import org.hni.provider.om.Provider;
 
 public interface PaymentInstrumentDAO extends BaseDAO<PaymentInstrument> {
 
-	Collection<PaymentInstrument> with(Provider provider);
+	Collection<PaymentInstrument> with(Provider provider, String state);
 }

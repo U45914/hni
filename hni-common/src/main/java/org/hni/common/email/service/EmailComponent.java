@@ -19,6 +19,7 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import org.hni.admin.service.converter.HNIConverter;
 import org.hni.user.om.Invitation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -29,7 +30,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 @Component
 public class EmailComponent {
 
-	private static final String CLIENT_INVITATION_TEXT_MESSAGE_INFO = "<br /> Once you have completed the registration, you will be able to text to this number everyday from June 1st to September 1st to order meals: <b> 314-300-0305 </b>.<br /><br />To place an order text: <b>HUNGRY</b> <br /><br />For questions email hunger@notimpossiblelabs.com";
+	private static final String CLIENT_INVITATION_TEXT_MESSAGE_INFO = "<br /> Once you have completed the registration, you will be able to text to this number everyday from June 1st to September 1st to order meals: <b> %s </b>.<br /><br />To place an order text: <b>HUNGRY</b> <br /><br />For questions email hunger@notimpossiblelabs.com";
 	// Constants
 	private static final String FORWARD_SLASH = "/";
 	private static final String RELATED = "related";
@@ -106,7 +107,7 @@ public class EmailComponent {
 		footerDs = new URLDataSource(classLoader.getResource(IMAGE_NOT_IMPOSSIBLE_LOGO_PNG));
 	}
 
-	public boolean sendEmail(Invitation invitation, String role)
+	public boolean sendEmail(Invitation invitation, String role, String phoneNumber)
 			throws AddressException, MessagingException, JsonParseException, JsonMappingException, IOException {
 
 		Message message = new MimeMessage(session);
@@ -115,7 +116,7 @@ public class EmailComponent {
 
 		message.setSubject(capitalize(getInviteName(role)) + _SPACE + emailSubTemplate);
 
-		String contentText = getEmailText(role, invitation.getInvitationCode(), invitation.getMessage());
+		String contentText = getEmailText(role, invitation.getInvitationCode(), invitation.getMessage(), phoneNumber);
 		MimeMultipart multipart = new MimeMultipart(RELATED);
 
 		// first part (the html)
@@ -135,7 +136,7 @@ public class EmailComponent {
 		return true;
 	}
 
-	private String getEmailText(String userType, String code, String invitationMessage)
+	private String getEmailText(String userType, String code, String invitationMessage, String phoneNumber)
 			throws JsonParseException, JsonMappingException, IOException {
 		StringBuilder emailTextBuilder = new StringBuilder(50);
 
@@ -149,7 +150,7 @@ public class EmailComponent {
 		emailTextBuilder.append(HTML_BR_BR);
 		
 		if (userType.equalsIgnoreCase(CLIENT)) {
-			emailTextBuilder.append(CLIENT_INVITATION_TEXT_MESSAGE_INFO);
+			emailTextBuilder.append(String.format(CLIENT_INVITATION_TEXT_MESSAGE_INFO,HNIConverter.convertPhoneNumberToUiFormat(phoneNumber)));
 			emailTextBuilder.append(HTML_BR_BR);
 		}
 

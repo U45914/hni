@@ -30,7 +30,9 @@ public class DefaultPaymentInstrumentService extends AbstractService<PaymentInst
 	 */
 	@Override
 	public Collection<PaymentInstrument> with(Provider provider, Double amount) {
-		Collection<PaymentInstrument> providerCards = paymentInstrumentDao.with(provider);
+		//TODO: change the MO to the respective order state value
+		Collection<PaymentInstrument> providerCards = paymentInstrumentDao.with(provider, "MO");
+		
 		Collection<PaymentInstrument> paymentCards = new HashSet();
 		Double cardTotal = 0.0;
 		// this is horribly crude, but will work for v1

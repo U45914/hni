@@ -193,7 +193,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
                         Optional<Menu> currentMenu = Optional.ofNullable(location.getMenu());
                         if (currentMenu.isPresent()) {
                             nearbyWithMenu.add(location);
-                            items.add(currentMenu.get().getMenuItems().iterator().next());
+                            items.add(currentMenu.get().getMenuItems().stream().filter(item -> item.isActive()).findFirst().get());
                         }
                     }
                     if (!nearbyWithMenu.isEmpty()) {

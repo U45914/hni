@@ -77,10 +77,17 @@ public class UserOnboardingServiceHelper extends AbstractServiceHelper {
 				inviteRequest = userOnBoardingService.createInvitation(inviteRequest);
 				if (inviteRequest.getId() != null) {
 					// Invitation record is been created
-					emailComponent.sendEmail(inviteRequest, userRole);
-					sendSmsInvitation(inviteRequest, userRole);
-
-					map.put(Constants.RESPONSE, Constants.SUCCESS);
+					Map<String,SmsProvider> phoneNumbers = smsServiceLoader.getProviders();
+					SmsProvider smsProvider = (SmsProvider) phoneNumbers.get(inviteRequest.getStateCode());
+					if(smsProvider != null){
+						String phoneNumber = smsProvider.getLongCode();
+						emailComponent.sendEmail(inviteRequest, userRole,phoneNumber);
+						sendSmsInvitation(inviteRequest, userRole, phoneNumber);
+						map.put(Constants.RESPONSE, Constants.SUCCESS);
+					} else{
+						emailComponent.sendEmail(inviteRequest, userRole,null);
+						map.put(Constants.RESPONSE, Constants.SUCCESS);
+					}
 				} else {
 					map.put(Constants.MESSAGE, FAILED_TO_CREATE_A_INVITATION);
 				}
@@ -131,7 +138,7 @@ public class UserOnboardingServiceHelper extends AbstractServiceHelper {
 		return response;
 	}
 
-	private void sendSmsInvitation(Invitation inviteRequest, String userRole) {
+	private void sendSmsInvitation(Invitation inviteRequest, String userRole, String phoneNumber) {
 
 		if (userRole.equalsIgnoreCase(CLIENT)) {
 			StringBuilder message = new StringBuilder("Hi ");
@@ -140,7 +147,7 @@ public class UserOnboardingServiceHelper extends AbstractServiceHelper {
 			message.append("Thank you for your interest in becoming a Hunger Not Impossible Participant!"
 					+ " To register with us, please reply ENROLL to this number");
 
-			smsMessageService.sendMessage(message.toString(), HNI_BASE_NUMBER, inviteRequest.getPhone());
+			smsMessageService.sendMessage(message.toString(), phoneNumber != null ? phoneNumber : HNI_BASE_NUMBER, inviteRequest.getPhone());
 		}
 
 	}
