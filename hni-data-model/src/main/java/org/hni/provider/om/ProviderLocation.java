@@ -23,12 +23,12 @@ import org.hni.user.om.Address;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
- * Represents a physical location for a provider generally where
- * food is prepared and provided to clients. 
+ * Represents a physical location for a provider generally where food is
+ * prepared and provided to clients.
  *
  */
 @Entity
-@Table(name="provider_locations")
+@Table(name = "provider_locations")
 public class ProviderLocation implements Persistable, Serializable {
 
 	private static final long serialVersionUID = 304579212529448435L;
@@ -37,28 +37,38 @@ public class ProviderLocation implements Persistable, Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id")
 	private Long id;
-	
-	@Column(name="name") private String name;
-	@Column(name="created") private Date created;
-	@Column(name="created_by") private Long createdById;
+
+	@Column(name = "name")
+	private String name;
+	@Column(name = "created")
+	private Date created;
+	@Column(name = "created_by")
+	private Long createdById;
 
 	@ManyToOne
-	@JoinColumn(name="address_id", referencedColumnName = "id")
+	@JoinColumn(name = "address_id", referencedColumnName = "id")
 	private Address address;
-	
+
 	@ManyToOne
-	@JoinColumn(name="provider_id", referencedColumnName = "id")
+	@JoinColumn(name = "provider_id", referencedColumnName = "id")
 	private Provider provider;
-	
-	@OneToMany(fetch=FetchType.EAGER, mappedBy="providerLocation", cascade = {CascadeType.ALL})
-    //@OneToMany(fetch=FetchType.EAGER, mappedBy="providerLocation", cascade = {CascadeType.ALL}, orphanRemoval=true)
-    private Set<ProviderLocationHour> providerLocationHours = new HashSet<ProviderLocationHour>();
-    
-    public ProviderLocation() {}
-    public ProviderLocation(Long id) {
-    	this.id = id;
-    }
-    
+
+	@ManyToOne
+	@JoinColumn(name = "menu_id", referencedColumnName = "id")
+	private Menu menu;
+
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "providerLocation", cascade = { CascadeType.ALL })
+	// @OneToMany(fetch=FetchType.EAGER, mappedBy="providerLocation", cascade =
+	// {CascadeType.ALL}, orphanRemoval=true)
+	private Set<ProviderLocationHour> providerLocationHours = new HashSet<ProviderLocationHour>();
+
+	public ProviderLocation() {
+	}
+
+	public ProviderLocation(Long id) {
+		this.id = id;
+	}
+
 	@Override
 	public Long getId() {
 		return this.id;
@@ -99,20 +109,30 @@ public class ProviderLocation implements Persistable, Serializable {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	
+
+	public Menu getMenu() {
+		return menu;
+	}
+
+	public void setMenu(Menu menu) {
+		this.menu = menu;
+	}
+
 	@JsonIgnore
 	public Provider getProvider() {
 		return provider;
 	}
+
 	public void setProvider(Provider provider) {
 		this.provider = provider;
 	}
+
 	public Set<ProviderLocationHour> getProviderLocationHours() {
 		return providerLocationHours;
 	}
+
 	public void setProviderLocationHours(Set<ProviderLocationHour> providerLocationHours) {
 		this.providerLocationHours = providerLocationHours;
 	}
 
-	
 }

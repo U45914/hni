@@ -190,8 +190,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
                     List<ProviderLocation> nearbyWithMenu = new ArrayList<>();
                     List<MenuItem> items = new ArrayList<>();
                     for (ProviderLocation location : nearbyProviders) {
-                        Optional<Menu> currentMenu = location.getProvider().getMenus().stream()
-                                .filter(menu -> isCurrent(menu)).findFirst();
+                        Optional<Menu> currentMenu = Optional.ofNullable(location.getMenu());
                         if (currentMenu.isPresent()) {
                             nearbyWithMenu.add(location);
                             items.add(currentMenu.get().getMenuItems().iterator().next());
