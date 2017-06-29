@@ -68,7 +68,7 @@ public class RegisterService extends AbstractRegistrationService<User> {
 	public static String REPLY_OK_YOUR_PASSWORD_HAS_BEEEN_SET = "OK, Your password has beeen set. ";
 	public static String REPLY_INVALID_INPUT_FOR_CHILDREN = "Invalid input %s , Reply NONE if you have no children.";
 
-	public static String REPLY_ACCEPT_POLICY = "Please follow this link http://hungernotimpossible.com/privacy to review the terms and conditions, and reply I ACCEPT to complete your enrollment";
+	public static String REPLY_ACCEPT_POLICY = "Please follow this link http://hungernotimpossible.com/#/agreement-policy to review the terms and conditions, and reply I ACCEPT to complete your enrollment";
 	public static String REPLY_ACCEPT_POLICY_ERROR = "Invalid entry, You must accept our terms and conditions to enroll with HNI, reply I ACCEPT to complete your enrollment";
 	@Inject
 	private UserService customerService;

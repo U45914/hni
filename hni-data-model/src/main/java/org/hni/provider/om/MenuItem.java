@@ -36,6 +36,7 @@ public class MenuItem implements Persistable, Serializable {
 	@Column(name="description") private String description;
 	@Column(name="price") private Double price;
 	@Column(name="expires") private Date expires;
+	@Column(name="active") private boolean active;
 	
 	@ManyToOne
 	@JoinColumn(name="menu_id", referencedColumnName = "id")
@@ -93,6 +94,13 @@ public class MenuItem implements Persistable, Serializable {
 		this.id = id;
 	}
 
+	
+	public boolean isActive() {
+		return active;
+	}
+	public void setActive(boolean active) {
+		this.active = active;
+	}
 	@JsonIgnore
 	public Menu getMenu() {
 		return menu;
