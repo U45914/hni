@@ -51,6 +51,7 @@ public class RegisterService extends AbstractRegistrationService<User> {
 	public static String REPLY_EMAIL_CONFIRM = "I have %s as your email address. Is that correct? Reply 1 for yes and 2 for no.";
 	public static String REPLY_EMAIL_INVALID = "I'm sorry that is not a valid email. Try again or type '%s' if don't have an email.";
 	public static String REPLY_EMAIL_REQUEST = "Enter your email address.";
+	public static String REPLY_EMAIL_REGISTERED = "E-mail: %s has already been registered. Please re-enter e-mail.";
 
 	public static String REPLY_AUTHCODE_REQUEST = "Please enter the 6 digit authorization code provided to you for this program.";
 	public static String REPLY_AUTHCODE_INVALID = "The authorization code you entered (%s) is invalid. Please resend a valid unused authorization code.";
@@ -128,11 +129,15 @@ public class RegisterService extends AbstractRegistrationService<User> {
 			user.setEmail(textMessage);
 			// validate the email
 			if (customerService.validate(user)) {
-				nextStateCode = RegistrationStep.STATE_REGISTER_CONFIRM_EMAIL;
-				if ("none".equalsIgnoreCase(textMessage)) {
-					returnString = REPLY_EMAIL_NONE;
+				if(customerService.byEmailAddress(user.getEmail()) == null){
+					nextStateCode = RegistrationStep.STATE_REGISTER_CONFIRM_EMAIL;
+					if ("none".equalsIgnoreCase(textMessage)) {
+						returnString = REPLY_EMAIL_NONE;
+					} else {
+						returnString = String.format(REPLY_EMAIL_CONFIRM, user.getEmail());
+					}
 				} else {
-					returnString = String.format(REPLY_EMAIL_CONFIRM, user.getEmail());
+					returnString = String.format(REPLY_EMAIL_REGISTERED, user.getEmail());
 				}
 			} else {
 				returnString = String.format(REPLY_EMAIL_INVALID, MSG_NONE);

@@ -19,8 +19,8 @@ public interface OrderDAO extends BaseDAO<Order> {
 
 	Collection<Order> get(Provider provider, LocalDateTime fromDate, LocalDateTime toDate);
 
-	Collection<Order> with(OrderStatus orderStatus);
+	Collection<Order> with(OrderStatus orderStatus, String stateCode);
 
-	Collection<Order> with(Provider provider, OrderStatus orderStatus);
+	Collection<Order> with(Provider provider, OrderStatus orderStatus, String stateCode);
 
 }

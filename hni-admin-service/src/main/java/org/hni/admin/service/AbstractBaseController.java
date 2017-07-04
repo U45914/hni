@@ -163,7 +163,7 @@ public class AbstractBaseController {
 		return initialProfileData;
 	}
 	
-	private Address createAddress(Set<Address> addresses) {
+	protected Address createAddress(Set<Address> addresses) {
 		Address addr = new Address();
 		
 		if (addresses != null && !addresses.isEmpty()) {

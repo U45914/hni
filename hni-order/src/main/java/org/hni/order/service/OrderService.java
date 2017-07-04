@@ -39,8 +39,8 @@ public interface OrderService extends BaseService<Order> {
 	 * @param providerLocation
 	 * @return
 	 */
-	Order next();
-	Order next(Provider provider);
+	Order next(String stateCode);
+	Order next(Provider provider, String stateCode);
 	
 	/**
 	 * Sets an order to completed.
@@ -59,14 +59,14 @@ public interface OrderService extends BaseService<Order> {
 	 * Returns a count of open orders
 	 * @return
 	 */
-	long countOrders();
+	long countOrders(String stateCode);
 	
 	/**
 	 * Returns a count of open orders for a provider
 	 * @param provider
 	 * @return
 	 */
-	long countOrders(Provider provider);
+	long countOrders(Provider provider, String stateCode);
 
 	Order reset(Order order);
 	

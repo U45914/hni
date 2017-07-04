@@ -77,7 +77,10 @@ public class PushMessageService {
 		StringBuilder builder = new StringBuilder();
 		builder.append("Please place the order for ");
 		String userName = order.getUser().getFirstName() + " " + order.getUser().getLastName().substring(0, 1).toUpperCase() + ".";
-		builder.append(userName);		
+		builder.append(userName);	
+		builder.append(" Order ID : HNI");
+		builder.append(order.getId());
+		builder.append(String.valueOf(order.getProviderLocation().getAddress().getState()).toUpperCase());
 		builder.append(" Order Item : ");
 		OrderItem orderItem = order.getOrderItems().iterator().next();
 		builder.append(orderItem.getMenuItem().getName());

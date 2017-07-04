@@ -78,10 +78,11 @@ public class DefaultOrderDAO extends AbstractDAO<Order> implements OrderDAO {
 	}
 	
 	@Override
-	public Collection<Order> with(OrderStatus orderStatus) {
+	public Collection<Order> with(OrderStatus orderStatus, String stateCode) {
 		try {
-			Query q = em.createQuery("SELECT x FROM Order x WHERE x.statusId = :statusId")
-					.setParameter("statusId", orderStatus.getId());
+			Query q = em.createQuery("SELECT x FROM Order x WHERE x.statusId = :statusId AND x.providerLocation.address.state = :stateCode")
+					.setParameter("statusId", orderStatus.getId())
+					.setParameter("stateCode", stateCode);
 			return q.getResultList();
 		} catch (NoResultException e) {
 			return Collections.emptyList();
@@ -89,11 +90,12 @@ public class DefaultOrderDAO extends AbstractDAO<Order> implements OrderDAO {
 	}
 
 	@Override
-	public Collection<Order> with(Provider provider, OrderStatus orderStatus) {
+	public Collection<Order> with(Provider provider, OrderStatus orderStatus, String stateCode) {
 		try {
-			Query q = em.createQuery("SELECT x FROM Order x WHERE x.providerLocation.provider.id = :providerId AND x.statusId = :statusId")
-					.setParameter("providerId", provider.getId())
-					.setParameter("statusId", orderStatus.getId());
+			Query q = em.createQuery("SELECT x FROM Order x WHERE x.statusId = :statusId AND x.providerLocation.provider.id = :providerId AND x.providerLocation.address.state = :stateCode")
+									 .setParameter("providerId", provider.getId())
+									 .setParameter("statusId", orderStatus.getId())
+									 .setParameter("stateCode", stateCode);
 			return q.getResultList();
 		} catch (NoResultException e) {
 			return Collections.emptyList();
