@@ -68,9 +68,9 @@ public class DefaultOrderService extends AbstractService<Order> implements Order
 	}
 
 	@Override
-	public Order next() {
+	public Order next(String stateCode) {
 		// Returns an uncompleted order placed within the last 24 hours. Null if none found.
-		Collection<Order> orders = orderDao.with(OrderStatus.OPEN);
+		Collection<Order> orders = orderDao.with(OrderStatus.OPEN, stateCode);
 
 		for(Order order : orders) {
 			if (lockAcquired(order)) {
@@ -89,9 +89,9 @@ public class DefaultOrderService extends AbstractService<Order> implements Order
 	}
 
 	@Override
-	public Order next(Provider provider) {
+	public Order next(Provider provider, String stateCode) {
 		// Returns an uncompleted order placed within the last 24 hours. Null if none found.
-		Collection<Order> orders = orderDao.with(provider, OrderStatus.OPEN);
+		Collection<Order> orders = orderDao.with(provider, OrderStatus.OPEN, stateCode);
 
 		for(Order order : orders) {
 			if (lockAcquired(order)) {
@@ -122,16 +122,16 @@ public class DefaultOrderService extends AbstractService<Order> implements Order
 	}
 	
 	@Override
-	public long countOrders() {
-		Collection<Order> orders = orderDao.with(OrderStatus.OPEN);
+	public long countOrders(String stateCode) {
+		Collection<Order> orders = orderDao.with(OrderStatus.OPEN, stateCode);
 		return orders.stream()
 				.filter(order -> !isLocked(order))
 				.count();
 	}
 
 	@Override
-	public long countOrders(Provider provider) {
-		Collection<Order> orders =  orderDao.with(provider, OrderStatus.OPEN);
+	public long countOrders(Provider provider, String stateCode) {
+		Collection<Order> orders =  orderDao.with(provider, OrderStatus.OPEN, stateCode);
 		return orders.stream()
 				.filter(order -> !isLocked(order))
 				.count();

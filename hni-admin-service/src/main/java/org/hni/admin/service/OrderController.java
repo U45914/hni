@@ -28,6 +28,7 @@ import org.hni.provider.om.MenuItem;
 import org.hni.provider.om.Provider;
 import org.hni.provider.om.ProviderLocation;
 import org.hni.provider.om.ProviderLocationHour;
+import org.hni.user.dao.UserDAO;
 import org.hni.user.om.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +48,7 @@ public class OrderController extends AbstractBaseController {
 	
 	@Inject private OrderService orderService;
 	@Inject private OrderPaymentService orderPaymentService; // for resets
+	@Inject private UserDAO userDao;
 	
 	@GET
 	@Path("/{id}")
@@ -94,20 +96,24 @@ public class OrderController extends AbstractBaseController {
 		, response = Order.class
 		, responseContainer = "")
 	public Response getNextOrder(@QueryParam("providerId") Long providerId) {
-		Order order = null;
-		if ( null != providerId ) {
-			order = orderService.next(new Provider(providerId));
-		} 
-		if (null == order) { // if no order is availale for a provider just grab whatever comes next.
-			order = orderService.next();
-		}
-		if ( null != order ) {
-			logger.info("Returning Order "+order.getId());
-			logger.info(serializeOrderToJson(order));
-			return Response.status(Response.Status.OK).
-	                entity(serializeOrderToJson(order)).
-	                type(MediaType.APPLICATION_JSON).
-	                build();
+		User user = getLoggedInUser();
+		if(null != user){
+			Order order = null;
+			String stateCode = userDao.findUserState(user.getId());
+			if ( null != providerId ) {
+				order = orderService.next(new Provider(providerId), stateCode);
+			} 
+			if (null == order) { // if no order is availale for a provider just grab whatever comes next.
+				order = orderService.next(stateCode);
+			}
+			if ( null != order ) {
+				logger.info("Returning Order "+order.getId());
+				logger.info(serializeOrderToJson(order));
+				return Response.status(Response.Status.OK).
+		                entity(serializeOrderToJson(order)).
+		                type(MediaType.APPLICATION_JSON).
+		                build();
+			}
 		}
 		return Response.status(Response.Status.NO_CONTENT).
                 entity("{}").
@@ -162,10 +168,15 @@ public class OrderController extends AbstractBaseController {
 		, response = Order.class
 		, responseContainer = "")
 	public String getOrderCount(@QueryParam("providerId") Long providerId) {
-		if ( null != providerId ) {
-			return String.format(ORDER_COUNT, orderService.countOrders(new Provider(providerId)));
+		User user = getLoggedInUser();
+		if(null != user){
+			String stateCode = userDao.findUserState(user.getId());
+			if ( null != providerId ) {
+					return String.format(ORDER_COUNT, orderService.countOrders(new Provider(providerId),stateCode));
+			}
+			return String.format(ORDER_COUNT, orderService.countOrders(stateCode));
 		}
-		return String.format(ORDER_COUNT, orderService.countOrders());
+		return String.format(ORDER_COUNT,0);
 	}
 	
 	
