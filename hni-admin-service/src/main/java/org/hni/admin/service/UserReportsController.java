@@ -244,7 +244,7 @@ public class UserReportsController extends AbstractBaseController {
 
 		Map<String, Object> response = new HashMap<>();
 		try {
-			Map<String, Object> count =  userReportService.getCustomersOrderCount();
+			List<Map<String,Object>> count =  userReportService.getCustomersOrderCount();
 			response.put("data", count);
 			response.put(Constants.RESPONSE, Constants.SUCCESS);
 		} catch (Exception e) {
