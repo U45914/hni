@@ -29,4 +29,5 @@ public interface UserOnboardingService extends BaseService<Invitation>{
 	Invitation createInvitation(Invitation invite);
 	User getUserByEmail(String email);
 	String isValidInvitation(String phoneNumber);
+	Invitation getInvitationByPhoneNumber(String phoneNumber);
 }

@@ -9,7 +9,9 @@ import org.hni.events.service.om.RegistrationState;
 import org.hni.security.service.ActivationCodeService;
 import org.hni.security.utils.HNISecurityUtils;
 import org.hni.type.HNIRoles;
+import org.hni.user.om.Invitation;
 import org.hni.user.om.User;
+import org.hni.user.service.UserOnboardingService;
 import org.hni.user.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +24,8 @@ import javax.inject.Inject;
 
 @Component
 public class RegisterService extends AbstractRegistrationService<User> {
+
+	private static final String I_ACCEPT = "i accept";
 
 	private static final String THANK_YOU_FOR_REGISTERING_WITH_HUNGER_NOT_IMPOSSIBLE = "Thank you for registering with HungerNotImpossible. ";
 
@@ -82,6 +86,9 @@ public class RegisterService extends AbstractRegistrationService<User> {
 
 	@Inject
 	private RegistrationStateDAO registrationStateDAO;
+	
+	@Inject
+	private UserOnboardingService userOnboardingService;
 
 	@PostConstruct
 	void init() {
@@ -179,8 +186,10 @@ public class RegisterService extends AbstractRegistrationService<User> {
 				returnString = REPLY_OK + REPLY_PASSWORD_REQUEST;
 				break;
 			case "1":
-				nextStateCode = RegistrationStep.STATE_REGISTER_NUMBER_OF_CHILDREN;
-				returnString = REPLY_OK_YOUR_PASSWORD_HAS_BEEEN_SET + REPLY_HOW_MANY_CHILDREN_DO_YOU_HAVE;
+				/*nextStateCode = RegistrationStep.STATE_REGISTER_NUMBER_OF_CHILDREN;
+				returnString = REPLY_OK_YOUR_PASSWORD_HAS_BEEEN_SET + REPLY_HOW_MANY_CHILDREN_DO_YOU_HAVE;*/
+				nextStateCode = RegistrationStep.STATE_REGISTER_ACCEPT_POLICY;
+				returnString = REPLY_ACCEPT_POLICY;
 				break;
 			default:
 				nextStateCode = RegistrationStep.STATE_REGISTER_CONFIRM_PASSWORD;
@@ -209,7 +218,7 @@ public class RegisterService extends AbstractRegistrationService<User> {
 			}
 			break;
 		case STATE_REGISTER_ACCEPT_POLICY:
-			if (textMessage.equalsIgnoreCase("i accept")) {
+			if (textMessage.equalsIgnoreCase(I_ACCEPT)) {
 				returnString = THANK_YOU_FOR_REGISTERING_WITH_HUNGER_NOT_IMPOSSIBLE + REPLY_REGISTRATION_COMPLETE;
 				registerUserAndSetActivationCodes(user);
 			} else {
@@ -230,8 +239,14 @@ public class RegisterService extends AbstractRegistrationService<User> {
 		user.setOrganizationId(1L);
 		HNISecurityUtils.setHashSecret(user, user.getPassword());
 		user.setPassword("");
-		orgUserService.register(user, HNIRoles.CLIENT.getRole());
-		activationCodeService.saveActivationCodes(user, (int) user.getAdditionalInfo().get(DEPENDANTS));
+		Invitation invitation = userOnboardingService.getInvitationByPhoneNumber(user.getMobilePhone());
+		if (invitation != null) {
+			orgUserService.register(user, HNIRoles.CLIENT.getRole());
+			int dependentCount = invitation.getDependantsCount() != null ? invitation.getDependantsCount() : 0;
+			activationCodeService.saveActivationCodes(user, dependentCount);
+		} else {
+			LOGGER.debug("Unable to find a valid invitation record for the user");
+		}
 		return user;
 	}
 }

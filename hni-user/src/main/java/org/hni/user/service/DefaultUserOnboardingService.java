@@ -508,4 +508,10 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 		}
 		return null;
 	}
+
+	@Override
+	public Invitation getInvitationByPhoneNumber(String phoneNumber) {
+		List<Invitation> invitations = userOnboardDao.isValidInvitation(phoneNumber);
+		return invitations != null && !invitations.isEmpty() ? invitations.get(0) : null;
+	}
 }
