@@ -200,7 +200,7 @@ public class OrderController extends AbstractBaseController {
 	private String serializeOrderToJson(Order order) {
 		try {
 			String json = mapper.writeValueAsString(JsonView.with(order)
-					.onClass(User.class, Match.match().exclude("*").include("id", "firstName", "lastName"))
+					.onClass(User.class, Match.match().exclude("*").include("id", "firstName", "lastName", "mobilePhone"))
 					.onClass(ProviderLocation.class, Match.match().include("*").exclude("created", "createdById"))
 					.onClass(ProviderLocationHour.class, Match.match().exclude("*").include("dow", "openHour", "closeHour"))
 					.onClass(Provider.class, Match.match().include("*").exclude("created", "createdById"))
