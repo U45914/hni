@@ -75,7 +75,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
 
     public static String REPLY_NO_UNDERSTAND = "I don't understand that. Reply with HUNGRY to place an order.";
     public static String REPLY_INVALID_INPUT = "Invalid input! ";
-    public static String REPLY_EXCEPTION_REGISTER_FIRST = "You will need to reply with REGISTER to sign up first.";
+    public static String REPLY_EXCEPTION_REGISTER_FIRST = "You will need to reply with ENROLL to sign up first.";
     public static String REPLY_MAX_ORDERS_REACHED = "You've reached the maximum number of orders for today. Please come back tomorrow.";
     private static final RemoteInvocationOptions REDISSON_REMOTE_INVOCATION_OPTION =
             RemoteInvocationOptions.defaults().expectAckWithin(10, TimeUnit.SECONDS).noResult();
