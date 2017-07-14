@@ -133,7 +133,9 @@ public class CustomerDao extends DefaultGenericDAO {
 		
 		for(int i=0;i<totalCount.size();i++){
 			Object[] result = totalCount.get(i);
-			state.put(result[0].toString().toUpperCase(), result[1]);
+			if (result != null && result[0] != null) {
+				state.put(result[0].toString().toUpperCase(), result[1]);
+			}
 		}
 		
 		participants.put("totalParticipants", query2.getSingleResult() );
