@@ -234,6 +234,8 @@ public class DefaultOrderProcessor implements OrderProcessor {
             	for(MenuItem mi : currentMenu.get().getMenuItems()){
             		if(mi.isActive()){
             			items.add(mi);
+            			if(items.size() == 5)
+            				break;
             		}
             	}
             }
@@ -272,7 +274,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
     	String output = "";
         try {
             int index = Integer.parseInt(message);
-            if (index < 1 || index > 3) {
+            if (index < 1 || index > 5) {
                 throw new IndexOutOfBoundsException();
             }
             MenuItem chosenItem = order.getMenuItemsForSelection().get(index - 1);
