@@ -52,6 +52,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
     public static String MSG_HUNGRY = "HUNGRY";
     public static String MSG_CONFIRM = "CONFIRM";
     public static String MSG_REDO = "REDO";
+    public static String RESTAURANT = "RESTAURANT";
 
     public static String REPLY_NOT_CURRENTLY_ORDERING = "You're not currently ordering, please respond with HUNGRY to place an order.";
     public static String REPLY_ORDER_CANCELLED = "You've cancelled your order.";
@@ -66,12 +67,12 @@ public class DefaultOrderProcessor implements OrderProcessor {
     public static String REPLY_ORDER_COMPLETE = "Success! Order confirmed. Reply with STATUS after 5 minutes to check to status of your order.";
     public static String REPLY_NEED_VALID_RESPONSE = "Please respond with CONFIRM, REDO, or ENDMEAL";
     public static String REPLY_ORDER_PENDING = "Your order is still open, please respond with STATUS in 5 minutes to check again.";
-    public static String REPLY_ORDER_READY = "Your order has been placed and should be ready to pick up shortly from %s at %s %s.";
+    public static String REPLY_ORDER_READY = "Your order has been placed and should be ready to pick up shortly from %s at %s %s %s.";
     public static String REPLY_ORDER_CLOSED = "Your order has been marked as closed.";
     public static String REPLY_ORDER_NOT_FOUND = "I can't find a recent order for you, please reply HUNGRY to place an order.";
 
-    public static String REPLY_ORDER_ITEM = "%d) %s from %s %s %s. ";
-    public static String REPLY_ORDER_CHOICE = "Reply %s to choose your meal. ";
+    public static String REPLY_ORDER_ITEM = "%d) %s . ";
+    public static String REPLY_ORDER_CHOICE = "Reply %s to choose your %s. ";
 
     public static String REPLY_NO_UNDERSTAND = "I don't understand that. Reply with HUNGRY to place an order.";
     public static String REPLY_INVALID_INPUT = "Invalid input! ";
@@ -148,6 +149,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
                 break;
             case CHOOSING_MENU_ITEM:
                 //this is chosen w/ provider for now
+            	output = chooseProvider(user, message, order);
                 break;
             case MULTIPLE_ORDER:
                 output = handleMultipleOrders(user, message, order);
@@ -189,16 +191,15 @@ public class DefaultOrderProcessor implements OrderProcessor {
                     order.setAddress(addressString);
                     List<ProviderLocation> nearbyWithMenu = new ArrayList<>();
                     List<MenuItem> items = new ArrayList<>();
+                    //TODO : check for same provider with multiple branches in same location.
                     for (ProviderLocation location : nearbyProviders) {
                         Optional<Menu> currentMenu = Optional.ofNullable(location.getMenu());
                         if (currentMenu.isPresent() && isCurrent(currentMenu.get())) {
                             nearbyWithMenu.add(location);
-                            items.add(currentMenu.get().getMenuItems().stream().filter(item -> item.isActive()).findFirst().get());
                         }
                     }
                     if (!nearbyWithMenu.isEmpty()) {
                         order.setProviderLocationsForSelection(nearbyWithMenu);
-                        order.setMenuItemsForSelection(items);
                         output += providerLocationMenuOutput(order);
                         order.setTransactionPhase(TransactionPhase.CHOOSING_LOCATION);
                     } else {
@@ -224,16 +225,60 @@ public class DefaultOrderProcessor implements OrderProcessor {
 
     private String chooseLocation(User user, String message, PartialOrder order) {
         String output = "";
+        try{
+        	int input = Integer.parseInt(message);
+        	List<MenuItem> items = new ArrayList<>();
+        	ProviderLocation location = order.getProviderLocationsForSelection().get(input-1);
+        	Optional<Menu> currentMenu = Optional.ofNullable(location.getMenu());
+            if (currentMenu.isPresent() && isCurrent(currentMenu.get())) {
+            	for(MenuItem mi : currentMenu.get().getMenuItems()){
+            		if(mi.isActive()){
+            			items.add(mi);
+            			if(items.size() == 5)
+            				break;
+            		}
+            	}
+            }
+        	 order.setMenuItemsForSelection(items);
+        	 order.setChosenProvider(location);
+        	 order.setTransactionPhase(TransactionPhase.CHOOSING_MENU_ITEM);
+        	 output += providerLocationMenuItemOutput(order);
+        
+        } catch (NumberFormatException | IndexOutOfBoundsException e) {
+        output += REPLY_INVALID_INPUT;
+        }
+        return output;
+    }
+    
+    private String providerLocationMenuItemOutput(PartialOrder order){
+    	 // Note: spaces are significant in the Strings below!
+        String options = "";
+        String meals = "";
+        for (int i = 0; i < order.getMenuItemsForSelection().size(); i++) {
+            MenuItem menuItem = order.getMenuItemsForSelection().get(i);
+            options += (i + 1) + ", ";
+            meals += String.format(REPLY_ORDER_ITEM, (i + 1), menuItem.getName());
+        }
+        // remove training comma and space
+        options = options.substring(0, options.length() - 2);
+
+        // if there's more than 1 option remove the last number, space and comma and replace with or #
+        if (options.length() > 1) {
+            options = options.substring(0, options.length() - 3);
+            options += " or " + order.getMenuItemsForSelection().size();
+        }
+        return String.format(REPLY_ORDER_CHOICE, options,MSG_MEAL.toLowerCase()) + meals;
+    }
+    
+    private String chooseProvider(User user, String message, PartialOrder order){
+    	String output = "";
         try {
             int index = Integer.parseInt(message);
-            if (index < 1 || index > 3) {
+            if (index < 1 || index > 5) {
                 throw new IndexOutOfBoundsException();
             }
-            ProviderLocation location = order.getProviderLocationsForSelection().get(index - 1);
-            order.setChosenProvider(location);
             MenuItem chosenItem = order.getMenuItemsForSelection().get(index - 1);
             order.getMenuItemsSelected().add(chosenItem);
-            LOGGER.debug("Location {} has been chosen with item {}", location.getName(), chosenItem.getName());
 
             // If this user has multiple auth codes we'll want to ask them how many of this item 
             List<ActivationCode> activationCodes = activationCodeService.getByUser(user);
@@ -242,11 +287,11 @@ public class DefaultOrderProcessor implements OrderProcessor {
                 output = String.format(REPLY_MULTIPLE_ORDERS, activationCodes.size());
             } else {
                 order.setTransactionPhase(TransactionPhase.CONFIRM_OR_REDO);
-                output = String.format(REPLY_CONFIRM_ORDER, chosenItem.getName(), location.getName());
+                output = String.format(REPLY_CONFIRM_ORDER, chosenItem.getName(), order.getChosenProvider().getProvider().getName());
             }
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
             output += REPLY_INVALID_INPUT;
-            output += providerLocationMenuOutput(order);
+            output += providerLocationMenuItemOutput(order);
         }
         return output;
     }
@@ -283,7 +328,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
             }
             // Set next phase to confirm order
             order.setTransactionPhase(TransactionPhase.CONFIRM_OR_REDO);
-            output = String.format(REPLY_CONFIRM_ORDER, menuItem.getName(), order.getChosenProvider().getName());
+            output = String.format(REPLY_CONFIRM_ORDER, menuItem.getName(), order.getChosenProvider().getProvider().getName());
         }
         return output;
 
@@ -334,7 +379,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
             if (status.equals(OrderStatus.OPEN)) {
                 return REPLY_ORDER_PENDING;
             } else if (status.equals(OrderStatus.ORDERED)) {
-                return String.format(REPLY_ORDER_READY, order.get().getProviderLocation().getAddress().getAddress1(), order.get().getProviderLocation().getAddress().getCity(), order.get().getProviderLocation().getAddress().getState());
+                return String.format(REPLY_ORDER_READY, order.get().getProviderLocation().getProvider().getName(),order.get().getProviderLocation().getAddress().getAddress1(), order.get().getProviderLocation().getAddress().getCity(), order.get().getProviderLocation().getAddress().getState());
 
             } else {
                 //TODO should we say anything for if they suspect an error
@@ -361,7 +406,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
         for (int i = 0; i < order.getProviderLocationsForSelection().size(); i++) {
             ProviderLocation location = order.getProviderLocationsForSelection().get(i);
             options += (i + 1) + ", ";
-            meals += String.format(REPLY_ORDER_ITEM, (i + 1), order.getMenuItemsForSelection().get(i).getName(), location.getName(), location.getAddress().getAddress1() + (StringUtils.isNotEmpty(location.getAddress().getAddress2()) ? " " + location.getAddress().getAddress2() : ""), location.getAddress().getCity());
+            meals += String.format(REPLY_ORDER_ITEM, (i + 1), location.getProvider().getName(), location.getAddress().getAddress1() + (StringUtils.isNotEmpty(location.getAddress().getAddress2()) ? " " + location.getAddress().getAddress2() : ""), location.getAddress().getCity());
         }
         // remove training comma and space
         options = options.substring(0, options.length() - 2);
@@ -371,7 +416,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
             options = options.substring(0, options.length() - 3);
             options += " or " + order.getProviderLocationsForSelection().size();
         }
-        return String.format(REPLY_ORDER_CHOICE, options) + meals;
+        return String.format(REPLY_ORDER_CHOICE, options, RESTAURANT.toLowerCase()) + meals;
     }
 
     private boolean isCurrent(Menu menu) {
