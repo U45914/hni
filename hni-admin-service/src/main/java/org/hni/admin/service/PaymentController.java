@@ -108,7 +108,13 @@ public class PaymentController extends AbstractBaseController {
 	public Response orderAndPaymentComplete(@QueryParam("orderId") Long id, 
 			@QueryParam("orderConfirmationId") String orderConfirmationId, 
 			@QueryParam("orderAmt") Double orderAmt) {
-		String response = paymentServiceHelper.completeOrder(id, orderConfirmationId, orderAmt);
+		String response = null;
+		try {
+			response = paymentServiceHelper.completeOrder(id, orderConfirmationId, orderAmt);
+		} catch(Exception e) {
+			logger.error(e.getMessage(), e);
+			response = e.getMessage();
+		}
 		
 		return createResponse(response);
 	}

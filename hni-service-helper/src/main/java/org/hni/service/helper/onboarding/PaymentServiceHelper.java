@@ -48,7 +48,7 @@ public class PaymentServiceHelper extends AbstractServiceHelper {
 	private HniTemplateService hniTemplateService;
 	
 
-	public String completeOrder(Long orderId, String confirmationId, Double orderAmount) throws HNIException {
+	public String completeOrder(Long orderId, String confirmationId, Double orderAmount) throws Exception {
 		String uniqIdForOrderTrace = Constants.HNI_CAP + orderId + confirmationId;
 		_LOGGER.info("Starting the process of order completion : " + uniqIdForOrderTrace);
 		Optional<Order> order = Optional.ofNullable(orderService.get(orderId));
@@ -76,12 +76,12 @@ public class PaymentServiceHelper extends AbstractServiceHelper {
 		}
 	}
 
-	private void sendOrderConfirmation(Order order, String confirmationId, String traceKey) {
+	private void sendOrderConfirmation(Order order, String confirmationId, String traceKey) throws Exception {
 		try {
 			smsMessageService.sendMessage(buildConfirmationMessage(order, confirmationId), getFromNumber(order.getProviderLocation().getAddress().getState().toUpperCase()), order.getUser().getMobilePhone());
 		} catch (Exception e) {
 			_LOGGER.error("Exception while sending confirmation message to user "+ traceKey, e);
-			throw new HNIException("Exception while sending confimation message to user : " + traceKey);
+			throw new Exception("Order Marked as complete, but confirmation message not sent : " + traceKey);
 		}
 	}
 
