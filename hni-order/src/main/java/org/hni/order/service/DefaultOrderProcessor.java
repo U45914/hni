@@ -64,15 +64,16 @@ public class DefaultOrderProcessor implements OrderProcessor {
     // In this flow, user chooses meal here : Reply 1) Ham sandwich 2) Tacos 3) Chicken Salad
     public static String REPLY_MULTIPLE_ORDERS = "You can order up to %d meals. How many would you like?";
     public static String REPLY_CONFIRM_ORDER = "You've chosen %s at %s. Reply CONFIRM to place this order, REDO to try again or ENDMEAL to quit.";
-    public static String REPLY_ORDER_COMPLETE = "Success! Order confirmed. Reply with STATUS after 5 minutes to check to status of your order.";
+    public static String REPLY_ORDER_COMPLETE = "Great choice! You will receive a text with a confirmation code and pickup instructions in about 30 minutes.";
     public static String REPLY_NEED_VALID_RESPONSE = "Please respond with CONFIRM, REDO, or ENDMEAL";
     public static String REPLY_ORDER_PENDING = "Your order is still open, please respond with STATUS in 5 minutes to check again.";
     public static String REPLY_ORDER_READY = "Your order has been placed and should be ready to pick up shortly from %s at %s %s %s.";
     public static String REPLY_ORDER_CLOSED = "Your order has been marked as closed.";
     public static String REPLY_ORDER_NOT_FOUND = "I can't find a recent order for you, please reply HUNGRY to place an order.";
-
+    public static String REPLY_GREATE_HERE_YOUR_OPTIONS = "Great! Here are your options: ";
     public static String REPLY_ORDER_ITEM = "%d) %s . ";
     public static String REPLY_ORDER_CHOICE = "Reply %s to choose your %s. ";
+    public static String REPLY_YOU_GOT_IT = "You got it! ";
 
     public static String REPLY_NO_UNDERSTAND = "I don't understand that. Reply with HUNGRY to place an order.";
     public static String REPLY_INVALID_INPUT = "Invalid input! ";
@@ -267,7 +268,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
             options = options.substring(0, options.length() - 3);
             options += " or " + order.getMenuItemsForSelection().size();
         }
-        return String.format(REPLY_ORDER_CHOICE, options,MSG_MEAL.toLowerCase()) + meals;
+        return String.format(REPLY_YOU_GOT_IT + REPLY_ORDER_CHOICE, options,MSG_MEAL.toLowerCase()) + meals;
     }
     
     private String chooseProvider(User user, String message, PartialOrder order){
@@ -406,7 +407,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
         for (int i = 0; i < order.getProviderLocationsForSelection().size(); i++) {
             ProviderLocation location = order.getProviderLocationsForSelection().get(i);
             options += (i + 1) + ", ";
-            meals += String.format(REPLY_ORDER_ITEM, (i + 1), location.getProvider().getName(), location.getAddress().getAddress1() + (StringUtils.isNotEmpty(location.getAddress().getAddress2()) ? " " + location.getAddress().getAddress2() : ""), location.getAddress().getCity());
+            meals += String.format(REPLY_ORDER_ITEM, (i + 1), getAddressString(location));
         }
         // remove training comma and space
         options = options.substring(0, options.length() - 2);
@@ -416,9 +417,21 @@ public class DefaultOrderProcessor implements OrderProcessor {
             options = options.substring(0, options.length() - 3);
             options += " or " + order.getProviderLocationsForSelection().size();
         }
-        return String.format(REPLY_ORDER_CHOICE, options, RESTAURANT.toLowerCase()) + meals;
+        return String.format(REPLY_GREATE_HERE_YOUR_OPTIONS + REPLY_ORDER_CHOICE, options, RESTAURANT.toLowerCase()) + meals;
     }
 
+    private String getAddressString(ProviderLocation location) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(location.getProvider().getName());
+		sb.append(", ");
+		sb.append(location.getAddress().getAddress1());
+		sb.append(", ");
+		sb.append(location.getAddress().getCity());
+		sb.append(", ");
+		sb.append(location.getAddress().getState());
+		
+		return sb.toString();
+	}
     private boolean isCurrent(Menu menu) {
         //TODO this has issues between 11:00 and 11:59 pm because minutes are not stored in db
         LocalTime now = LocalTime.now();
