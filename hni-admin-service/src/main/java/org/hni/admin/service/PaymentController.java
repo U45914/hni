@@ -30,6 +30,7 @@ import org.hni.provider.om.Provider;
 import org.hni.provider.om.ProviderLocation;
 import org.hni.provider.om.ProviderLocationHour;
 import org.hni.provider.service.ProviderService;
+import org.hni.service.helper.onboarding.PaymentServiceHelper;
 import org.hni.user.om.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,6 +60,7 @@ public class PaymentController extends AbstractBaseController {
 	@Inject private ProviderService providerService;
 	@Inject private OrderService orderService;
 	@Inject private OrderPaymentService orderPaymentService;
+	@Inject private PaymentServiceHelper paymentServiceHelper;
 	
 	@GET
 	@Path("/payment-instruments/")
@@ -103,14 +105,12 @@ public class PaymentController extends AbstractBaseController {
 		, notes = "encrypted"
 		, response = Order.class
 		, responseContainer = "")
-	public Response orderAndPaymentComplete(@QueryParam("orderId")Long id) {
-		Order order = orderService.get(id);
-		if ( null != order ) {
-			logger.info(String.format("Marking order %d complete", order.getId()));
-			orderService.complete(order);
-			return createResponse(OK);
-		}
-		throw new HNIException("Order does not exist.");
+	public Response orderAndPaymentComplete(@QueryParam("orderId") Long id, 
+			@QueryParam("orderConfirmationId") String orderConfirmationId, 
+			@QueryParam("orderAmt") Double orderAmt) {
+		String response = paymentServiceHelper.completeOrder(id, orderConfirmationId, orderAmt);
+		
+		return createResponse(response);
 	}
 	
 	@POST

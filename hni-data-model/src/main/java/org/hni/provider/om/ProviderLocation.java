@@ -19,6 +19,7 @@ import javax.persistence.Table;
 
 import org.hni.common.om.Persistable;
 import org.hni.user.om.Address;
+import org.hni.user.om.User;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -44,6 +45,14 @@ public class ProviderLocation implements Persistable, Serializable {
 	private Date created;
 	@Column(name = "created_by")
 	private Long createdById;
+	@Column(name = "is_active")
+	private Boolean isActive;
+	@Column(name = "last_updated")
+	private Date lastUpdated;
+	
+	@ManyToOne
+	@JoinColumn(name = "last_updated_by", referencedColumnName = "id")
+	private User lastUpdatedBy;
 
 	@ManyToOne
 	@JoinColumn(name = "address_id", referencedColumnName = "id")
@@ -118,6 +127,15 @@ public class ProviderLocation implements Persistable, Serializable {
 		this.menu = menu;
 	}
 
+	
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
+	}
+
 	@JsonIgnore
 	public Provider getProvider() {
 		return provider;
@@ -135,4 +153,21 @@ public class ProviderLocation implements Persistable, Serializable {
 		this.providerLocationHours = providerLocationHours;
 	}
 
+	public Date getLastUpdated() {
+		return lastUpdated;
+	}
+
+	public void setLastUpdated(Date lastUpdated) {
+		this.lastUpdated = lastUpdated;
+	}
+
+	public User getLastUpdatedBy() {
+		return lastUpdatedBy;
+	}
+
+	public void setLastUpdatedBy(User lastUpdatedBy) {
+		this.lastUpdatedBy = lastUpdatedBy;
+	}
+
+	
 }

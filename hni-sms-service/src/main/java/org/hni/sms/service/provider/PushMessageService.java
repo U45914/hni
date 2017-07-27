@@ -90,7 +90,6 @@ public class PushMessageService {
 		builder.append(" www.hungernotimpossible.com");
 		
 		return builder.toString();
-
 	}
 	
 	public boolean sendMessage(String message, String from, String to) {
@@ -98,5 +97,14 @@ public class PushMessageService {
 		provider.get(ServiceProvider.TWILIO).sendMessage(createMessageObject(message, from, to));
 		
 		return false;
+	}
+	
+	public String getProviderNumberForState(String stateCode) {
+		SmsProvider smsProvider = SmsServiceLoader.getProviders().get(stateCode.toUpperCase());
+		if (smsProvider == null) {
+			return SmsServiceLoader.getProviders().get("MO").getLongCode();
+		} else {
+			return smsProvider.getLongCode();
+		}
 	}
 }

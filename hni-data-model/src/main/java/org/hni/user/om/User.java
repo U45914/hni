@@ -17,6 +17,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hni.common.om.Persistable;
@@ -63,6 +64,14 @@ public class User implements Persistable, Serializable {
 	private String hashedSecret;
 	@Column(name = "salt")
 	private String salt;
+	@Column(name = "active")
+	private Boolean isActive;
+	@ManyToOne
+	@JoinColumn(name = "created_by", referencedColumnName = "id")
+	private User createdBy;
+	@ManyToOne
+	@JoinColumn(name = "updated_by", referencedColumnName = "id")
+	private User updatedBy;
 	
 	private transient String organizationName;
 	
@@ -227,4 +236,29 @@ public class User implements Persistable, Serializable {
 		this.addresses = addresses;
 	}
 
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
+	}
+
+	public User getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(User createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public User getUpdatedBy() {
+		return updatedBy;
+	}
+
+	public void setUpdatedBy(User updatedBy) {
+		this.updatedBy = updatedBy;
+	}
+
+	
 }

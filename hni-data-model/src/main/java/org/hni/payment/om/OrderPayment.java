@@ -20,13 +20,22 @@ public class OrderPayment implements Serializable, Persistable {
 
 	private static final long serialVersionUID = -1036619624568269599L;
 
-	@EmbeddedId private OrderPaymentPK id;
+	@EmbeddedId
+	private OrderPaymentPK id;
 
-	@Column(name="amount") private Double amount;
-	@Column(name="created_by") private Long createdById;
-	@Column(name="created_date") private Date createdDatetime;
+	@Column(name = "amount")
+	private Double amount;
+	@Column(name = "created_by")
+	private Long createdById;
+	@Column(name = "created_date")
+	private Date createdDatetime;
+	@Column(name = "status")
+	private String status;
 	
-	public OrderPayment() {}
+
+	public OrderPayment() {
+	}
+
 	public OrderPayment(OrderPaymentPK id, Double amount, Long createdById, Date createdDatetime) {
 		this.id = id;
 		this.amount = amount;
@@ -36,11 +45,14 @@ public class OrderPayment implements Serializable, Persistable {
 
 	@Override
 	public String toString() {
-		return String.format("OrderPayment: orderId:%d, cardId:%d, amount:%.2f ", id.getOrder().getId(), id.getPaymentInstrument().getId(), amount);
+		return String.format("OrderPayment: orderId:%d, cardId:%d, amount:%.2f ", id.getOrder().getId(),
+				id.getPaymentInstrument().getId(), amount);
 	}
+
 	public OrderPayment(Order order, PaymentInstrument paymentInstrument, Double amount, User user) {
 		this(new OrderPaymentPK(order, paymentInstrument), amount, user.getId(), new Date());
 	}
+
 	public OrderPaymentPK getId() {
 		return id;
 	}
@@ -72,6 +84,14 @@ public class OrderPayment implements Serializable, Persistable {
 	public void setCreatedDatetime(Date createdDatetime) {
 		this.createdDatetime = createdDatetime;
 	}
-	
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
 	
 }

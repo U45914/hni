@@ -12,6 +12,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hni.common.om.Persistable;
@@ -31,6 +33,9 @@ public class Client implements Persistable, Serializable {
 	
 	@Column(name = "user_id", nullable = false)
 	private Long userId;
+	@ManyToOne
+	@JoinColumn(name = "ngo_id", referencedColumnName = "id")
+	private Ngo ngo;
 	
 	@Column(name = "created_by", nullable = false)
 	private Long createdBy;

@@ -41,6 +41,25 @@
 			<artifactId>hni-sms-service</artifactId>
 			<version>${project.version}</version>
 		</dependency>		
-		
+		<dependency>
+			<groupId>org.hni</groupId>
+			<artifactId>hni-order</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hni</groupId>
+			<artifactId>hni-security</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hni</groupId>
+			<artifactId>hni-events</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hni</groupId>
+			<artifactId>hni-payment</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 </project>

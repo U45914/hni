@@ -148,8 +148,8 @@ public class DefaultOrderPaymentService extends AbstractService<OrderPayment> im
 			totalAmount = totalAmount.add(BigDecimal.valueOf(op.getAmount()));
 			PaymentInstrument pi = op.getId().getPaymentInstrument();
 			if (pi.getBalance() > 0) {
-				pi.setBalance(0.0);
-				paymentInstrumentDao.save(pi);
+				//pi.setBalance(0.0);
+				//paymentInstrumentDao.save(pi);
 			}
 		}
 		Collection<PaymentInstrument> providerCards = paymentInstrumentDao.with(provider,state);
@@ -158,6 +158,7 @@ public class DefaultOrderPaymentService extends AbstractService<OrderPayment> im
 				logger.info("locking card "+lockingKey(paymentInstrument));
 				double amount = (totalAmount.doubleValue() == 0.0)?order.getSubTotal():1.0;
 				OrderPayment orderPayment = new OrderPayment(order, paymentInstrument, amount, user);
+				orderPayment.setStatus("IP");
 				// associate this payment with the order before returning it
 				orderPaymentDao.save(orderPayment);
 				return Optional.of(orderPayment);
@@ -236,4 +237,7 @@ public class DefaultOrderPaymentService extends AbstractService<OrderPayment> im
 		lockingService.getNativeClient().getBucket(orderPaymentsKey(order)).delete();
 	}
 	
+	public PaymentInstrument updatePaymentInstrument(PaymentInstrument paymentInstrument) {
+		return paymentInstrumentDao.update(paymentInstrument);
+	}
 }
