@@ -113,36 +113,19 @@ public class CustomerDao extends DefaultGenericDAO {
 		return customers;
 	}
 	
-	public List<Map<String,Object>> getCustomerOrderCount(){
+	public Map<String, Object> getCustomerOrderCount(){
 		Long role = HNIRoles.CLIENT.getRole();
-		Query query1 = em.createNativeQuery("SELECT a.state,COUNT(*) "+
-				    			  "FROM order_items oi "+
-				    			  "INNER JOIN orders o ON oi.order_id = o.id "+
-				    			  "LEFT JOIN provider_locations pl ON o.provider_location_id = pl.id "+
-				    			  "LEFT JOIN addresses a ON pl.address_id = a.id "+
-				    			  "GROUP BY a.state");
+		Query query1 = em.createNativeQuery("SELECT COUNT(oi.id) as TotalOrders FROM order_items oi");
 		
 		Query query2 = em.createNativeQuery("SELECT COUNT(*) FROM user_organization_role uor WHERE uor.role_id = :roleId")
 						 .setParameter("roleId", role);
 		
-		List<Object[]> totalCount = query1.getResultList();
+		Map<String, Object> attributes = new HashMap<>();
 		
-		List<Map<String,Object>> resultList = new ArrayList<>();
-		Map<String, Object> state = new HashMap<>();
-		Map<String, Object> participants = new HashMap<>();
+		attributes.put("TotalOrders", query1.getSingleResult());
+		attributes.put("TotalParticipants", query2.getSingleResult());
+
 		
-		for(int i=0;i<totalCount.size();i++){
-			Object[] result = totalCount.get(i);
-			if (result != null && result[0] != null) {
-				state.put(result[0].toString().toUpperCase(), result[1]);
-			}
-		}
-		
-		participants.put("totalParticipants", query2.getSingleResult() );
-		
-		resultList.add(state);
-		resultList.add(participants);
-		
-		return resultList;
+		return attributes;
 	}
 }

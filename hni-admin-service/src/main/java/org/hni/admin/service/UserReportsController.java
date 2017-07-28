@@ -244,8 +244,8 @@ public class UserReportsController extends AbstractBaseController {
 
 		Map<String, Object> response = new HashMap<>();
 		try {
-			List<Map<String,Object>> count =  userReportService.getCustomersOrderCount();
-			response.put("data", count);
+			Map<String,Object> statAttributes =  userReportService.getCustomersOrderCount();
+			response.put("stats", statAttributes);
 			response.put(Constants.RESPONSE, Constants.SUCCESS);
 		} catch (Exception e) {
 			_LOGGER.error("Error in get participant and order total:" + e.getMessage(), e);

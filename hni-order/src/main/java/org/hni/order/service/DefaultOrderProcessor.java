@@ -56,8 +56,8 @@ public class DefaultOrderProcessor implements OrderProcessor {
 
     public static String REPLY_NOT_CURRENTLY_ORDERING = "You're not currently ordering, please respond with HUNGRY to place an order.";
     public static String REPLY_ORDER_CANCELLED = "You've cancelled your order.";
-    public static String REPLY_ORDER_GET_STARTED = "Yes! Let's get started to order a meal for you. ";
-    public static String REPLY_ORDER_REQUEST_ADDRESS = "Reply with your location (e.g. #3 Smith St. 72758) or ENDMEAL to quit";
+    public static String REPLY_ORDER_GET_STARTED = "OK! Let's get you something to eat. ";
+    public static String REPLY_ORDER_REQUEST_ADDRESS = "What is your nearest address? You'll need a complete address. (e.g. 1234 Main St. 63113) Or, text ENDMEAL to cancel.";
     public static String REPLY_PROVIDERS_UNAVAILABLE = "Providers currently unavailable. Reply with new location or try again later. Reply ENDMEAL to quit. ";
     public static String REPLY_NO_LOCATION_FOUND = "There seems to be a problem with your address. Please try again with street address, city, and State";
     public static String REPLY_NO_PROVIDERS_NEAR_BY = "There are no providers near your location {0}. Reply with new location or ENDMEAL to quit.";
@@ -72,8 +72,10 @@ public class DefaultOrderProcessor implements OrderProcessor {
     public static String REPLY_ORDER_NOT_FOUND = "I can't find a recent order for you, please reply HUNGRY to place an order.";
     public static String REPLY_GREATE_HERE_YOUR_OPTIONS = "Great! Here are your options: ";
     public static String REPLY_ORDER_ITEM = "%d) %s . ";
-    public static String REPLY_ORDER_CHOICE = "Reply %s to choose your %s. ";
+    public static String REPLY_ORDER_CHOICE = " Reply %s to choose your %s. ";
+    public static String REPLY_ORDER_SELECT = " Reply %s to select your %s. ";
     public static String REPLY_YOU_GOT_IT = "You got it! ";
+    public static String REPLY_HERE_ARE_YOUR_OPTIONS = "Here are your meal options: ";
 
     public static String REPLY_NO_UNDERSTAND = "I don't understand that. Reply with HUNGRY to place an order.";
     public static String REPLY_INVALID_INPUT = "Invalid input! ";
@@ -268,7 +270,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
             options = options.substring(0, options.length() - 3);
             options += " or " + order.getMenuItemsForSelection().size();
         }
-        return String.format(REPLY_YOU_GOT_IT + REPLY_ORDER_CHOICE, options,MSG_MEAL.toLowerCase()) + meals;
+        return String.format(REPLY_YOU_GOT_IT + REPLY_HERE_ARE_YOUR_OPTIONS +  meals + REPLY_ORDER_SELECT, options , MSG_MEAL.toLowerCase());
     }
     
     private String chooseProvider(User user, String message, PartialOrder order){
@@ -417,7 +419,7 @@ public class DefaultOrderProcessor implements OrderProcessor {
             options = options.substring(0, options.length() - 3);
             options += " or " + order.getProviderLocationsForSelection().size();
         }
-        return String.format(REPLY_GREATE_HERE_YOUR_OPTIONS + REPLY_ORDER_CHOICE, options, RESTAURANT.toLowerCase()) + meals;
+        return String.format(REPLY_GREATE_HERE_YOUR_OPTIONS + meals + REPLY_ORDER_CHOICE, options, RESTAURANT.toLowerCase()) ;
     }
 
     private String getAddressString(ProviderLocation location) {
