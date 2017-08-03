@@ -32,7 +32,6 @@ public class HNIUtils {
 			headers.add(addField("firstName", "First Name"));
 			headers.add(addField("lastName", "Last Name"));
 			headers.add(addField("mobilePhone", "Phone Number"));
-			headers.add(addField("race", "Race"));
 			headers.add(addField("address", "Address"));
 			headers.add(addField("orders", "No of Orders"));
 
