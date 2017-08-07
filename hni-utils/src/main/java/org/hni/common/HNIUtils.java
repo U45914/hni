@@ -45,7 +45,6 @@ public class HNIUtils {
 			headers.add(getFieldDefMap("firstName", "First Name", true, canEdit));
 			headers.add(getFieldDefMap("lastName", "Last Name", true, canEdit));
 			headers.add(getFieldDefMap("mobilePhone", "Phone Number", true, canEdit));
-			headers.add(getFieldDefMap("race", "Race", true, canEdit));
 			headers.add(getFieldDefMap("address", "Address", true, canEdit));
 			headers.add(getFieldDefMap("orders", "No of Orders", true, canEdit));
 
