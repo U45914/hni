@@ -18,46 +18,59 @@ public class HNIUtils {
 		return UUID.randomUUID().toString().replaceAll("-", "").trim();
 	}
 
-	public static List<Map<String, String>> getReportHeaders(Integer reportId) {
+	private static Map<String, Object> getFieldDefMap(String fieldName, String displayName,
+			Boolean resizable, Boolean enableCellEdit) {
+		Map<String, Object> fieldDef = new HashMap<>();
+		fieldDef.put("field", fieldName);
+		fieldDef.put("displayName", displayName);
+		fieldDef.put("resizable", resizable);
+		fieldDef.put("enableCellEdit", enableCellEdit);
+		//fieldDef.put("field", fieldName);
+		
+		return fieldDef;
+	}
+	
 
-		List<Map<String, String>> headers = new ArrayList<>();
+	public static List<Map<String, Object>> getReportHeaders(Integer reportId, Boolean canEdit) {
+
+		List<Map<String, Object>> headers = new ArrayList<>();
 		if (Constants.REPORT_ALL_NGO.equals(reportId)) {
 
-			headers.add(addField("name", "NGO Name"));
-			headers.add(addField("phone", "NGO Phone"));
-			headers.add(addField("address", "NGO Address"));
-			headers.add(addField("createdUsers", "Total number of Clients "));
+			headers.add(getFieldDefMap("name", "NGO Name", true, canEdit));
+			headers.add(getFieldDefMap("phone", "NGO Phone", true, canEdit));
+			headers.add(getFieldDefMap("address", "NGO Address", true, canEdit));
+			headers.add(getFieldDefMap("createdUsers", "Total number of Clients", true, canEdit));
 		} else if (Constants.REPORT_ALL_CUSTOMER.equals(reportId)) {
 
-			headers.add(addField("firstName", "First Name"));
-			headers.add(addField("lastName", "Last Name"));
-			headers.add(addField("mobilePhone", "Phone Number"));
-			headers.add(addField("race", "Race"));
-			headers.add(addField("address", "Address"));
-			headers.add(addField("orders", "No of Orders"));
+			headers.add(getFieldDefMap("firstName", "First Name", true, canEdit));
+			headers.add(getFieldDefMap("lastName", "Last Name", true, canEdit));
+			headers.add(getFieldDefMap("mobilePhone", "Phone Number", true, canEdit));
+			headers.add(getFieldDefMap("race", "Race", true, canEdit));
+			headers.add(getFieldDefMap("address", "Address", true, canEdit));
+			headers.add(getFieldDefMap("orders", "No of Orders", true, canEdit));
 
 		} else if(Constants.REPORT_ALL_VOLUNTEER.equals(reportId)){
-			headers.add(addField("firstName", "First Name"));
-			headers.add(addField("lastName", "Last Name"));
-			headers.add(addField("address", "Address"));
-			headers.add(addField("phone", "Phone Number"));
-			headers.add(addField("email", "Email"));
+			headers.add(getFieldDefMap("firstName", "First Name", true, canEdit));
+			headers.add(getFieldDefMap("lastName", "Last Name", true, canEdit));
+			headers.add(getFieldDefMap("address", "Address", true, canEdit));
+			headers.add(getFieldDefMap("phone", "Phone Number", true, canEdit));
+			headers.add(getFieldDefMap("email", "Email", true, canEdit));
 		}
 		else if(Constants.REPORT_ALL_ORDER.equals(reportId)){
-			headers.add(addField("orderDate", "Order date"));
-			headers.add(addField("readyDate", "Ready date"));
-			headers.add(addField("name", "Orderd By"));
-			headers.add(addField("orderstatus", "Order status"));
-			headers.add(addField("total", "Total"));
+			headers.add(getFieldDefMap("orderDate", "Order date", true, canEdit));
+			headers.add(getFieldDefMap("readyDate", "Ready date", true, canEdit));
+			headers.add(getFieldDefMap("name", "Orderd By", true, canEdit));
+			headers.add(getFieldDefMap("orderstatus", "Order status", true, canEdit));
+			headers.add(getFieldDefMap("total", "Total", true, canEdit));
 			//headers.add(addField("orderItems", "Ordered Items"));
 		}
 		else if (Constants.REPORT_ALL_PROVIDER.equals(reportId)) {
 
-			headers.add(addField("name", "Provider Name"));
-			headers.add(addField("address", "Address"));
-			headers.add(addField("website", "Website"));
-			headers.add(addField("createdOn", "Created On"));
-			headers.add(addField("createdBy", "Created By"));	
+			headers.add(getFieldDefMap("name", "Provider Name", true, canEdit));
+			headers.add(getFieldDefMap("address", "Address", true, canEdit));
+			headers.add(getFieldDefMap("website", "Website", true, canEdit));
+			headers.add(getFieldDefMap("createdOn", "Created On", true, canEdit));
+			headers.add(getFieldDefMap("createdBy", "Created By", true, canEdit));	
 			}
 		return headers;
 	}

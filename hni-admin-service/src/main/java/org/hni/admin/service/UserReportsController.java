@@ -59,7 +59,7 @@ public class UserReportsController extends AbstractBaseController {
 		Map<String, Object> response = new HashMap<>();
 		try {
 			List<NgoBasicDto> ngo = userReportService.getAllNgo();
-			response.put("headers", HNIUtils.getReportHeaders(40));
+			response.put("headers", HNIUtils.getReportHeaders(40, canEditField()));
 			response.put("data", ngo);
 			response.put(Constants.RESPONSE, Constants.SUCCESS);
 		} catch (Exception e) {
@@ -70,6 +70,10 @@ public class UserReportsController extends AbstractBaseController {
 
 	}
 
+	private Boolean canEditField() {
+		return true;
+	}
+
 	@GET
 	@Path("/customers/all")
 	@Produces({ MediaType.APPLICATION_JSON })
@@ -78,7 +82,7 @@ public class UserReportsController extends AbstractBaseController {
 
 		Map<String, Object> response = new HashMap<>();
 		try {
-			response.put("headers", HNIUtils.getReportHeaders(60));
+			response.put("headers", HNIUtils.getReportHeaders(60, canEditField()));
 			List<Map> customers = userReportService.getAllCustomersByRole();
 			response.put("data", customers);
 			response.put(Constants.RESPONSE, Constants.SUCCESS);
@@ -100,7 +104,7 @@ public class UserReportsController extends AbstractBaseController {
 		Map<String, Object> response = new HashMap<>();
 		try {
 			List<Map> customers = userReportService.getAllCustomersUnderOrganisation(user);
-			response.put("headers", HNIUtils.getReportHeaders(60));
+			response.put("headers", HNIUtils.getReportHeaders(60, canEditField()));
 			response.put("data", customers);
 			response.put(Constants.RESPONSE, Constants.SUCCESS);
 		} catch (Exception e) {
@@ -131,7 +135,7 @@ public class UserReportsController extends AbstractBaseController {
 				
 				dataList.add(json);
 			}
-			response.put("headers", HNIUtils.getReportHeaders(50));
+			response.put("headers", HNIUtils.getReportHeaders(50, canEditField()));
 			response.put("data", dataList);
 			response.put(Constants.RESPONSE, Constants.SUCCESS);
 		} catch (Exception e) {
@@ -153,7 +157,7 @@ public class UserReportsController extends AbstractBaseController {
 		Map<String, Object> response = new HashMap<>();
 		try {
 			List<Map> customers = userReportService.getAllCustomersEnrolledByNgo(user);
-			response.put("headers", HNIUtils.getReportHeaders(60));
+			response.put("headers", HNIUtils.getReportHeaders(60, canEditField()));
 			response.put("data", customers);
 			response.put(Constants.RESPONSE, Constants.SUCCESS);
 		} catch (Exception e) {
@@ -204,7 +208,7 @@ public class UserReportsController extends AbstractBaseController {
 				// or.put("orderItems", order.getOrderItems());
 				dataList.add(or);
 			}
-			response.put("headers", HNIUtils.getReportHeaders(30));
+			response.put("headers", HNIUtils.getReportHeaders(30, canEditField()));
 			response.put("data", dataList);
 			response.put(Constants.RESPONSE, Constants.SUCCESS);
 		} catch (Exception e) {
@@ -225,7 +229,7 @@ public class UserReportsController extends AbstractBaseController {
 		Map<String, Object> response = new HashMap<>();
 		try {
 			List<ObjectNode> providers = userReportService.getAllProviders(user);
-			response.put("headers", HNIUtils.getReportHeaders(20));
+			response.put("headers", HNIUtils.getReportHeaders(20, canEditField()));
 			response.put("data", providers);
 			response.put(Constants.RESPONSE, Constants.SUCCESS);
 		} catch (Exception e) {
