@@ -2,8 +2,10 @@ package org.hni.admin.service;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Map;
 
 import javax.inject.Inject;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -28,6 +30,7 @@ import org.hni.provider.om.MenuItem;
 import org.hni.provider.om.Provider;
 import org.hni.provider.om.ProviderLocation;
 import org.hni.provider.om.ProviderLocationHour;
+import org.hni.service.helper.onboarding.OrderServiceHelper;
 import org.hni.user.dao.UserDAO;
 import org.hni.user.om.User;
 import org.slf4j.Logger;
@@ -44,11 +47,17 @@ import io.swagger.annotations.ApiOperation;
 @Component
 @Path("/orders")
 public class OrderController extends AbstractBaseController {
-	private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(OrderController.class);
 	
-	@Inject private OrderService orderService;
-	@Inject private OrderPaymentService orderPaymentService; // for resets
-	@Inject private UserDAO userDao;
+	@Inject 
+	private OrderService orderService;
+	@Inject 
+	private OrderPaymentService orderPaymentService; 
+	@Inject 
+	private UserDAO userDao;
+	
+	@Inject
+	private OrderServiceHelper orderServiceHelper;
 	
 	@GET
 	@Path("/{id}")
@@ -88,6 +97,24 @@ public class OrderController extends AbstractBaseController {
 		throw new HNIException("You must have elevated permissions to do this.");
 	}
 
+	@POST
+	@Path("/cancel/{id}")
+	@Produces({MediaType.APPLICATION_JSON})
+	@Consumes({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = "Cancel a order with reason code and text"
+		, notes = ""
+		, response = Order.class
+		, responseContainer = "")
+	public Response cancelOrder(@PathParam("id") Long id, Map<String, Object> cancelOrderInfo) {
+		LOGGER.info("Request reached for cancel order " + id);
+		if (getLoggedInUser() != null) {
+			return Response.ok().entity(orderServiceHelper.cancelOrder(cancelOrderInfo, id)).build();
+		} else {
+			LOGGER.error("User not logged IN");
+			throw new HNIException();
+		}
+	}
+	
 	@GET
 	@Path("/next")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -107,8 +134,8 @@ public class OrderController extends AbstractBaseController {
 				order = orderService.next(stateCode);
 			}
 			if ( null != order ) {
-				logger.info("Returning Order "+order.getId());
-				logger.info(serializeOrderToJson(order));
+				LOGGER.info("Returning Order "+order.getId());
+				LOGGER.info(serializeOrderToJson(order));
 				return Response.status(Response.Status.OK).
 		                entity(serializeOrderToJson(order)).
 		                type(MediaType.APPLICATION_JSON).
@@ -153,7 +180,7 @@ public class OrderController extends AbstractBaseController {
 		, responseContainer = "")
 	public void removeLock(@PathParam("id") Long id) {
 		//if (isPermitted(Constants.ORDER, Constants.CREATE, 0L)) {
-			logger.info("Unlocking Order "+id);
+			LOGGER.info("Unlocking Order "+id);
 			orderService.releaseLock(orderService.get(id));
 		//}
 		//throw new HNIException("You must have elevated permissions to do this.");
@@ -209,7 +236,7 @@ public class OrderController extends AbstractBaseController {
 					.onClass(MenuItem.class, Match.match().include("*").exclude("menu")));
 			return json;
 		} catch (Exception e) {
-			logger.error("Serializing User object:"+e.getMessage(), e);
+			LOGGER.error("Serializing User object:"+e.getMessage(), e);
 		}
 		return "{}";
 	}

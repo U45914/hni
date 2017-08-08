@@ -39,4 +39,12 @@ public class SmsMessage {
 		this.status = status;
 	}
 
+	@Override
+	public String toString() {
+		return "SmsMessage [toNumber=" + toNumber + ", text=" + text + ", fromNumber=" + fromNumber + ", status="
+				+ status + "]";
+	}
+	
+	
+
 }

@@ -60,7 +60,7 @@ public class NGOGenericDAO extends DefaultGenericDAO {
 		List<NgoBasicDto> ngos = new ArrayList<>();
 		Long ngoRoleId = HNIRoles.NGO.getRole();
 		List<Object[]> userOrganizationRoles = em
-				.createNativeQuery("SELECT u.id,u.first_name,u.last_name, u.mobile_phone,ng.website,ad.address_line1, ad.city,ad.state  "
+				.createNativeQuery("SELECT u.id, ng.contact_name, u.mobile_phone, ng.website, ad.address_line1, ad.city, ad.state, ng.id  "
 						+ "FROM ngo ng  "
 						+ "LEFT JOIN users u ON u.id = ng.user_id  "
 						+ "LEFT JOIN user_organization_role uor ON uor.user_id = u.id  "
@@ -72,14 +72,15 @@ public class NGOGenericDAO extends DefaultGenericDAO {
 		for (Object[] u : userOrganizationRoles) {
 			NgoBasicDto ngoBasicDto = new NgoBasicDto();
 			Long userId = Long.valueOf(getValue(u[0]));
-
+			Long ngoId = Long.valueOf(getValue(u[7]));
+			
 			ngoBasicDto.setUserId(userId);
-			ngoBasicDto.setName(getValue(u[1]) + " " + getValue(u[2]));
-			ngoBasicDto.setPhone(HNIConverter.convertPhoneNumberToUiFormat(getValue(u[3])));
-			ngoBasicDto.setWebsite(u[4] != null ? (String) u[4] : "");
-			ngoBasicDto.setAddress(getValue(u[5]) + "," + getValue(u[6]) + "," + getValue(u[7]));
-			ngoBasicDto.setCreatedUsers((Long) em.createQuery("select count(id) from Client where createdBy=:userId")
-					.setParameter("userId", userId).getSingleResult());
+			ngoBasicDto.setName(getValue(u[1]));
+			ngoBasicDto.setPhone(HNIConverter.convertPhoneNumberToUiFormat(getValue(u[2])));
+			ngoBasicDto.setWebsite(u[3] != null ? (String) u[3] : "");
+			ngoBasicDto.setAddress(getValue(u[4]) + "," + getValue(u[5]) + "," + getValue(u[6]));
+			ngoBasicDto.setCreatedUsers((Long) em.createQuery("select count(id) from Client where ngo_id=:ngoId")
+					.setParameter("ngoId", ngoId).getSingleResult());
 			ngos.add(ngoBasicDto);
 		}
 		return ngos;

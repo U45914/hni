@@ -83,4 +83,6 @@ public interface OrderService extends BaseService<Order> {
 	 * @return
 	 */
 	public boolean hasActiveActivationCodes(User user);
+	
+	public Order cancelOrder(Order order);
 }

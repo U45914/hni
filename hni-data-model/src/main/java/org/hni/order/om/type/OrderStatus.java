@@ -9,6 +9,8 @@ public class OrderStatus {
 	public static OrderStatus OPEN = new OrderStatus(1L, "Open");
 	public static OrderStatus ORDERED = new OrderStatus(2L, "Order Placed");
 	public static OrderStatus CLOSED = new OrderStatus(3L, "Closed");
+	public static OrderStatus CANCELLED = new OrderStatus(4L, "Cancelled");
+	public static OrderStatus REJECTED = new OrderStatus(5L, "Rejected");
 	
 	private Long id;
 	private String name;
@@ -34,7 +36,7 @@ public class OrderStatus {
 		return null;
 	}
 
-	private static final OrderStatus[] TYPES = { OPEN, ORDERED, CLOSED};
+	private static final OrderStatus[] TYPES = { OPEN, ORDERED, CLOSED, CANCELLED, REJECTED};
 	public static final List<OrderStatus> VALUES = Collections.unmodifiableList(Arrays.asList(TYPES));
 
 
