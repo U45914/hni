@@ -60,7 +60,7 @@ public class NGOGenericDAO extends DefaultGenericDAO {
 		List<NgoBasicDto> ngos = new ArrayList<>();
 		Long ngoRoleId = HNIRoles.NGO.getRole();
 		List<Object[]> userOrganizationRoles = em
-				.createNativeQuery("SELECT u.id, ng.contact_name, u.mobile_phone, ng.website, ad.address_line1, ad.city, ad.state, ng.id  "
+				.createNativeQuery("SELECT u.id, ng.contact_name, u.mobile_phone, ng.website, ad.address_line1, ad.city, ad.state, ng.id as ngoId  "
 						+ "FROM ngo ng  "
 						+ "LEFT JOIN users u ON u.id = ng.user_id  "
 						+ "LEFT JOIN user_organization_role uor ON uor.user_id = u.id  "

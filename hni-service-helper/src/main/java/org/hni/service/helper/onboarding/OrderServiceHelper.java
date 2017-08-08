@@ -63,6 +63,7 @@ public class OrderServiceHelper extends AbstractServiceHelper {
 				response.put(Constants.MESSAGE, NO_ORDER_FOUND_WITH_THE_GIVEN_DETAILS);
 			}
 		} catch (Exception e) {
+			_LOGGER.error("Exception while cancelling order " + orderId, e);
 			response.put(Constants.RESPONSE, Constants.ERROR);
 			response.put(Constants.MESSAGE, SOMETHING_WENT_WRONG_PLEASE_RETRY_AFTER_SOMETIME);
 		}
