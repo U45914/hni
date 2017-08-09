@@ -207,4 +207,15 @@ public class DefaultOrderService extends AbstractService<Order> implements Order
 		logger.debug("hasActiveActivationCodes size=" + list.size());
 		return (list.size() > 0);
 	}
+
+	@Override
+	public Order cancelOrder(Order order) {
+		
+		if (lockingService.isLocked(getLockingKey(order))) {
+			releaseLock(order);
+		}
+		order.setStatus(OrderStatus.CANCELLED);
+		orderDao.update(order);
+		return order;
+	}
 }

@@ -46,6 +46,7 @@ public class SMSRestClient extends HniWebClient {
    
     public String sendMessageWithTwilio(SmsMessage entity) {
     	Twilio.init(TWILIO_AUTH_USER, TWILIO_API_KEY);
+    	LOGGER.debug("Message Information : ", entity.toString());
     	Message message = Message.creator(new PhoneNumber(entity.getToNumber()), 
     						new PhoneNumber(entity.getFromNumber()), 
     							entity.getText())

@@ -57,6 +57,8 @@ public class Constants {
 	
 	// Constants for HNI Templates
 	public static final String PARTICIPANT_ORDER_CONFIRMATION_NOTIFICATION = "POCN";
+	public static final String ORDER_CANCELLATION_NOTIFICATION = "OCAN";
+	
 	public static final String HNI_CAP = "HNI";
 	
 	public static final Map<String, Integer> USER_TYPES = new HashMap<>();

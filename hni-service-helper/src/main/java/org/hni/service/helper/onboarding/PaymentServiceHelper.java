@@ -11,13 +11,11 @@ import javax.inject.Inject;
 
 import org.hni.common.Constants;
 import org.hni.common.exception.HNIException;
-import org.hni.common.service.HniTemplateService;
 import org.hni.order.om.Order;
 import org.hni.order.service.OrderService;
 import org.hni.payment.om.OrderPayment;
 import org.hni.payment.om.PaymentInstrument;
 import org.hni.payment.service.OrderPaymentService;
-import org.hni.sms.service.provider.PushMessageService;
 import org.hni.template.om.HniTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,10 +40,6 @@ public class PaymentServiceHelper extends AbstractServiceHelper {
 	private OrderService orderService;
 	@Inject
 	private OrderPaymentService orderPaymentService;
-	@Inject
-	private PushMessageService smsMessageService;
-	@Inject 
-	private HniTemplateService hniTemplateService;
 	
 
 	public String completeOrder(Long orderId, String confirmationId, Double orderAmount) throws Exception {
@@ -83,10 +77,6 @@ public class PaymentServiceHelper extends AbstractServiceHelper {
 			_LOGGER.error("Exception while sending confirmation message to user "+ traceKey, e);
 			throw new Exception("Order Marked as complete, but confirmation message not sent : " + traceKey);
 		}
-	}
-
-	private String getFromNumber(String stateCode) {
-		return smsMessageService.getProviderNumberForState(stateCode);
 	}
 
 	private BigDecimal updateOrderPaymentStatusAndGetSubTotal(Collection<OrderPayment> paymentsForOrder, String traceKey) {
