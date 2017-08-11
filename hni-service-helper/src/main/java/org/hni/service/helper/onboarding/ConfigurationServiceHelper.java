@@ -185,4 +185,25 @@ public class ConfigurationServiceHelper extends AbstractServiceHelper {
 
 		return response;
 	}
+	
+	public Map<Object, Object> deleteUsers(List<Long> userIds, User loggedInUser) {
+		_LOGGER.debug("Starting process for delete user");
+		Map<Object, Object> response = new HashMap<>();
+		userIds.stream().parallel().forEach(userId -> {
+			User toUser = userService.get(userId);
+	
+			if (isAllowed(loggedInUser, toUser)) {
+				toUser.setIsActive(false);
+				toUser.setDeleted(true);
+	
+				toUser.setUpdatedBy(loggedInUser);
+				userService.update(toUser);
+	
+				response.put(userId, Constants.SUCCESS);
+			} else {
+				response.put(userId, Constants.ERROR);
+			}
+		});
+		return response;
+	}
 }

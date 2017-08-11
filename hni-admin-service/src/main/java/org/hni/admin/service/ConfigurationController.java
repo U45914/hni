@@ -6,6 +6,7 @@ package org.hni.admin.service;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -31,6 +32,7 @@ public class ConfigurationController extends AbstractBaseController {
 
 	private static final Logger _LOGGER = LoggerFactory.getLogger(ConfigurationController.class);
 
+	@Inject
 	private ConfigurationServiceHelper configurationServiceHelper;
 
 	@POST
@@ -97,6 +99,20 @@ public class ConfigurationController extends AbstractBaseController {
 		User loggedInUser = getLoggedInUser();
 		if (loggedInUser != null) {
 			Map<String, String> response = configurationServiceHelper.deleteUser(userId, loggedInUser);
+			return Response.ok().entity(response).build();
+		} else {
+			return Response.status(Status.UNAUTHORIZED).build();
+		}
+	}
+	
+	@POST
+	@Path("/users/delete")
+	@Produces("application/json")
+	public Response deleteUsers(List<Long> userIds) {
+		_LOGGER.debug("Request reached to delete multiple user " + userIds);
+		User loggedInUser = getLoggedInUser();
+		if (loggedInUser != null) {
+			Map<Object, Object> response = configurationServiceHelper.deleteUsers(userIds, loggedInUser);
 			return Response.ok().entity(response).build();
 		} else {
 			return Response.status(Status.UNAUTHORIZED).build();
