@@ -108,6 +108,14 @@ public class DefaultGenericDAO implements GenericDAO {
 			return "-";
 		}
 	}
+	
+	protected String getValueForBoolean(Object field) {
+		if (field != null) {
+			return String.valueOf(field).equalsIgnoreCase("1") ? "Active" : "Not Active";
+		} else {
+			return "Not Active";
+		}
+	}
 
 
 }

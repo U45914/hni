@@ -22,7 +22,7 @@ public class CustomerDao extends DefaultGenericDAO {
 		Long role = HNIRoles.CLIENT.getRole();
 
 		List<Object[]> user = em
-				.createNativeQuery("SELECT u.first_name,u.last_name,u.gender_code,u.mobile_phone,u.email, a.address_line1, COUNT(o.id) AS ordCount "
+				.createNativeQuery("SELECT u.id, u.active, u.first_name,u.last_name,u.gender_code,u.mobile_phone,u.email, a.address_line1, COUNT(o.id) AS ordCount "
 						+ "FROM users u "
 						+ "LEFT JOIN user_organization_role uor ON uor.user_id = u.id "
 						+ "LEFT JOIN client c ON c.user_id = u.id "
@@ -34,11 +34,13 @@ public class CustomerDao extends DefaultGenericDAO {
 				.setParameter("roleId", role).getResultList();
 		for (Object[] u : user) {
 			Map<String,String> map=new HashMap<String,String>();
-			map.put("firstName",getValue(u[0]));
-			map.put("lastName",getValue(u[1]));
-			map.put("mobilePhone",HNIConverter.convertPhoneNumberToUiFormat(getValue(u[3])));
-			map.put("address",getValue(u[5]));
-			map.put("orders", getValue(u[6]));	
+			map.put("uid",getValue(u[0]));
+			map.put("active", getValueForBoolean(u[1]));
+			map.put("firstName",getValue(u[2]));
+			map.put("lastName",getValue(u[3]));
+			map.put("mobilePhone",HNIConverter.convertPhoneNumberToUiFormat(getValue(u[5])));
+			map.put("address",getValue(u[7]));
+			map.put("orders", getValue(u[8]));	
 			customers.add(map);
 		}
 		return customers;
