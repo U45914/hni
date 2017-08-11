@@ -27,7 +27,7 @@ public class RegisterService extends AbstractRegistrationService<User> {
 
 	private static final String I_ACCEPT = "i accept";
 
-	private static final String THANK_YOU_FOR_REGISTERING_WITH_HUNGER_NOT_IMPOSSIBLE = "Thank you for registering with HungerNotImpossible. ";
+	private static final String THANK_YOU_FOR_REGISTERING_WITH_HUNGER_NOT_IMPOSSIBLE = "Congrats! You've successfully enrolled in Hunger Not Impossible. When you'd like to pickup something to eat, text HUNGRY back to this number. Orders are placed 11-8 pm.";
 
 	private static final String DEPENDANTS = "dependants";
 
@@ -200,7 +200,7 @@ public class RegisterService extends AbstractRegistrationService<User> {
 		case STATE_REGISTER_NUMBER_OF_CHILDREN:
 			Integer childrens = 0;
 			if (textMessage.equalsIgnoreCase("none")) {
-				returnString = REPLY_REGISTRATION_COMPLETE;
+				returnString = THANK_YOU_FOR_REGISTERING_WITH_HUNGER_NOT_IMPOSSIBLE;
 				nextStateCode = RegistrationStep.STATE_REGISTER_ACCEPT_POLICY;
 				user.getAdditionalInfo().put(DEPENDANTS, childrens);
 			} else {
@@ -219,7 +219,7 @@ public class RegisterService extends AbstractRegistrationService<User> {
 			break;
 		case STATE_REGISTER_ACCEPT_POLICY:
 			if (textMessage.equalsIgnoreCase(I_ACCEPT)) {
-				returnString = THANK_YOU_FOR_REGISTERING_WITH_HUNGER_NOT_IMPOSSIBLE + REPLY_REGISTRATION_COMPLETE;
+				returnString = THANK_YOU_FOR_REGISTERING_WITH_HUNGER_NOT_IMPOSSIBLE;
 				registerUserAndSetActivationCodes(user);
 			} else {
 				returnString = REPLY_ACCEPT_POLICY_ERROR;
