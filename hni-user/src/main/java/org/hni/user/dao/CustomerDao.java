@@ -29,7 +29,7 @@ public class CustomerDao extends DefaultGenericDAO {
 						+ "LEFT JOIN user_address ua ON ua.user_id = u.id "
 						+ "LEFT JOIN addresses a ON a.id = ua.address_id "
 						+ "LEFT JOIN orders o ON o.user_id=u.id "
-						+ "WHERE uor.role_id = :roleId AND u.deleted = 0"
+						+ "WHERE uor.role_id = :roleId AND u.deleted = 0 "
 						+ "group by u.id;")
 				.setParameter("roleId", role).getResultList();
 		for (Object[] u : user) {
