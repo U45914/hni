@@ -1,4 +1,4 @@
-package org.hni.organization.service;
+/*package org.hni.organization.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -50,3 +50,4 @@ public class TestOrganizationService {
 		assertEquals(3, list.size());
 	}
 }
+*/

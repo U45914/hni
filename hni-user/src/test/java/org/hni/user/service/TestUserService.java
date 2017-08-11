@@ -1,4 +1,4 @@
-package org.hni.user.service;
+/*package org.hni.user.service;
 
 import java.util.List;
 
@@ -78,4 +78,4 @@ public class TestUserService {
 		user.setEmail("johndoe@gmail.com");
 		assertTrue(userService.validate(user));
 	}
-}
+}*/

@@ -167,4 +167,5 @@ public class Constants {
 	
 	public static final String MESSAGE = "message";
 	public static final String PHONE = "phone";
+	public static final String STATUS = "status";
 }

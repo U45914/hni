@@ -25,7 +25,7 @@ public class DefaultUserDAO extends AbstractDAO<User> implements UserDAO {
 	@Override
 	public List<User> byMobilePhone(String mobilePhone) {
 		try {
-			Query q = em.createQuery("SELECT x FROM User x WHERE x.mobilePhone = :mobilePhone").setParameter("mobilePhone", mobilePhone);
+			Query q = em.createQuery("SELECT x FROM User x WHERE x.mobilePhone = :mobilePhone  AND x.isActive = 1 AND deleted = 0").setParameter("mobilePhone", mobilePhone);
 			return q.getResultList();
 		} catch (NoResultException e) {
 			return Collections.emptyList();
@@ -35,7 +35,7 @@ public class DefaultUserDAO extends AbstractDAO<User> implements UserDAO {
 	@Override
 	public List<User> byLastName(String lastName) {
 		try {
-			Query q = em.createQuery("SELECT x FROM User x WHERE x.lastName = :lastName").setParameter("lastName", lastName);
+			Query q = em.createQuery("SELECT x FROM User x WHERE x.lastName = :lastName  AND x.isActive = 1 AND deleted = 0 ").setParameter("lastName", lastName);
 			return q.getResultList();
 		} catch (NoResultException e) {
 			return Collections.emptyList();
@@ -45,7 +45,7 @@ public class DefaultUserDAO extends AbstractDAO<User> implements UserDAO {
 	@Override
 	public User byEmailAddress(String email) {
 		try {
-			Query q = em.createQuery("SELECT x FROM User x WHERE x.email = :email").setParameter("email", email);
+			Query q = em.createQuery("SELECT x FROM User x WHERE x.email = :email AND x.isActive = 1 AND deleted = 0 ").setParameter("email", email);
 			return (User) q.getSingleResult();
 		} catch (NoResultException e) {
 			return null;
