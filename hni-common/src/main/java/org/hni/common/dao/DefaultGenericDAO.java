@@ -116,6 +116,14 @@ public class DefaultGenericDAO implements GenericDAO {
 			return "Not Active";
 		}
 	}
+	
+	protected String getValueForSheltered(Object field) {
+		if (field != null) {
+			return String.valueOf(field).equalsIgnoreCase("1") ? "Sheltered" : "Unsheltered";
+		} else {
+			return "Unsheltered";
+		}
+	}
 
 
 }

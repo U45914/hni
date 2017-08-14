@@ -74,7 +74,7 @@ public class Client implements Persistable, Serializable {
 	@Column(name = "live_at_home", length = 1)
 	private boolean liveAtHome;
 	@Column(name = "sheltered")
-	private Integer sheltered;
+	private Boolean sheltered;
 	@Column(name = "parent_education")
 	private Integer parentEducation;
 	@Column(name = "education")
@@ -184,7 +184,7 @@ public class Client implements Persistable, Serializable {
 			String monthlyPlanData, String monthlyPlanCost,
 			Integer altMonthlyPlan, String altMonthlyPlanTogether,
 			Integer sliblings, Integer kids, boolean liveAtHome,
-			Integer sheltered, Integer liveWith, Integer parentEducation, Integer education,
+			Boolean sheltered, Integer liveWith, Integer parentEducation, Integer education,
 			Integer enrollmentStatus, String enrollmentLocation,
 			Integer workStatus, Integer timeToWorkplace, Integer noOfJob,
 			String employer, String jobTitle, Integer durationOfEmployement,
@@ -449,11 +449,11 @@ public class Client implements Persistable, Serializable {
 	}
 
 	
-	public Integer getSheltered() {
+	public Boolean getSheltered() {
 		return this.sheltered;
 	}
 
-	public void setSheltered(Integer sheltered) {
+	public void setSheltered(Boolean sheltered) {
 		this.sheltered = sheltered;
 	}
 
