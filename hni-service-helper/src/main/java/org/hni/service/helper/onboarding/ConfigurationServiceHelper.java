@@ -11,6 +11,8 @@ import org.hni.common.Constants;
 import org.hni.organization.om.UserOrganizationRole;
 import org.hni.organization.service.OrganizationUserService;
 import org.hni.type.HNIRoles;
+import org.hni.user.dao.ClientDAO;
+import org.hni.user.om.Client;
 import org.hni.user.om.User;
 import org.hni.user.service.UserService;
 import org.slf4j.Logger;
@@ -27,6 +29,9 @@ public class ConfigurationServiceHelper extends AbstractServiceHelper {
 	@Inject
 	@Named("defaultUserService")
 	private UserService userService;
+	
+	@Inject
+	private ClientDAO clientDao;
 
 	public Map<String, String> activateUser(Long userId, User loggedInUser) {
 		_LOGGER.debug("Starting process for activate user");
@@ -204,6 +209,31 @@ public class ConfigurationServiceHelper extends AbstractServiceHelper {
 				response.put(userId, Constants.ERROR);
 			}
 		});
+		return response;
+	}
+	
+	public Map<String, String> shelterUser(Long userId, User loggedInUser) {
+		_LOGGER.debug("Starting process for shelter user");
+		Map<String, String> response = new HashMap<>();
+		User toUser = userService.get(userId);
+
+		if (isAllowed(loggedInUser, toUser)) {
+			Client client = clientDao.getByUserId(userId);
+			if(client != null){
+				client.setSheltered(true);
+				client.getUser().setUpdatedBy(userService.get(loggedInUser.getId()));
+			}
+			toUser.setUpdatedBy(loggedInUser);
+			userService.update(toUser);
+			
+
+			response.put(Constants.STATUS, Constants.SUCCESS);
+			response.put(Constants.MESSAGE, "User is been sheltered");
+		} else {
+			response.put(Constants.STATUS, Constants.ERROR);
+			response.put(Constants.MESSAGE, "You don't have to permission to excute this action");
+		}
+
 		return response;
 	}
 }

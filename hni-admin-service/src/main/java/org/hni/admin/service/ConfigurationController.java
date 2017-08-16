@@ -119,4 +119,18 @@ public class ConfigurationController extends AbstractBaseController {
 		}
 	}
 	
+	@POST
+	@Path("/user/sheltered")
+	@Produces("application/json")
+	public Response shelterUser(Long userId) {
+		_LOGGER.debug("Request reached to shelter user " + userId);
+		User loggedInUser = getLoggedInUser();
+		if (loggedInUser != null) {
+			Map<String, String> response = configurationServiceHelper.shelterUser(userId, loggedInUser);
+			return Response.ok().entity(response).build();
+		} else {
+			return Response.status(Status.UNAUTHORIZED).build();
+		}
+	}
+	
 }
