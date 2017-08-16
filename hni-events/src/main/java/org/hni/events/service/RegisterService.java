@@ -239,6 +239,8 @@ public class RegisterService extends AbstractRegistrationService<User> {
 		user.setOrganizationId(1L);
 		HNISecurityUtils.setHashSecret(user, user.getPassword());
 		user.setPassword("");
+		user.setIsActive(true);
+		user.setDeleted(false);
 		Invitation invitation = userOnboardingService.getInvitationByPhoneNumber(user.getMobilePhone());
 		if (invitation != null) {
 			orgUserService.register(user, HNIRoles.CLIENT.getRole());
