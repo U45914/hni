@@ -3,6 +3,8 @@
  */
 package org.hni.admin.service;
 
+import io.swagger.annotations.Api;
+
 import java.util.List;
 import java.util.Map;
 
@@ -14,12 +16,15 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.hni.service.helper.onboarding.ConfigurationServiceHelper;
+import org.hni.user.om.Client;
+import org.hni.user.om.Dependent;
 import org.hni.user.om.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import io.swagger.annotations.Api;
+import com.monitorjbl.json.JsonView;
+import com.monitorjbl.json.Match;
 
 /**
  * @author Rahul
@@ -133,4 +138,34 @@ public class ConfigurationController extends AbstractBaseController {
 		}
 	}
 	
+	@POST
+	@Path("/user/participant/details")
+	@Produces("application/json")
+	public String getParticipantDetails(Long userId) {
+		_LOGGER.debug("Request reached to retrieve participant details " + userId);
+		User loggedInUser = getLoggedInUser();
+		return  serializeClientToJson(configurationServiceHelper.getParticipantDetails(userId, loggedInUser));
+	}
+	
+	private String serializeClientToJson(Client client) {
+		try {
+			String json = mapper.writeValueAsString(JsonView.with(client)
+					.onClass(User.class, Match.match().exclude("*").include("id", "firstName", "lastName", "mobilePhone", "email", "createdBy", "addresses", "isActive"))
+					.onClass(Client.class, Match.match().exclude("*").include("id", "user", "sheltered", "dependents"))
+					.onClass(Dependent.class, Match.match().exclude("*").include("name", "age")));
+				
+			return json;
+		} catch (Exception e) {
+			_LOGGER.error("Serializing Client object:"+e.getMessage(), e);
+		}
+		return "{}";
+	}
+	
+	@POST
+	@Path("/user/participant/save")
+	@Produces("application/json")
+	public String saveParticipantDetails(Client client) {
+		_LOGGER.debug("Request reached to save participant details " + client);
+		return  "Success";
+	}
 }

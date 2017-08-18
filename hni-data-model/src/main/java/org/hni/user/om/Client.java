@@ -6,13 +6,19 @@ import static javax.persistence.GenerationType.IDENTITY;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -31,8 +37,7 @@ public class Client implements Persistable, Serializable {
 	@Column(name = "id", unique = true, nullable = false)
 	private Integer id;
 	
-	@Column(name = "user_id", nullable = false)
-	private Long userId;
+	transient private Long userId;
 	@ManyToOne
 	@JoinColumn(name = "ngo_id", referencedColumnName = "id")
 	private Ngo ngo;
@@ -41,7 +46,9 @@ public class Client implements Persistable, Serializable {
 	private Long createdBy;
 	@Column(name = "race", nullable = false)
 	private Long race;
-	transient private User user;
+	@ManyToOne
+	@JoinColumn(name = "user_id", referencedColumnName = "id")
+	private User user;
 	transient private Address address;
 	@Column(name = "bday")
 	private Date bday;
@@ -167,6 +174,10 @@ public class Client implements Persistable, Serializable {
 	private Integer ethnicity;
 	
 	transient private List<Integer> foodPreferenceList = new ArrayList<>();
+	
+	@ManyToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+	@JoinTable(name = "participant_dependent_relation", joinColumns = { @JoinColumn(name = "client_id", nullable = false, updatable = false) }, inverseJoinColumns = { @JoinColumn(name = "dependent_id",  referencedColumnName = "id", nullable = false, updatable = false) })	
+	private Set<Dependent> dependents = new HashSet<>(0);
 	
 	public Client() {
 	}
@@ -873,6 +884,15 @@ public class Client implements Persistable, Serializable {
 	public void setFoodPreferenceList(List<Integer> foodPreferenceList) {
 		this.foodPreferenceList = foodPreferenceList;
 	}
+
+	public Set<Dependent> getDependents() {
+		return dependents;
+	}
+
+	public void setDependants(Set<Dependent> dependents) {
+		this.dependents = dependents;
+	}
+	
 	
 
 }

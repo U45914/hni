@@ -17,7 +17,7 @@ public class ClientDAOImpl extends AbstractDAO<Client> implements ClientDAO  {
 
 	@Override
 	public Client getByUserId(Long userId) {
-			Query q = em.createQuery("SELECT x FROM Client x WHERE x.userId = :userId").setParameter("userId", userId);
+			Query q = em.createQuery("SELECT x FROM Client x WHERE x.user.id = :userId").setParameter("userId", userId);
 			List<Client> clients = q.getResultList();
 			if (clients.isEmpty()) {
 				return null;
