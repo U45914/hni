@@ -236,4 +236,15 @@ public class ConfigurationServiceHelper extends AbstractServiceHelper {
 
 		return response;
 	}
+	
+	public Client getParticipantDetails(Long userId, User loggedInUser) {
+		_LOGGER.debug("Starting process for retrieve user");
+		Map<String, String> response = new HashMap<>();
+		User toUser = userService.get(userId);
+
+		if (isAllowed(loggedInUser, toUser)) {
+			return clientDao.getByUserId(userId);
+		}
+		return null;
+	}
 }
