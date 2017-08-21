@@ -102,4 +102,16 @@ public class DefaultOrderDAO extends AbstractDAO<Order> implements OrderDAO {
 		}
 	}
 	
+	@Override
+	public Collection<Order> getOpenOrdersFor(User user) {
+		try {
+			Query q = em.createQuery("SELECT x FROM Order x WHERE x.user.id = :userId AND x.statusId = :statusId")
+					.setParameter("userId", user.getId())
+					.setParameter("statusId", OrderStatus.OPEN.getId());
+			return q.getResultList();
+		} catch(NoResultException e) {
+			return Collections.emptyList();
+		}
+	}
+	
 }

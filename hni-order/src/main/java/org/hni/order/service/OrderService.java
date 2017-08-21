@@ -85,4 +85,11 @@ public interface OrderService extends BaseService<Order> {
 	public boolean hasActiveActivationCodes(User user);
 	
 	public Order cancelOrder(Order order);
+	
+	/**
+	 * Get all the open orders (OrderStatus.OPEN) for the given user
+	 * @param user
+	 * @return a collection of open orders
+	 */
+	public Collection<Order> getOpenOrdersFor(User user);
 }

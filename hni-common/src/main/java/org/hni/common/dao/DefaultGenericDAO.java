@@ -119,9 +119,9 @@ public class DefaultGenericDAO implements GenericDAO {
 	
 	protected String getValueForSheltered(Object field) {
 		if (field != null) {
-			return String.valueOf(field).equalsIgnoreCase("1") ? "Sheltered" : "Unsheltered";
+			return String.valueOf(field).equalsIgnoreCase("1") ? "Yes" : "No";
 		} else {
-			return "Unsheltered";
+			return "No";
 		}
 	}
 

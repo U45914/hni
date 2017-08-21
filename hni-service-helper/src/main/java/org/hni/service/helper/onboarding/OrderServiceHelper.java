@@ -54,7 +54,7 @@ public class OrderServiceHelper extends AbstractServiceHelper {
 				_LOGGER.info("Cancelling order payments "+ orderId);
 				cancelPaymentFor(order);
 				// Now sent intimation to client
-				sendNotification(order);
+				sendOrderCancelNotification(order, Constants.CANCEL_REASON_PROVIDER_NOT_AVAILABLE);
 				
 				response.put(Constants.RESPONSE, Constants.SUCCESS);
 				response.put(Constants.MESSAGE, SUCCESSFULLY_CANCELLED_ORDER);
@@ -70,19 +70,30 @@ public class OrderServiceHelper extends AbstractServiceHelper {
 		return response;
 	}
 
-	private void sendNotification(Order order) {
+	protected void sendOrderCancelNotification(Order order, Integer reasonCode) {
 		_LOGGER.info("Trying to send cancel notification to user "+ order.getUser().getEmail());
-		smsMessageService.sendMessage(buildCancelOrderNotificationMessage(order),
+		smsMessageService.sendMessage(buildCancelOrderNotificationMessage(order, reasonCode),
 				getFromNumber(order.getProviderLocation().getAddress().getState().toUpperCase()),
 				order.getUser().getMobilePhone());
 		_LOGGER.info("Completed order cancellation notification");
 	}
 
-	private String buildCancelOrderNotificationMessage(Order order) {
-		HniTemplate template = hniTemplateService.getByType(Constants.ORDER_CANCELLATION_NOTIFICATION);
+	private String buildCancelOrderNotificationMessage(Order order, Integer reasonCode) {
+		HniTemplate template = hniTemplateService.getByType(getTemplateCodeByReasonCode(reasonCode));
 		String message = String.format(template.getTemplate(), Constants.HNI_CAP + order.getId());
 
 		return message;
+	}
+
+	private String getTemplateCodeByReasonCode(Integer reasonCode) {
+		if (reasonCode.equals(Constants.CANCEL_REASON_PROVIDER_NOT_AVAILABLE)) {
+			return Constants.ORDER_CANCELLATION_NOTIFICATION;
+		} else if (reasonCode.equals(Constants.CANCEL_REASON_USER_IS_NOT_ACTIVE) 
+				|| reasonCode.equals(Constants.CANCEL_REASON_USER_IS_DELETED)) {
+			return Constants.ORDER_CANCELLED_USER_NOT_ACTIVE_OR_DELETED;
+		}
+		// Temporary return value
+		return Constants.ORDER_CANCELLATION_NOTIFICATION;
 	}
 
 	private void cancelOrderAndReleaseLock(Order order) {

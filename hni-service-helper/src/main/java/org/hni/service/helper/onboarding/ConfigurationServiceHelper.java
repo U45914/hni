@@ -1,13 +1,17 @@
 package org.hni.service.helper.onboarding;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.transaction.Transactional;
 
 import org.hni.common.Constants;
+import org.hni.order.om.Order;
+import org.hni.order.service.OrderService;
 import org.hni.organization.om.UserOrganizationRole;
 import org.hni.organization.service.OrganizationUserService;
 import org.hni.type.HNIRoles;
@@ -29,10 +33,13 @@ public class ConfigurationServiceHelper extends AbstractServiceHelper {
 	@Inject
 	@Named("defaultUserService")
 	private UserService userService;
-	
+	@Inject
+	private OrderService orderService;	
 	@Inject
 	private ClientDAO clientDao;
-
+	@Inject
+	private OrderServiceHelper orderServiceHelper;
+	
 	public Map<String, String> activateUser(Long userId, User loggedInUser) {
 		_LOGGER.debug("Starting process for activate user");
 		Map<String, String> response = new HashMap<>();
@@ -61,6 +68,10 @@ public class ConfigurationServiceHelper extends AbstractServiceHelper {
 		User toUser = userService.get(userId);
 
 		if (isAllowed(loggedInUser, toUser)) {
+			_LOGGER.info("Logged in user is allowed to perform this action");
+			if (findRoleOfUser(toUser).equals(HNIRoles.CLIENT.getRole())) {
+				cancelOpenOrdersIfExists(toUser);
+			}
 			toUser.setIsActive(false);
 
 			toUser.setUpdatedBy(loggedInUser);
@@ -76,6 +87,30 @@ public class ConfigurationServiceHelper extends AbstractServiceHelper {
 		return response;
 	}
 
+	private void cancelOpenOrdersIfExists(User user) {
+		_LOGGER.info("Finding Open orders for user");
+		Collection<Order> openOrders = orderService.getOpenOrdersFor(user);
+		if (!openOrders.isEmpty()) {
+			_LOGGER.info("Sending order cancellation notification to user : ");
+			openOrders.forEach(order -> {
+				_LOGGER.info("Sending cancel notification for Order ID (sys): " + order.getId());
+				orderServiceHelper.sendOrderCancelNotification(order, Constants.CANCEL_REASON_USER_IS_NOT_ACTIVE);
+				_LOGGER.info("Completed cancel notification for Order ID (sys): " + order.getId());
+			});
+		}
+		
+	}
+
+	private Long findRoleOfUser(User user) {
+		_LOGGER.info("Finding user role for id  "+ user.getEmail());
+		List<UserOrganizationRole> userRoles = (List<UserOrganizationRole>) organizationUserService.getUserOrganizationRoles(user);
+		if (!userRoles.isEmpty()) {
+			return userRoles.get(0).getId().getRoleId();
+		} else {
+			return HNIRoles.USER.getRole();
+		}
+		
+	}
 	/**
 	 * Check the given user has the permission to enable or disable such actions
 	 * on the given user
@@ -84,6 +119,7 @@ public class ConfigurationServiceHelper extends AbstractServiceHelper {
 	 */
 	public boolean isAllowed(User performer, User toUser) {
 		boolean isAllowed = false;
+		_LOGGER.info("Logged User {}, User to delete {} ", performer.getId(), toUser.getId());
 		List<UserOrganizationRole> performerRoles = (List<UserOrganizationRole>) organizationUserService
 				.getUserOrganizationRoles(performer);
 
@@ -120,9 +156,6 @@ public class ConfigurationServiceHelper extends AbstractServiceHelper {
 		return false;
 	}
 
-	public boolean isAnyOrderPending(User user) {
-		return false;
-	}
 
 	public Map<Object, Object> activateUsers(List<Long> userIds, User loggedInUser) {
 		_LOGGER.debug("Starting process for activate multiple user");
@@ -155,6 +188,9 @@ public class ConfigurationServiceHelper extends AbstractServiceHelper {
 			User toUser = userService.get(userId);
 
 			if (isAllowed(loggedInUser, toUser)) {
+				if (findRoleOfUser(toUser).equals(HNIRoles.CLIENT.getRole())) {
+					cancelOpenOrdersIfExists(toUser);
+				}
 				toUser.setIsActive(false);
 
 				toUser.setUpdatedBy(loggedInUser);
@@ -175,6 +211,9 @@ public class ConfigurationServiceHelper extends AbstractServiceHelper {
 		User toUser = userService.get(userId);
 
 		if (isAllowed(loggedInUser, toUser)) {
+			if (findRoleOfUser(toUser).equals(HNIRoles.CLIENT.getRole())) {
+				cancelOpenOrdersIfExists(toUser);
+			}
 			toUser.setIsActive(false);
 			toUser.setDeleted(true);
 
@@ -198,6 +237,9 @@ public class ConfigurationServiceHelper extends AbstractServiceHelper {
 			User toUser = userService.get(userId);
 	
 			if (isAllowed(loggedInUser, toUser)) {
+				if (findRoleOfUser(toUser).equals(HNIRoles.CLIENT.getRole())) {
+					cancelOpenOrdersIfExists(toUser);
+				}
 				toUser.setIsActive(false);
 				toUser.setDeleted(true);
 	
@@ -212,28 +254,35 @@ public class ConfigurationServiceHelper extends AbstractServiceHelper {
 		return response;
 	}
 	
-	public Map<String, String> shelterUser(Long userId, User loggedInUser) {
+	@Transactional
+	public Map<String, String> shelterUsers(List<Long> userIds, User loggedInUser, Boolean isSheltered) {
 		_LOGGER.debug("Starting process for shelter user");
 		Map<String, String> response = new HashMap<>();
-		User toUser = userService.get(userId);
-
-		if (isAllowed(loggedInUser, toUser)) {
-			Client client = clientDao.getByUserId(userId);
-			if(client != null){
-				client.setSheltered(true);
-				client.getUser().setUpdatedBy(userService.get(loggedInUser.getId()));
-			}
-			toUser.setUpdatedBy(loggedInUser);
-			userService.update(toUser);
+		User parent = userService.get(loggedInUser.getId());
+		userIds.forEach(userId -> {
+			User toUser = userService.get(userId);
+			if (isAllowed(loggedInUser, toUser)) {
+				Client client = clientDao.getByUserId(userId);
+				if(client == null){
+					client = new Client();
+					client.setRace(0L);
+					client.setUserId(toUser.getId());
+					client.setUser(toUser);
+					client.setCreatedBy(loggedInUser.getId());
+				}
+				client.setSheltered(isSheltered);
+				client.getUser().setUpdatedBy(parent);
+				
+				clientDao.update(client);
+	
+				response.put(Constants.STATUS, Constants.SUCCESS);
+				response.put(Constants.MESSAGE, "User is been sheltered");
 			
-
-			response.put(Constants.STATUS, Constants.SUCCESS);
-			response.put(Constants.MESSAGE, "User is been sheltered");
-		} else {
-			response.put(Constants.STATUS, Constants.ERROR);
-			response.put(Constants.MESSAGE, "You don't have to permission to excute this action");
-		}
-
+			} else {
+				response.put(Constants.STATUS, Constants.ERROR);
+				response.put(Constants.MESSAGE, "You don't have to permission to excute this action");
+			}
+		});
 		return response;
 	}
 	

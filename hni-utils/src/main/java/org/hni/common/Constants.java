@@ -58,6 +58,12 @@ public class Constants {
 	// Constants for HNI Templates
 	public static final String PARTICIPANT_ORDER_CONFIRMATION_NOTIFICATION = "POCN";
 	public static final String ORDER_CANCELLATION_NOTIFICATION = "OCAN";
+	public static final String ORDER_CANCELLED_USER_NOT_ACTIVE_OR_DELETED = "OCUND";
+	
+	// Order reject reason codes
+	public final static Integer CANCEL_REASON_PROVIDER_NOT_AVAILABLE = 3;
+	public final static Integer CANCEL_REASON_USER_IS_NOT_ACTIVE = 1;
+	public final static Integer CANCEL_REASON_USER_IS_DELETED = 2;
 	
 	public static final String HNI_CAP = "HNI";
 	

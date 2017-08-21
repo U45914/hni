@@ -23,4 +23,6 @@ public interface OrderDAO extends BaseDAO<Order> {
 
 	Collection<Order> with(Provider provider, OrderStatus orderStatus, String stateCode);
 
+	Collection<Order> getOpenOrdersFor(User user);
+
 }

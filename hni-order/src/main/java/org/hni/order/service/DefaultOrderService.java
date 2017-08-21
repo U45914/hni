@@ -218,4 +218,9 @@ public class DefaultOrderService extends AbstractService<Order> implements Order
 		orderDao.update(order);
 		return order;
 	}
+
+	@Override
+	public Collection<Order> getOpenOrdersFor(User user) {
+		return orderDao.getOpenOrdersFor(user);
+	}
 }
