@@ -11,9 +11,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hni.common.om.Persistable;
+
 
 
 @Entity
@@ -50,6 +52,9 @@ public class Dependent implements Persistable, Serializable {
 	@Column(name = "modified_date")
 	private Date modifiedDate;
 	
+	@ManyToOne
+	@JoinColumn(name="client_id", referencedColumnName = "id")
+	private Client client;
 
 	public Dependent() {
 		super();
@@ -133,5 +138,17 @@ public class Dependent implements Persistable, Serializable {
 	public void setModifiedDate(Date modifiedDate) {
 		this.modifiedDate = modifiedDate;
 	}
+	
+
+	public Client getClient() {
+		return client;
+	}
+
+
+	public void setClient(Client client) {
+		this.client = client;
+	}
+	
+	
 	
 }

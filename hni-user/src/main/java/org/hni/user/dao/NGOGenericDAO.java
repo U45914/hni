@@ -81,6 +81,7 @@ public class NGOGenericDAO extends DefaultGenericDAO {
 			ngoBasicDto.setAddress(getValue(u[4]) + "," + getValue(u[5]) + "," + getValue(u[6]));
 			ngoBasicDto.setCreatedUsers((Long) em.createQuery("select count(id) from Client where ngo_id=:ngoId")
 					.setParameter("ngoId", ngoId).getSingleResult());
+			ngoBasicDto.setId(ngoId);
 			ngos.add(ngoBasicDto);
 		}
 		return ngos;

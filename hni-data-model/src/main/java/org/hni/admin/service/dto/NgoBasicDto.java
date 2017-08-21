@@ -2,6 +2,7 @@ package org.hni.admin.service.dto;
 
 public class NgoBasicDto {
 	
+	Long id;
 	Long userId;
 	String name;
 	String phone;
@@ -14,6 +15,14 @@ public class NgoBasicDto {
 
 	public void setAddress(String address) {
 		this.address = address;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public Long getUserId() {
