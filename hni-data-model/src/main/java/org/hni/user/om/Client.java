@@ -20,6 +20,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hni.common.om.Persistable;
@@ -38,7 +39,7 @@ public class Client implements Persistable, Serializable {
 	private Integer id;
 	
 	transient private Long userId;
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
 	@JoinColumn(name = "ngo_id", referencedColumnName = "id")
 	private Ngo ngo;
 	
@@ -175,8 +176,7 @@ public class Client implements Persistable, Serializable {
 	
 	transient private List<Integer> foodPreferenceList = new ArrayList<>();
 	
-	@ManyToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
-	@JoinTable(name = "participant_dependent_relation", joinColumns = { @JoinColumn(name = "client_id", nullable = false, updatable = false) }, inverseJoinColumns = { @JoinColumn(name = "dependent_id",  referencedColumnName = "id", nullable = false, updatable = false) })	
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "client", cascade = { CascadeType.ALL })
 	private Set<Dependent> dependents = new HashSet<>(0);
 	
 	public Client() {
@@ -890,6 +890,18 @@ public class Client implements Persistable, Serializable {
 	}
 
 	public void setDependants(Set<Dependent> dependents) {
+		this.dependents = dependents;
+	}
+
+	public Ngo getNgo() {
+		return ngo;
+	}
+
+	public void setNgo(Ngo ngo) {
+		this.ngo = ngo;
+	}
+
+	public void setDependents(Set<Dependent> dependents) {
 		this.dependents = dependents;
 	}
 	

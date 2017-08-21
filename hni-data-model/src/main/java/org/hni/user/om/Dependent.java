@@ -2,6 +2,7 @@ package org.hni.user.om;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -10,12 +11,15 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import org.hni.common.om.Persistable;
 
 
 @Entity
 @Table(name = "dependents")
-public class Dependent {
+public class Dependent implements Persistable, Serializable  {
 	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
@@ -47,6 +51,9 @@ public class Dependent {
 	@Column(name = "modified_date")
 	private Date modifiedDate;
 	
+	@ManyToOne
+	@JoinColumn(name="client_id", referencedColumnName = "id")
+	private Client client;
 
 	public Dependent() {
 		super();
@@ -130,5 +137,17 @@ public class Dependent {
 	public void setModifiedDate(Date modifiedDate) {
 		this.modifiedDate = modifiedDate;
 	}
+
+
+	public Client getClient() {
+		return client;
+	}
+
+
+	public void setClient(Client client) {
+		this.client = client;
+	}
+	
+	
 	
 }
