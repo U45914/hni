@@ -1,11 +1,16 @@
 package org.hni.service.helper.onboarding;
 
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.transaction.Transactional;
 
 import org.hni.common.Constants;
 import org.hni.organization.om.UserOrganizationRole;
@@ -13,7 +18,11 @@ import org.hni.organization.service.OrganizationUserService;
 import org.hni.type.HNIRoles;
 import org.hni.user.dao.ClientDAO;
 import org.hni.user.om.Client;
+import org.hni.user.om.Dependent;
+import org.hni.user.om.Ngo;
 import org.hni.user.om.User;
+import org.hni.user.service.DependentService;
+import org.hni.user.service.NGOGenericService;
 import org.hni.user.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +41,13 @@ public class ConfigurationServiceHelper extends AbstractServiceHelper {
 	
 	@Inject
 	private ClientDAO clientDao;
+	
+	@Inject
+	private NGOGenericService ngoGenericService;
+	
+	@Inject
+	@Named("defaultDependentService")
+	private DependentService dependentService;
 
 	public Map<String, String> activateUser(Long userId, User loggedInUser) {
 		_LOGGER.debug("Starting process for activate user");
@@ -239,12 +255,60 @@ public class ConfigurationServiceHelper extends AbstractServiceHelper {
 	
 	public Client getParticipantDetails(Long userId, User loggedInUser) {
 		_LOGGER.debug("Starting process for retrieve user");
-		Map<String, String> response = new HashMap<>();
 		User toUser = userService.get(userId);
-
 		if (isAllowed(loggedInUser, toUser)) {
 			return clientDao.getByUserId(userId);
 		}
 		return null;
+	}
+	
+	@Transactional
+	public Map<String, String> saveParticipantDetails(Client client, User loggedInUser) {
+		_LOGGER.debug("Starting process for save user");
+		Long userId = client.getUser().getId();
+		User toUser = userService.get(userId);
+		Map<String, String> response = new HashMap<>();
+		if (isAllowed(loggedInUser, toUser)) {
+			Client existingClient = clientDao.getByUserId(userId);
+			existingClient.getUser().setFirstName(client.getUser().getFirstName());
+			existingClient.getUser().setLastName(client.getUser().getLastName());
+			existingClient.getUser().setMobilePhone(client.getUser().getMobilePhone());
+			
+			Ngo ngo = ngoGenericService.get(client.getNgo().getId());
+			existingClient.setNgo(ngo);
+			
+			if(existingClient.getDependents() != null){
+				Iterator<Dependent> iterator  = client.getDependents().iterator();
+				Set<Dependent> newDependents = new HashSet<>();
+				while(iterator.hasNext()){
+					Dependent dependent = (Dependent) iterator.next();
+					if(dependent.getId() == null){
+						_LOGGER.debug("Saving new dependent");
+						dependent.setCreatedBy(loggedInUser);
+						dependent.setIsActive(true);
+						dependent.setCreatedDate(new Date());
+						dependent.setModifiedDate(new Date());
+						dependent.setClient(existingClient);
+						dependentService.save(dependent);
+					}
+					newDependents.add(dependent);
+				}
+				//existingClient.setDependants(newDependents);
+			}else{
+				existingClient.setDependants(null);
+			}
+			existingClient.getUser().setIsActive(client.getUser().getIsActive());
+			existingClient.getUser().setUpdatedBy(loggedInUser);
+			
+			clientDao.update(existingClient);
+			
+			response.put(Constants.STATUS, Constants.SUCCESS);
+			response.put(Constants.MESSAGE, "User profile updated");
+		} else {
+			response.put(Constants.STATUS, Constants.ERROR);
+			response.put(Constants.MESSAGE, "You don't have to permission to excute this action");
+		}
+
+		return response;
 	}
 }
