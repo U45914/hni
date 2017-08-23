@@ -176,7 +176,7 @@ public class Client implements Persistable, Serializable {
 	
 	transient private List<Integer> foodPreferenceList = new ArrayList<>();
 	
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "client", cascade = { CascadeType.ALL })
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "client",  cascade = { CascadeType.ALL})
 	private Set<Dependent> dependents = new HashSet<>(0);
 	
 	public Client() {
