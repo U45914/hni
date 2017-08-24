@@ -19,7 +19,6 @@ import org.hni.order.service.OrderService;
 import org.hni.organization.om.UserOrganizationRole;
 import org.hni.organization.service.OrganizationUserService;
 import org.hni.type.HNIRoles;
-import org.hni.user.dao.ClientDAO;
 import org.hni.user.om.Client;
 import org.hni.user.om.Dependent;
 import org.hni.user.om.Ngo;
@@ -44,12 +43,7 @@ public class ConfigurationServiceHelper extends AbstractServiceHelper {
 	@Inject
 	private OrderService orderService;	
 	@Inject
-	private ClientDAO clientDao;
-	@Inject
 	private OrderServiceHelper orderServiceHelper;
-	
-	@Inject
-	private NGOGenericService ngoGenericService;
 	
 	@Inject
 	@Named("defaultDependentService")

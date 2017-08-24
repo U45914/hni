@@ -1,26 +1,20 @@
 package org.hni.events.service;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
+import org.apache.commons.lang.RandomStringUtils;
 import org.hni.common.HNIUtils;
 import org.hni.events.service.dao.RegistrationStateDAO;
 import org.hni.events.service.om.Event;
-import org.hni.events.service.om.RegistrationStep;
-import org.hni.organization.service.OrganizationUserService;
 import org.hni.events.service.om.RegistrationState;
-import org.hni.security.service.ActivationCodeService;
-import org.hni.security.utils.HNISecurityUtils;
-import org.hni.type.HNIRoles;
-import org.hni.user.om.Invitation;
+import org.hni.events.service.om.RegistrationStep;
+import org.hni.service.helper.onboarding.UserCreationServiceHelper;
 import org.hni.user.om.User;
-import org.hni.user.service.UserOnboardingService;
 import org.hni.user.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import java.util.HashMap;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
 
 @Component
 public class RegisterService extends AbstractRegistrationService<User> {
@@ -28,6 +22,8 @@ public class RegisterService extends AbstractRegistrationService<User> {
 	private static final String I_ACCEPT = "i accept";
 
 	private static final String THANK_YOU_FOR_REGISTERING_WITH_HUNGER_NOT_IMPOSSIBLE = "Congrats! You've successfully enrolled in Hunger Not Impossible. When you'd like to pickup something to eat, text HUNGRY back to this number. Orders are placed 11-8 pm.";
+	@Inject
+	private UserCreationServiceHelper userCreationHelper;
 
 	private static final String DEPENDANTS = "dependants";
 
@@ -37,6 +33,7 @@ public class RegisterService extends AbstractRegistrationService<User> {
 
 	public static String MSG_PRIVACY = "PRIVACY";
 	public static String MSG_NONE = "NONE";
+	String ERROR_RESP_USER_CREATION_FAILED = "Something went wrong please contact HungerNotImpossible for more assistance, Err: ";
 
 	public static String REPLY_WELCOME = "Welcome to Hunger Not Impossible! Msg and data rates may apply. "
 			+ "Information you provide will be kept private. "
@@ -77,18 +74,9 @@ public class RegisterService extends AbstractRegistrationService<User> {
 	public static String REPLY_ACCEPT_POLICY_ERROR = "Invalid entry, You must accept our terms and conditions to enroll with HNI, reply I ACCEPT to complete your enrollment";
 	@Inject
 	private UserService customerService;
-	
-	@Inject
-	private OrganizationUserService orgUserService;
-
-	@Inject
-	private ActivationCodeService activationCodeService;
 
 	@Inject
 	private RegistrationStateDAO registrationStateDAO;
-	
-	@Inject
-	private UserOnboardingService userOnboardingService;
 
 	@PostConstruct
 	void init() {
@@ -219,8 +207,13 @@ public class RegisterService extends AbstractRegistrationService<User> {
 			break;
 		case STATE_REGISTER_ACCEPT_POLICY:
 			if (textMessage.equalsIgnoreCase(I_ACCEPT)) {
-				returnString = THANK_YOU_FOR_REGISTERING_WITH_HUNGER_NOT_IMPOSSIBLE;
-				registerUserAndSetActivationCodes(user);
+				String response = registerUserAndSetActivationCodes(user);
+				if (response != null) {
+					returnString = response;
+					nextStateCode = RegistrationStep.STATE_REGISTER_ACCEPT_POLICY;
+				} else {
+					returnString = THANK_YOU_FOR_REGISTERING_WITH_HUNGER_NOT_IMPOSSIBLE;
+				}
 			} else {
 				returnString = REPLY_ACCEPT_POLICY_ERROR;
 				nextStateCode = RegistrationStep.STATE_REGISTER_ACCEPT_POLICY;
@@ -235,20 +228,20 @@ public class RegisterService extends AbstractRegistrationService<User> {
 		return new WorkFlowStepResult(returnString, nextStateCode, serialize(user));
 	}
 	
-	private User registerUserAndSetActivationCodes(User user) {
-		user.setOrganizationId(1L);
-		HNISecurityUtils.setHashSecret(user, user.getPassword());
-		user.setPassword("");
-		user.setIsActive(true);
-		user.setDeleted(false);
-		Invitation invitation = userOnboardingService.getInvitationByPhoneNumber(user.getMobilePhone());
-		if (invitation != null) {
-			orgUserService.register(user, HNIRoles.CLIENT.getRole());
-			int dependentCount = invitation.getDependantsCount() != null ? invitation.getDependantsCount() : 0;
-			activationCodeService.saveActivationCodes(user, dependentCount);
-		} else {
-			LOGGER.debug("Unable to find a valid invitation record for the user");
+	private String registerUserAndSetActivationCodes(User user) {
+		try {
+			boolean isCreated = userCreationHelper.createUserForSmsChannel(user);
+			if (isCreated) {
+				return null;
+			} else {
+				String errorCodeForClient = RandomStringUtils.random(5);
+				LOGGER.error("Failed to create user , ErrorCode : " + errorCodeForClient);
+				return ERROR_RESP_USER_CREATION_FAILED + errorCodeForClient;
+			}
+		} catch (Exception e) {
+			String errorCodeForClient = RandomStringUtils.random(5);
+			LOGGER.error("Exception while completing user creation process , ErrorCode : " + errorCodeForClient, e);
+			return ERROR_RESP_USER_CREATION_FAILED + errorCodeForClient;
 		}
-		return user;
 	}
 }

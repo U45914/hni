@@ -260,5 +260,30 @@ public class User implements Persistable, Serializable {
 		this.updatedBy = updatedBy;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("User [id=");
+		builder.append(id);
+		builder.append(", firstName=");
+		builder.append(firstName);
+		builder.append(", lastName=");
+		builder.append(lastName);
+		builder.append(", mobilePhone=");
+		builder.append(mobilePhone);
+		builder.append(", email=");
+		builder.append(email);
+		builder.append(", deleted=");
+		builder.append(deleted);
+		builder.append(", isActive=");
+		builder.append(isActive);
+		builder.append(", createdBy=");
+		builder.append(createdBy);
+		builder.append("]");
+		return builder.toString();
+	}
+	
+	
+
 	
 }

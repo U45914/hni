@@ -53,6 +53,9 @@ public class Invitation implements Persistable, Serializable {
 	private String data;
 	@Column(name = "website")
 	private String website;
+	@Column(name = "ngo_id")
+	private Long ngoId;
+	
 
 	public Long getId() {
 		return id;
@@ -181,5 +184,15 @@ public class Invitation implements Persistable, Serializable {
 	public void setWebsite(String website) {
 		this.website = website;
 	}
+
+	public Long getNgoId() {
+		return ngoId;
+	}
+
+	public void setNgoId(Long ngoId) {
+		this.ngoId = ngoId;
+	}
+	
+	
 
 }

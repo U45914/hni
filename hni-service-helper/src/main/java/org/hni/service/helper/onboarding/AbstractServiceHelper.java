@@ -6,8 +6,13 @@ package org.hni.service.helper.onboarding;
 import javax.inject.Inject;
 
 import org.hni.common.service.HniTemplateService;
+import org.hni.organization.service.OrganizationUserService;
 import org.hni.sms.service.provider.PushMessageService;
+import org.hni.type.HNIRoles;
+import org.hni.user.dao.ClientDAO;
+import org.hni.user.om.Invitation;
 import org.hni.user.om.User;
+import org.hni.user.service.NGOGenericService;
 import org.hni.user.service.UserOnboardingService;
 
 /**
@@ -22,6 +27,12 @@ public abstract class AbstractServiceHelper {
 	protected PushMessageService smsMessageService;
 	@Inject
 	protected HniTemplateService hniTemplateService;
+	@Inject
+	protected OrganizationUserService orgUserService;
+	@Inject
+	protected ClientDAO clientDao;
+	@Inject
+	protected NGOGenericService ngoGenericService;
 	
 	protected boolean isUserExists(String email) {
 		return getUserByEmail(email) != null;
@@ -33,5 +44,17 @@ public abstract class AbstractServiceHelper {
 
 	protected String getFromNumber(String stateCode) {
 		return smsMessageService.getProviderNumberForState(stateCode);
+	}
+	
+	protected Invitation getInvitationByMobile(String mobilePhone) {
+		return userOnBoardingService.getInvitationByPhoneNumber(mobilePhone);
+	}
+	
+	protected boolean isParticipant(HNIRoles role) {
+		if (HNIRoles.CLIENT.equals(role)) {
+			return Boolean.TRUE;
+		} else {
+			return Boolean.FALSE;
+		}
 	}
 }
