@@ -56,7 +56,6 @@
     	<module>hni-utils</module>
         <module>hni-common</module>
         <module>hni-db-parent</module>
-        <module>hni-events</module>
         <module>hni-user</module>
         <module>hni-organization</module>
         <module>hni-security</module>
@@ -67,7 +66,8 @@
         <module>hni-order</module>
         <module>hni-payment</module>
         <module>hni-card-loader</module>
-    <module>hni-service-helper</module>
+    	<module>hni-service-helper</module>
+        <module>hni-events</module>
   </modules>
     <build>
         <plugins>

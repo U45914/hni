@@ -1,343 +1,50 @@
-SET MODE MySQL;
--- MySQL Workbench Forward Engineering
+-- --------------------------------------------------------
+-- Host:                         127.0.0.1
+-- Server version:               10.1.22-MariaDB - mariadb.org binary distribution
+-- Server OS:                    Win64
+-- HeidiSQL Version:             9.4.0.5125
+-- --------------------------------------------------------
 
--- -----------------------------------------------------
--- Schema mydb
--- -----------------------------------------------------
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET NAMES utf8 */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 
--- -----------------------------------------------------
--- Table `event_state`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `event_state` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `eventname` VARCHAR(255) NOT NULL,
-  `phoneno` VARCHAR(45) NOT NULL UNIQUE,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
--- -----------------------------------------------------
--- Table `registration_state`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `registration_state` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `eventname` VARCHAR(255) NOT NULL,
-  `phoneno` VARCHAR(45) NOT NULL,
-  `payload` VARCHAR(255) NULL,
-  `eventstate` VARCHAR(255) NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
--- -----------------------------------------------------
--- Table `users`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `users` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `first_name` VARCHAR(255) NULL,
-  `last_name` VARCHAR(255) NULL,
-  `gender_code` VARCHAR(1) NULL,
-  `mobile_phone` VARCHAR(45) NULL,
-  `email` VARCHAR(255) NULL,
-  `deleted` INT NULL,
-  `hashed_secret` VARCHAR(255) NULL,
-  `salt` VARCHAR(255) NULL,
-  `created` DATETIME NULL,
-  `opt_out` INT NULL DEFAULT 0 COMMENT 'true/false whether the user is opt-in/out.  Default ‘0’',
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `organizations`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `organizations` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(255) NULL,
-  `phone` VARCHAR(45) NULL,
-  `email` VARCHAR(255) NULL,
-  `website` VARCHAR(255) NULL,
-  `logo` VARCHAR(255) NULL,
-  `created` DATETIME NOT NULL,
-  `created_by` INT NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `security_roles`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `security_roles` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(45) NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `user_organization_role`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `user_organization_role` (
-  `user_id` INT NOT NULL,
-  `organization_id` INT NOT NULL,
-  `role_id` INT NOT NULL,
-  PRIMARY KEY (`user_id`, `organization_id`, `role_id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `providers`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `providers` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(255) NULL,
-  `address_id` INT NULL,
-  `menu_id` INT NOT NULL,
-  `website_url` VARCHAR(255) NULL,
-  `created` DATETIME NOT NULL,
-  `created_by` INT NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `provider_locations`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `provider_locations` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(255) NULL,
-  `provider_id` INT NOT NULL,
-  `address_id` INT NULL,
-  `created` DATETIME NOT NULL,
-  `created_by` INT NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `orders`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `orders` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `user_id` INT NOT NULL,
-  `provider_location_id` INT NOT NULL,
-  `order_date` DATETIME NOT NULL,
-  `ready_date` DATETIME NULL,
-  `pickup_date` DATETIME NULL,
-  `subtotal` DECIMAL(10,2) NULL,
-  `tax` DECIMAL(10,2) NULL,
-  `created_by` INT NULL COMMENT 'surrogate to users',
-  `status_id` INT NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `menus`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `menus` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(45) NULL,
-  `provider_id` INT NOT NULL,
-  `start_hour` INT NULL COMMENT 'starting hour item is available in 24hr',
-  `end_hour` INT NULL COMMENT 'ending hour item is available in 24hr',
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `menu_items`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `menu_items` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `menu_id` INT NOT NULL,
-  `name` VARCHAR(255) NULL,
-  `description` TEXT NULL,
-  `price` DECIMAL(10,2) NULL,
-  `expires` DATETIME NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `order_items`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `order_items` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `order_id` INT NOT NULL,
-  `menu_item_id` INT NOT NULL,
-  `quantity` INT NOT NULL,
-  `amount` DECIMAL(10,2) NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `addresses`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `addresses` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(255) NULL,
-  `address_line1` VARCHAR(255) NULL,
-  `address_line2` VARCHAR(255) NULL,
-  `city` VARCHAR(45) NULL,
-  `state` VARCHAR(2) NULL,
-  `zip` VARCHAR(15) NULL,
-  `longitude` DOUBLE NULL,
-  `latitude` DOUBLE NULL,
-  `timezone` VARCHAR(45) NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `activation_codes`
--- -----------------------------------------------------
+-- Dumping structure for table hni.activation_codes
+DROP TABLE IF EXISTS `activation_codes`;
 CREATE TABLE IF NOT EXISTS `activation_codes` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `activation_code` VARCHAR(128) NOT NULL,
-  `organization_id` INT NOT NULL,
-  `meals_authorized` INT NULL,
-  `meals_remaining` INT NULL,
-  `enabled` TINYINT NULL COMMENT 'true/false whether this voucher can be used',
-  `comments` VARCHAR(255) NULL,
-  `created` VARCHAR(45) NULL,
-  `user_id` INT NULL COMMENT 'the user who “owns” this voucher',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `idx_activation_code` (`activation_code`))
-ENGINE = InnoDB;
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `activation_code` varchar(128) NOT NULL,
+  `organization_id` int(11) NOT NULL,
+  `meals_authorized` int(11) DEFAULT NULL,
+  `meals_remaining` int(11) DEFAULT NULL,
+  `enabled` tinyint(4) DEFAULT NULL COMMENT 'true/false whether this voucher can be used',
+  `comments` varchar(255) DEFAULT NULL,
+  `created` varchar(45) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL COMMENT 'the user who “owns” this voucher',
+  PRIMARY KEY (`id`)) ENGINE=InnoDB;
 
+-- Data exporting was unselected.
+-- Dumping structure for table hni.addresses
+DROP TABLE IF EXISTS `addresses`;
+CREATE TABLE IF NOT EXISTS `addresses` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `address_line1` varchar(255) DEFAULT NULL,
+  `address_line2` varchar(255) DEFAULT NULL,
+  `city` varchar(45) DEFAULT NULL,
+  `state` varchar(2) DEFAULT NULL,
+  `zip` varchar(15) DEFAULT NULL,
+  `longitude` double DEFAULT NULL,
+  `latitude` double DEFAULT NULL,
+  `timezone` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
 
--- -----------------------------------------------------
--- Table `user_provider_role`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `user_provider_role` (
-  `user_id` INT NOT NULL,
-  `provider_id` INT NOT NULL,
-  `role_id` INT NOT NULL,
-  PRIMARY KEY (`user_id`, `provider_id`, `role_id`))
-ENGINE = InnoDB;
-
-
-
--- -----------------------------------------------------
--- Table `organization_addresses`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `organization_addresses` (
-  `organization_id` INT NOT NULL,
-  `address_id` INT NOT NULL,
-  PRIMARY KEY (`organization_id`, `address_id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `provider_location_hours`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `provider_location_hours` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `provider_location_id` INT NOT NULL,
-  `dow` VARCHAR(3) NULL,
-  `open_hour` INT NULL COMMENT 'open hour in 24hr',
-  `close_hour` INT NULL COMMENT 'close hour in 24hr',
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `security_permissions`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `security_permissions` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `domain` VARCHAR(45) NULL,
-  `value` VARCHAR(45) NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `security_role_permissions`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `security_role_permissions` (
-  `role_id` INT NOT NULL,
-  `permission_id` INT NOT NULL,
-  `all_instances` INT NULL DEFAULT 0,
-  PRIMARY KEY (`role_id`, `permission_id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `payment_instruments`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `payment_instruments` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `provider_id` INT NULL,
-  `card_type` VARCHAR(45) NULL,
-  `card_serial_id` VARCHAR(255) NULL,  
-  `card_number` VARCHAR(45) NULL COMMENT 'hashed value',
-  `status` VARCHAR(45) NULL COMMENT 'activated or not',
-  `orginal_balance` DECIMAL(10,2) NULL,
-  `balance` DECIMAL(10,2) NULL,
-  `last_used_datetime` DATETIME NULL,
-  `pin_number` VARCHAR(45) NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `order_payments`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `order_payments` (
-  `order_id` INT NOT NULL,
-  `payment_instrument_id` INT NOT NULL,
-  `amount` DECIMAL(10,2) NULL,
-  `created_by` INT NOT NULL,
-  `created_date` DATETIME NOT NULL,
-  PRIMARY KEY (`order_id`, `payment_instrument_id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `partial_orders`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `partial_orders` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `user_id` INT NULL,
-  `provider_location_id` INT NULL,
-  `menu_item_id` INT NULL,
-  `chosen_menu_id` INT NULL,
-  `chosen_provider_id` INT NULL,
-  `transaction_phase` VARCHAR(45) NULL,
-  `address` VARCHAR(160) NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `partial_orders_menu_items`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `partial_orders_menu_items` (
-  `id` INT NOT NULL,
-  `menu_item_id` INT NOT NULL)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `partial_orders_provider_locations`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `partial_orders_provider_locations` (
-  `id` INT NOT NULL,
-  `provider_location_id` INT NOT NULL)
-ENGINE = InnoDB;
-
--- -----------------------------------------------------
--- Table `partial_orders_menu_selections`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `partial_orders_menu_selections` (
-  `id` INT NOT NULL,
-  `menu_item_id` INT NOT NULL)
-ENGINE = InnoDB;
-
--- -----------------------------------------------------
--- Table `board_members`
--- -----------------------------------------------------
+-- Data exporting was unselected.
+-- Dumping structure for table hni.board_members
+DROP TABLE IF EXISTS `board_members`;
 CREATE TABLE IF NOT EXISTS `board_members` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `ngo_id` int(11) NOT NULL,
@@ -346,13 +53,11 @@ CREATE TABLE IF NOT EXISTS `board_members` (
   `company` varchar(255) NOT NULL,
   `created` datetime NOT NULL,
   `created_by` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-  ) ENGINE=InnoDB DEFAULT ;
+  PRIMARY KEY (`id`)) ENGINE=InnoDB;
 
-
--- -----------------------------------------------------
--- Table `brand_partners`
--- -----------------------------------------------------
+-- Data exporting was unselected.
+-- Dumping structure for table hni.brand_partners
+DROP TABLE IF EXISTS `brand_partners`;
 CREATE TABLE IF NOT EXISTS `brand_partners` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `ngo_id` int(11) NOT NULL,
@@ -360,25 +65,25 @@ CREATE TABLE IF NOT EXISTS `brand_partners` (
   `company` varchar(255) NOT NULL,
   `created` datetime NOT NULL,
   `created_by` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-) ENGINE=InnoDB DEFAULT ;
+  PRIMARY KEY (`id`)) ENGINE=InnoDB;
 
--- -----------------------------------------------------
--- Table `client`
--- -----------------------------------------------------
+-- Data exporting was unselected.
+-- Dumping structure for table hni.client
+DROP TABLE IF EXISTS `client`;
 CREATE TABLE IF NOT EXISTS `client` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL DEFAULT '0',
   `created_by` int(11) NOT NULL DEFAULT '0',
   `race` int(11) NOT NULL DEFAULT '0',
-  `address_id` int(11) NOT NULL DEFAULT '0',
-  `bday` int(11) DEFAULT '0',
-  `been_arrested` char(1) DEFAULT '0',
-  `been_convicted` char(1) DEFAULT '0',
-  `has_smart_phone` char(1) DEFAULT '0',
+  `ethinicity` int(11) DEFAULT '0',
+  `bday` date DEFAULT NULL,
+  `been_arrested` tinyint(4) DEFAULT '0',
+  `ngo_id` int(11) DEFAULT '0',
+  `been_convicted` tinyint(4) DEFAULT '0',
+  `has_smart_phone` tinyint(4) DEFAULT '0',
   `service_provider` varchar(50) DEFAULT '0',
   `model` varchar(50) DEFAULT '0',
-  `have_monthly_plan` char(1) DEFAULT '0',
+  `have_monthly_plan` tinyint(4) DEFAULT '0',
   `monthly_plan_minute` varchar(50) DEFAULT '0',
   `monthly_plan_data` varchar(50) DEFAULT '0',
   `monthly_plan_cost` varchar(50) DEFAULT '0',
@@ -386,8 +91,9 @@ CREATE TABLE IF NOT EXISTS `client` (
   `alt_monthly_plan_together` varchar(50) DEFAULT '0',
   `sliblings` int(11) DEFAULT '0',
   `kids` int(11) DEFAULT '0',
-  `live_at_home` char(1) DEFAULT '0',
+  `live_at_home` tinyint(4) DEFAULT '0',
   `sheltered` int(11) DEFAULT '0',
+  `live_with` int(4) DEFAULT '0',
   `parent_education` int(11) DEFAULT '0',
   `education` int(11) DEFAULT '0',
   `enrollment_status` int(11) DEFAULT '0',
@@ -398,7 +104,7 @@ CREATE TABLE IF NOT EXISTS `client` (
   `employer` varchar(50) DEFAULT '0',
   `job_title` varchar(50) DEFAULT '0',
   `duration_of_employement` int(11) DEFAULT '0',
-  `unemployment_benfits` char(1) DEFAULT '0',
+  `unemployment_benfits` tinyint(4) DEFAULT '0',
   `reason_unemployment_benefits` varchar(100) DEFAULT '0',
   `total_income` double DEFAULT '0',
   `rate_amount` int(11) DEFAULT '0',
@@ -411,20 +117,20 @@ CREATE TABLE IF NOT EXISTS `client` (
   `dollar_spend_transport` int(11) DEFAULT '0',
   `dollar_spend_savings` int(11) DEFAULT '0',
   `meals_per_day` int(11) DEFAULT '0',
-  `food_preference` int(11) DEFAULT '0',
+  `food_preference` varchar(200) DEFAULT '0',
   `food_source` varchar(50) DEFAULT '0',
-  `cook` char(1) DEFAULT '0',
+  `cook` tinyint(4) DEFAULT '0',
   `travel_for_food_distance` int(11) DEFAULT '0',
   `traval_for_food_time` int(11) DEFAULT '0',
-  `sub_food_program` char(1) DEFAULT '0',
+  `sub_food_program` tinyint(4) DEFAULT '0',
   `sub_food_program_entity` varchar(50) DEFAULT '0',
   `sub_food_program_duration` int(11) DEFAULT '0',
   `sub_food_program_renew` int(11) DEFAULT '0',
   `sub_food_program_exp` varchar(256) DEFAULT '0',
   `allergies` varchar(256) DEFAULT '0',
-  `addiction` char(1) DEFAULT '0',
+  `addiction` tinyint(4) DEFAULT '0',
   `addiction_type` varchar(50) DEFAULT '0',
-  `mental_health_issue` char(1) DEFAULT '0',
+  `mental_health_issue` varchar(250) DEFAULT '0',
   `mental_health_issue_history` varchar(256) DEFAULT '0',
   `height` varchar(50) DEFAULT '0',
   `weight` varchar(50) DEFAULT '0',
@@ -432,33 +138,70 @@ CREATE TABLE IF NOT EXISTS `client` (
   `last_visit_doctor` int(11) DEFAULT '0',
   `last_visit_dentist` int(11) DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT ;
+) ENGINE=InnoDB;
 
--- -----------------------------------------------------
--- Table `education`
--- -----------------------------------------------------
+-- Data exporting was unselected.
+-- Dumping structure for table hni.dependents
+DROP TABLE IF EXISTS `dependents`;
+CREATE TABLE IF NOT EXISTS `dependents` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `age` int(11) DEFAULT '0',
+  `client_id` int(11) DEFAULT '0',
+  `relation` varchar(255) DEFAULT NULL,
+  `gender` varchar(5) DEFAULT NULL,
+  `active` tinyint(4) NOT NULL DEFAULT '0',
+  `eligible_for_meal` tinyint(4) DEFAULT '0',
+  `created_by` int(11) NOT NULL,
+  `created_date` datetime NOT NULL,
+  `modified_date` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+-- Data exporting was unselected.
+-- Dumping structure for table hni.education
+DROP TABLE IF EXISTS `education`;
 CREATE TABLE IF NOT EXISTS `education` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `education_desc` varchar(100) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT ;
+) ENGINE=InnoDB;
 
--- -----------------------------------------------------
--- Table `food_bank`
--- -----------------------------------------------------
+-- Data exporting was unselected.
+-- Dumping structure for table hni.endrosement
+DROP TABLE IF EXISTS `endrosement`;
+CREATE TABLE IF NOT EXISTS `endrosement` (
+  `id` int(11) NOT NULL,
+  `ngo_id` int(11) NOT NULL,
+  `endrosement` varchar(100),
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
 
+-- Data exporting was unselected.
+-- Dumping structure for table hni.event_state
+DROP TABLE IF EXISTS `event_state`;
+CREATE TABLE IF NOT EXISTS `event_state` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `eventname` varchar(255) NOT NULL,
+  `phoneno` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `phoneno` (`phoneno`)
+) ENGINE=InnoDB;
+
+-- Data exporting was unselected.
+-- Dumping structure for table hni.food_bank
+DROP TABLE IF EXISTS `food_bank`;
 CREATE TABLE IF NOT EXISTS `food_bank` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `ngo_id` int(11) NOT NULL,
   `food_bank_name` varchar(255) NOT NULL,
   `created` datetime NOT NULL,
   `created_by` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-) ENGINE=InnoDB DEFAULT ;
+  PRIMARY KEY (`id`)) ENGINE=InnoDB;
 
--- -----------------------------------------------------
--- Table `food_services`
--- -----------------------------------------------------
+-- Data exporting was unselected.
+-- Dumping structure for table hni.food_services
+DROP TABLE IF EXISTS `food_services`;
 CREATE TABLE IF NOT EXISTS `food_services` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `ngo_id` int(11) NOT NULL,
@@ -468,12 +211,11 @@ CREATE TABLE IF NOT EXISTS `food_services` (
   `other` varchar(255) NOT NULL,
   `created` datetime NOT NULL,
   `created_by` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-) ENGINE=InnoDB DEFAULT ;
+  PRIMARY KEY (`id`)) ENGINE=InnoDB;
 
--- -----------------------------------------------------
--- Table `hni_services`
--- -----------------------------------------------------
+-- Data exporting was unselected.
+-- Dumping structure for table hni.hni_services
+DROP TABLE IF EXISTS `hni_services`;
 CREATE TABLE IF NOT EXISTS `hni_services` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `org_id` int(11) NOT NULL,
@@ -483,37 +225,54 @@ CREATE TABLE IF NOT EXISTS `hni_services` (
   `service_img` varchar(500) DEFAULT NULL,
   `active` varchar(1) NOT NULL,
   `created` datetime NOT NULL,
-  PRIMARY KEY (`id`),
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT ;
+  PRIMARY KEY (`id`)) ENGINE=InnoDB;
 
--- -----------------------------------------------------
--- Table `income`
--- -----------------------------------------------------
+-- Data exporting was unselected.
+-- Dumping structure for table hni.hni_templates
+DROP TABLE IF EXISTS `hni_templates`;
+CREATE TABLE IF NOT EXISTS `hni_templates` (
+  `id` int(5) NOT NULL AUTO_INCREMENT,
+  `created_by` int(5) NOT NULL DEFAULT '1',
+  `template` varchar(1000) NOT NULL,
+  `type` varchar(25) NOT NULL,
+  `last_modified` date NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+-- Data exporting was unselected.
+-- Dumping structure for table hni.income
+DROP TABLE IF EXISTS `income`;
 CREATE TABLE IF NOT EXISTS `income` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `income_desc` varchar(100) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT ;
+) ENGINE=InnoDB;
 
--- -----------------------------------------------------
--- Table `invitation`
--- -----------------------------------------------------
+-- Data exporting was unselected.
+-- Dumping structure for table hni.invitation
+DROP TABLE IF EXISTS `invitation`;
 CREATE TABLE IF NOT EXISTS `invitation` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `org_id` int(11) NOT NULL,
+  `org_id` int(11) DEFAULT NULL,
   `invite_code` varchar(50) NOT NULL,
+  `activated` int(2) NOT NULL DEFAULT '0',
   `email` varchar(100) NOT NULL,
   `invited_by` int(11) NOT NULL,
+  `ngo_id` int(11) DEFAULT NULL,
   `token_expire_date` date NOT NULL,
+  `phone` varchar(17) DEFAULT NULL,
+  `dependants_count` int(2) DEFAULT '0',
+  `message` varchar(500) DEFAULT NULL,
+  `name` varchar(250) DEFAULT NULL,
+  `invitation_type` varchar(50) DEFAULT NULL,
+  `state` varchar(50) DEFAULT NULL,
   `created_date` date NOT NULL,
-  `activated` int(2) NOT NULL,
-  `data` VARCHAR(200) NOT NULL,
-  PRIMARY KEY (`id`),
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT ;
+  `data` varchar(500) DEFAULT NULL,
+  PRIMARY KEY (`id`)) ENGINE=InnoDB;
 
--- -----------------------------------------------------
--- Table `local_partners`
--- -----------------------------------------------------
+-- Data exporting was unselected.
+-- Dumping structure for table hni.local_partners
+DROP TABLE IF EXISTS `local_partners`;
 CREATE TABLE IF NOT EXISTS `local_partners` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `ngo_id` int(11) NOT NULL,
@@ -521,36 +280,33 @@ CREATE TABLE IF NOT EXISTS `local_partners` (
   `company` varchar(255) NOT NULL,
   `created` datetime NOT NULL,
   `created_by` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-) ENGINE=InnoDB DEFAULT ;
+  PRIMARY KEY (`id`)) ENGINE=InnoDB;
 
--- -----------------------------------------------------
--- Table `marital_status`
--- -----------------------------------------------------
-
+-- Data exporting was unselected.
+-- Dumping structure for table hni.marital_status
+DROP TABLE IF EXISTS `marital_status`;
 CREATE TABLE IF NOT EXISTS `marital_status` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `marital_status_desc` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT ;
--- -----------------------------------------------------
--- Table `meal_donation_sources`
--- -----------------------------------------------------
+) ENGINE=InnoDB;
 
+-- Data exporting was unselected.
+-- Dumping structure for table hni.meal_donation_sources
+DROP TABLE IF EXISTS `meal_donation_sources`;
 CREATE TABLE IF NOT EXISTS `meal_donation_sources` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `ngo_id` int(11) NOT NULL,
   `source` varchar(255) NOT NULL,
+  `quantity` int(11) DEFAULT NULL,
   `frequency` varchar(255) NOT NULL,
   `created` datetime NOT NULL,
   `created_by` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-) ENGINE=InnoDB DEFAULT ;
+  PRIMARY KEY (`id`)) ENGINE=InnoDB;
 
--- -----------------------------------------------------
--- Table `meal_funding_sources`
--- -----------------------------------------------------
-
+-- Data exporting was unselected.
+-- Dumping structure for table hni.meal_funding_sources
+DROP TABLE IF EXISTS `meal_funding_sources`;
 CREATE TABLE IF NOT EXISTS `meal_funding_sources` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `ngo_id` int(11) NOT NULL,
@@ -558,17 +314,45 @@ CREATE TABLE IF NOT EXISTS `meal_funding_sources` (
   `source` varchar(255) NOT NULL,
   `created` datetime NOT NULL,
   `created_by` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-) ENGINE=InnoDB DEFAULT ;
+  PRIMARY KEY (`id`)) ENGINE=InnoDB;
 
--- -----------------------------------------------------
--- Table `ngo`
--- -----------------------------------------------------
+-- Data exporting was unselected.
+-- Dumping structure for table hni.menus
+DROP TABLE IF EXISTS `menus`;
+CREATE TABLE IF NOT EXISTS `menus` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) DEFAULT NULL,
+  `provider_id` int(11) NOT NULL,
+  `start_hour` int(11) DEFAULT NULL COMMENT 'starting hour item is available in 24hr',
+  `end_hour` int(11) DEFAULT NULL COMMENT 'ending hour item is available in 24hr',
+  PRIMARY KEY (`id`)) ENGINE=InnoDB;
+
+-- Data exporting was unselected.
+-- Dumping structure for table hni.menu_items
+DROP TABLE IF EXISTS `menu_items`;
+CREATE TABLE IF NOT EXISTS `menu_items` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `menu_id` int(11) NOT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `description` text,
+  `price` decimal(10,2) DEFAULT NULL,
+  `expires` datetime DEFAULT NULL,
+  `calories` int(11) DEFAULT NULL,
+  `protien` int(11) DEFAULT NULL,
+  `fat` int(11) DEFAULT NULL,
+  `carbs` int(11) DEFAULT NULL,
+  `active` tinyint(3) DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+-- Data exporting was unselected.
+-- Dumping structure for table hni.ngo
+DROP TABLE IF EXISTS `ngo`;
 CREATE TABLE IF NOT EXISTS `ngo` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
-  `address_id` int(11) NOT NULL,
   `website` varchar(255) NOT NULL,
+  `contact_name` varchar(255) NOT NULL,
   `fte` int(11) NOT NULL,
   `overview` varchar(2048) NOT NULL,
   `mission` varchar(2048) NOT NULL,
@@ -578,7 +362,7 @@ CREATE TABLE IF NOT EXISTS `ngo` (
   `kitchen_volunteers` int(11) DEFAULT NULL,
   `food_stamp_assist` tinyint(1) NOT NULL,
   `food_bank` tinyint(1) NOT NULL,
-  `resources_to_clients` int(11) NOT NULL,
+  `resources_to_clients` varchar(200) DEFAULT NULL,
   `ind_serv_daily` int(11) NOT NULL,
   `ind_serv_monthly` int(11) NOT NULL,
   `ind_serv_annual` int(11) NOT NULL,
@@ -588,12 +372,11 @@ CREATE TABLE IF NOT EXISTS `ngo` (
   `clients_employed` int(11) NOT NULL,
   `created` datetime NOT NULL,
   `created_by` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-) ENGINE=InnoDB DEFAULT ;
+  PRIMARY KEY (`id`)) ENGINE=InnoDB;
 
--- -----------------------------------------------------
--- Table `ngo_funding_sources`
--- -----------------------------------------------------
+-- Data exporting was unselected.
+-- Dumping structure for table hni.ngo_funding_sources
+DROP TABLE IF EXISTS `ngo_funding_sources`;
 CREATE TABLE IF NOT EXISTS `ngo_funding_sources` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `ngo_id` int(11) NOT NULL,
@@ -601,38 +384,305 @@ CREATE TABLE IF NOT EXISTS `ngo_funding_sources` (
   `source` varchar(255) NOT NULL,
   `created` datetime NOT NULL,
   `created_by` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-) ENGINE=InnoDB DEFAULT ;
+  PRIMARY KEY (`id`)) ENGINE=InnoDB;
 
--- -----------------------------------------------------
--- Table `partial_orders_order_items`
--- -----------------------------------------------------
+-- Data exporting was unselected.
+-- Dumping structure for table hni.orders
+DROP TABLE IF EXISTS `orders`;
+CREATE TABLE IF NOT EXISTS `orders` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `provider_location_id` int(11) NOT NULL,
+  `order_date` datetime NOT NULL,
+  `ready_date` datetime DEFAULT NULL,
+  `pickup_date` datetime DEFAULT NULL,
+  `subtotal` decimal(10,2) DEFAULT NULL,
+  `tax` decimal(10,2) DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL COMMENT 'surrogate to users',
+  `status_id` int(11) NOT NULL,
+  `completed_by` int(11) DEFAULT NULL,
+  `confirmation_id` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`id`)) ENGINE=InnoDB;
+
+-- Data exporting was unselected.
+-- Dumping structure for table hni.order_items
+DROP TABLE IF EXISTS `order_items`;
+CREATE TABLE IF NOT EXISTS `order_items` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `order_id` int(11) NOT NULL,
+  `menu_item_id` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `amount` decimal(10,2) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+-- Data exporting was unselected.
+-- Dumping structure for table hni.order_payments
+DROP TABLE IF EXISTS `order_payments`;
+CREATE TABLE IF NOT EXISTS `order_payments` (
+  `order_id` int(11) NOT NULL,
+  `payment_instrument_id` int(11) NOT NULL,
+  `amount` decimal(10,2) DEFAULT NULL,
+  `created_by` int(11) NOT NULL,
+  `created_date` datetime NOT NULL,
+  `status` varchar(5) NOT NULL,
+  PRIMARY KEY (`order_id`,`payment_instrument_id`)
+) ENGINE=InnoDB;
+
+-- Data exporting was unselected.
+-- Dumping structure for table hni.organizations
+DROP TABLE IF EXISTS `organizations`;
+CREATE TABLE IF NOT EXISTS `organizations` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `phone` varchar(45) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `website` varchar(255) DEFAULT NULL,
+  `logo` varchar(255) DEFAULT NULL,
+  `created` datetime NOT NULL,
+  `created_by` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+-- Data exporting was unselected.
+-- Dumping structure for table hni.organization_addresses
+DROP TABLE IF EXISTS `organization_addresses`;
+CREATE TABLE IF NOT EXISTS `organization_addresses` (
+  `organization_id` int(11) NOT NULL,
+  `address_id` int(11) NOT NULL,
+  PRIMARY KEY (`organization_id`,`address_id`)) ENGINE=InnoDB;
+
+-- Data exporting was unselected.
+-- Dumping structure for table hni.partial_orders
+DROP TABLE IF EXISTS `partial_orders`;
+CREATE TABLE IF NOT EXISTS `partial_orders` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) DEFAULT NULL,
+  `provider_location_id` int(11) DEFAULT NULL,
+  `menu_item_id` int(11) DEFAULT NULL,
+  `order_item_id` int(11) DEFAULT NULL,
+  `chosen_provider_id` int(11) DEFAULT NULL,
+  `transaction_phase` varchar(45) DEFAULT NULL,
+  `address` varchar(160) DEFAULT NULL,
+  PRIMARY KEY (`id`)) ENGINE=InnoDB;
+
+-- Data exporting was unselected.
+-- Dumping structure for table hni.partial_orders_menu_items
+DROP TABLE IF EXISTS `partial_orders_menu_items`;
+CREATE TABLE IF NOT EXISTS `partial_orders_menu_items` (
+  `id` int(11) NOT NULL,
+  `menu_item_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)) ENGINE=InnoDB;
+
+-- Data exporting was unselected.
+-- Dumping structure for table hni.partial_orders_menu_selections
+DROP TABLE IF EXISTS `partial_orders_menu_selections`;
+CREATE TABLE IF NOT EXISTS `partial_orders_menu_selections` (
+  `id` int(11) NOT NULL,
+  `menu_item_id` int(11) NOT NULL
+) ENGINE=InnoDB;
+
+-- Data exporting was unselected.
+-- Dumping structure for table hni.partial_orders_order_items
+DROP TABLE IF EXISTS `partial_orders_order_items`;
 CREATE TABLE IF NOT EXISTS `partial_orders_order_items` (
   `id` int(11) NOT NULL,
   `order_item_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT ;
+) ENGINE=InnoDB;
 
--- -----------------------------------------------------
--- Table `race`
--- -----------------------------------------------------
+-- Data exporting was unselected.
+-- Dumping structure for table hni.partial_orders_provider_locations
+DROP TABLE IF EXISTS `partial_orders_provider_locations`;
+CREATE TABLE IF NOT EXISTS `partial_orders_provider_locations` (
+  `id` int(11) NOT NULL,
+  `provider_location_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)) ENGINE=InnoDB;
+
+-- Data exporting was unselected.
+-- Dumping structure for table hni.participant_dependent_relation
+DROP TABLE IF EXISTS `participant_dependent_relation`;
+CREATE TABLE IF NOT EXISTS `participant_dependent_relation` (
+  `client_id` int(11) DEFAULT NULL,
+  `dependent_id` int(11) DEFAULT NULL) ENGINE=InnoDB;
+
+-- Data exporting was unselected.
+-- Dumping structure for table hni.payment_instruments
+DROP TABLE IF EXISTS `payment_instruments`;
+CREATE TABLE IF NOT EXISTS `payment_instruments` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `provider_id` int(11) DEFAULT NULL,
+  `card_type` varchar(45) DEFAULT NULL,
+  `card_serial_id` varchar(255) DEFAULT NULL,
+  `card_number` varchar(45) DEFAULT NULL COMMENT 'hashed value',
+  `status` varchar(45) DEFAULT NULL COMMENT 'activated or not',
+  `orginal_balance` decimal(10,2) DEFAULT NULL,
+  `balance` decimal(10,2) DEFAULT NULL,
+  `last_used_datetime` datetime DEFAULT NULL,
+  `state_code` varchar(50) DEFAULT NULL,
+  `allow_topup` tinyint(4) DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `modified_by` int(11) DEFAULT NULL,
+  `created_date` date DEFAULT NULL,
+  `pin_number` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+-- Data exporting was unselected.
+-- Dumping structure for table hni.providers
+DROP TABLE IF EXISTS `providers`;
+CREATE TABLE IF NOT EXISTS `providers` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `address_id` int(11) DEFAULT NULL,
+  `menu_id` int(11) NOT NULL,
+  `website_url` varchar(255) DEFAULT NULL,
+  `created` datetime NOT NULL,
+  `created_by` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+-- Data exporting was unselected.
+-- Dumping structure for table hni.provider_locations
+DROP TABLE IF EXISTS `provider_locations`;
+CREATE TABLE IF NOT EXISTS `provider_locations` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `provider_id` int(11) NOT NULL,
+  `address_id` int(11) DEFAULT NULL,
+  `menu_id` int(11) DEFAULT NULL,
+  `created` datetime NOT NULL,
+  `created_by` int(11) NOT NULL,
+  `is_active` tinyint(4) DEFAULT NULL,
+  `last_updated_by` int(11) DEFAULT NULL,
+  `last_updated` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)) ENGINE=InnoDB;
+
+-- Data exporting was unselected.
+-- Dumping structure for table hni.provider_location_hours
+DROP TABLE IF EXISTS `provider_location_hours`;
+CREATE TABLE IF NOT EXISTS `provider_location_hours` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `provider_location_id` int(11) NOT NULL,
+  `dow` varchar(3) DEFAULT NULL,
+  `open_hour` int(11) DEFAULT NULL COMMENT 'open hour in 24hr',
+  `close_hour` int(11) DEFAULT NULL COMMENT 'close hour in 24hr',
+  PRIMARY KEY (`id`)) ENGINE=InnoDB;
+
+-- Data exporting was unselected.
+-- Dumping structure for table hni.race
+DROP TABLE IF EXISTS `race`;
 CREATE TABLE IF NOT EXISTS `race` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `race_desc` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT ;
+) ENGINE=InnoDB;
 
--- -----------------------------------------------------
--- Table `user_address`
--- -----------------------------------------------------
+-- Data exporting was unselected.
+-- Dumping structure for table hni.registration_state
+DROP TABLE IF EXISTS `registration_state`;
+CREATE TABLE IF NOT EXISTS `registration_state` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `eventname` varchar(255) NOT NULL,
+  `phoneno` varchar(45) NOT NULL,
+  `payload` varchar(255) DEFAULT NULL,
+  `eventstate` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+-- Data exporting was unselected.
+-- Dumping structure for table hni.reports
+DROP TABLE IF EXISTS `reports`;
+CREATE TABLE IF NOT EXISTS `reports` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `report_path` varchar(50) NOT NULL,
+  `label` varchar(50) NOT NULL,
+  `role` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+-- Data exporting was unselected.
+-- Dumping structure for table hni.security_permissions
+DROP TABLE IF EXISTS `security_permissions`;
+CREATE TABLE IF NOT EXISTS `security_permissions` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `domain` varchar(45) DEFAULT NULL,
+  `value` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+-- Data exporting was unselected.
+-- Dumping structure for table hni.security_roles
+DROP TABLE IF EXISTS `security_roles`;
+CREATE TABLE IF NOT EXISTS `security_roles` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+-- Data exporting was unselected.
+-- Dumping structure for table hni.security_role_permissions
+DROP TABLE IF EXISTS `security_role_permissions`;
+CREATE TABLE IF NOT EXISTS `security_role_permissions` (
+  `role_id` int(11) NOT NULL,
+  `permission_id` int(11) NOT NULL,
+  `all_instances` int(11) DEFAULT '0',
+  PRIMARY KEY (`role_id`,`permission_id`)) ENGINE=InnoDB;
+
+-- Data exporting was unselected.
+-- Dumping structure for table hni.sms_provider
+DROP TABLE IF EXISTS `sms_provider`;
+CREATE TABLE IF NOT EXISTS `sms_provider` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `provider` varchar(100) NOT NULL,
+  `long_code` varchar(20) DEFAULT NULL,
+  `short_code` varchar(20) DEFAULT NULL,
+  `state_code` varchar(2) NOT NULL,
+  `description` varchar(250) DEFAULT NULL,
+  `created` date DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+-- Data exporting was unselected.
+-- Dumping structure for table hni.users
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `first_name` varchar(255) DEFAULT NULL,
+  `last_name` varchar(255) DEFAULT NULL,
+  `gender_code` varchar(1) DEFAULT NULL,
+  `mobile_phone` varchar(45) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `deleted` int(11) DEFAULT NULL,
+  `hashed_secret` varchar(255) DEFAULT NULL,
+  `salt` varchar(255) DEFAULT NULL,
+  `created` datetime DEFAULT NULL,
+  `active` tinyint(4) DEFAULT '0',
+  `created_by` int(11) DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email_uniq_idx` (`email`)
+) ENGINE=InnoDB;
+
+-- Data exporting was unselected.
+-- Dumping structure for table hni.user_address
+DROP TABLE IF EXISTS `user_address`;
 CREATE TABLE IF NOT EXISTS `user_address` (
   `user_id` int(11) NOT NULL,
   `address_id` int(11) NOT NULL,
-  PRIMARY KEY (`user_id`,`address_id`),
-) ENGINE=InnoDB DEFAULT ;
+  PRIMARY KEY (`user_id`,`address_id`)) ENGINE=InnoDB;
 
--- -----------------------------------------------------
--- Table `user_profile_tmp`
--- -----------------------------------------------------
+-- Data exporting was unselected.
+-- Dumping structure for table hni.user_organization_role
+DROP TABLE IF EXISTS `user_organization_role`;
+CREATE TABLE IF NOT EXISTS `user_organization_role` (
+  `user_id` int(11) NOT NULL,
+  `organization_id` int(11) NOT NULL,
+  `role_id` int(11) NOT NULL,
+  PRIMARY KEY (`user_id`,`organization_id`,`role_id`)) ENGINE=InnoDB;
+
+-- Data exporting was unselected.
+-- Dumping structure for table hni.user_profile_tmp
+DROP TABLE IF EXISTS `user_profile_tmp`;
 CREATE TABLE IF NOT EXISTS `user_profile_tmp` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `type` varchar(45) NOT NULL,
@@ -641,26 +691,33 @@ CREATE TABLE IF NOT EXISTS `user_profile_tmp` (
   `created` datetime NOT NULL,
   `last_updated` datetime NOT NULL,
   `status` varchar(1) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-) ENGINE=InnoDB DEFAULT ;
+  PRIMARY KEY (`id`)) ENGINE=InnoDB;
 
--- -----------------------------------------------------
--- Table `user_status`
--- -----------------------------------------------------
+-- Data exporting was unselected.
+-- Dumping structure for table hni.user_provider_role
+DROP TABLE IF EXISTS `user_provider_role`;
+CREATE TABLE IF NOT EXISTS `user_provider_role` (
+  `user_id` int(11) NOT NULL,
+  `provider_id` int(11) NOT NULL,
+  `role_id` int(11) NOT NULL,
+  PRIMARY KEY (`user_id`,`provider_id`,`role_id`)) ENGINE=InnoDB;
+
+-- Data exporting was unselected.
+-- Dumping structure for table hni.user_status
+DROP TABLE IF EXISTS `user_status`;
 CREATE TABLE IF NOT EXISTS `user_status` (
   `user_id` int(11) NOT NULL,
   `status` varchar(2) NOT NULL
-) ENGINE=InnoDB DEFAULT ;
+) ENGINE=InnoDB;
 
--- -----------------------------------------------------
--- Table `volunteer`
--- -----------------------------------------------------
+-- Data exporting was unselected.
+-- Dumping structure for table hni.volunteer
+DROP TABLE IF EXISTS `volunteer`;
 CREATE TABLE IF NOT EXISTS `volunteer` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `created` date NOT NULL,
   `created_by` int(11) NOT NULL,
-  `address_id` int(11) NOT NULL,
   `birthday` date NOT NULL,
   `sex` char(1) NOT NULL,
   `race` int(11) NOT NULL,
@@ -670,29 +727,24 @@ CREATE TABLE IF NOT EXISTS `volunteer` (
   `kids` int(11) NOT NULL,
   `employer` varchar(100) NOT NULL,
   `non_profit` char(1) NOT NULL COMMENT 'Yes or No',
+  `available_for_place_order` tinyint(3) DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT ;
+) ENGINE=InnoDB;
 
--- -----------------------------------------------------
--- Table `volunteer_availability`
--- -----------------------------------------------------
+-- Data exporting was unselected.
+-- Dumping structure for table hni.volunteer_availability
+DROP TABLE IF EXISTS `volunteer_availability`;
 CREATE TABLE IF NOT EXISTS `volunteer_availability` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `created` date NOT NULL,
   `created_by` int(11) NOT NULL,
   `volunteer_id` int(11) NOT NULL,
   `timeline` int(11) NOT NULL COMMENT 'It should be a list of time rages, constants',
-  `weekday` varchar(50) NOT NULL COMMENT 'sunday, monday, etc',
+  `weekday` varchar(200) NOT NULL COMMENT 'sunday, monday, etc',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT ;
+) ENGINE=InnoDB;
 
--- -----------------------------------------------------
--- Table `reports`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `reports` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `report_path` varchar(50) NOT NULL,
-  `label` varchar(50) NOT NULL,
-  `role` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT ;
+-- Data exporting was unselected.
+/*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
+/*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

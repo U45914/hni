@@ -3,7 +3,6 @@ package org.hni.order.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -104,7 +103,7 @@ public class TestOrderService {
 
 		//Gets the next order, checks its time/date is good, marks it complete, and repeats.
 		for (int i = 5; i > 0; i --) {
-			Order order = orderService.next(new Provider(1L));
+			Order order = orderService.next(new Provider(1L), "MO");
 
 			//assertEquals(DateUtils.asDate(fromDate.minus(i - 1, ChronoUnit.MINUTES)), order.getOrderDate());
 			assertNull(order.getPickupDate());
@@ -126,7 +125,7 @@ public class TestOrderService {
 		}
 
 		//Search from tomorrow to today (backwards)
-		Order order = orderService.next(new Provider(10L));
+		Order order = orderService.next(new Provider(10L), "MO");
 		//No object should be returned for searches in the future
 		assertNull(order);
 	}

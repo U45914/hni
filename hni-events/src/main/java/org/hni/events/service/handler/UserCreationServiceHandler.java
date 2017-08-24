@@ -1,18 +1,23 @@
 /**
  * 
  */
-package org.hni.service.helpers;
+package org.hni.events.service.handler;
 
 import java.util.Optional;
 
+import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 import org.hni.common.Constants;
+import org.hni.organization.service.OrganizationUserService;
 import org.hni.security.utils.HNISecurityUtils;
 import org.hni.type.HNIRoles;
+import org.hni.user.dao.ClientDAO;
 import org.hni.user.om.Client;
 import org.hni.user.om.Invitation;
 import org.hni.user.om.User;
+import org.hni.user.service.NGOGenericService;
+import org.hni.user.service.UserOnboardingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,14 +25,24 @@ import org.slf4j.LoggerFactory;
  * @author Rahul K
  *
  */
-public class UserCreationServiceHelper extends AbstractServiceHelper {
+public class UserCreationServiceHandler {
 
-	private static final Logger _LOGGER = LoggerFactory.getLogger(UserCreationServiceHelper.class);
+	private static final Logger _LOGGER = LoggerFactory.getLogger(UserCreationServiceHandler.class);
 
 	private static final Integer MAX_MEAL_PER_DEPENDENT = 2;
 	private static final Integer MAX_MEAL_ALLOWED_FOR_PARTICIPANT = 180;
 	private static final Integer MAX_MEAL_ALLOWED_PER_DAY = 2;
 
+	@Inject
+	protected OrganizationUserService orgUserService;
+	@Inject
+	protected ClientDAO clientDao;
+	@Inject
+	protected NGOGenericService ngoGenericService;
+	@Inject
+	protected UserOnboardingService userOnBoardingService;
+	
+	
 	public boolean createUserForSmsChannel(User user) {
 		_LOGGER.info("Started adding new user to system from SMS channgel");
 		_LOGGER.debug("User Info : {}", user.toString());
@@ -89,5 +104,18 @@ public class UserCreationServiceHelper extends AbstractServiceHelper {
 		user.setIsActive(Boolean.TRUE);
 		user.setDeleted(Boolean.FALSE);
 		user.setPassword(Constants.EMPTY_STR);
+	}
+	
+
+	protected Invitation getInvitationByMobile(String mobilePhone) {
+		return userOnBoardingService.getInvitationByPhoneNumber(mobilePhone);
+	}
+	
+	protected boolean isParticipant(HNIRoles role) {
+		if (HNIRoles.CLIENT.equals(role)) {
+			return Boolean.TRUE;
+		} else {
+			return Boolean.FALSE;
+		}
 	}
 }

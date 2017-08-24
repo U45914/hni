@@ -16,11 +16,8 @@ import org.hni.organization.om.UserOrganizationRole;
 import org.hni.organization.service.OrganizationUserService;
 import org.hni.type.HNIRoles;
 import org.hni.user.om.Client;
-import org.hni.user.om.Dependent;
-import org.hni.user.om.Ngo;
 import org.hni.user.om.User;
-import org.hni.user.service.DependentService;
-import org.hni.user.service.NGOGenericService;
+import org.hni.user.service.ClientService;
 import org.hni.user.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +39,6 @@ public class ConfigurationServiceHelper extends AbstractServiceHelper {
 	private ClientService clientService;
 	@Inject
 	private OrderServiceHelper orderServiceHelper;
-	
 	@Inject
 	private DependentServiceHelper dependentServiceHelper;
 

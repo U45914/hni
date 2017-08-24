@@ -6,10 +6,10 @@ import javax.inject.Inject;
 import org.apache.commons.lang.RandomStringUtils;
 import org.hni.common.HNIUtils;
 import org.hni.events.service.dao.RegistrationStateDAO;
+import org.hni.events.service.handler.UserCreationServiceHandler;
 import org.hni.events.service.om.Event;
 import org.hni.events.service.om.RegistrationState;
 import org.hni.events.service.om.RegistrationStep;
-import org.hni.service.helpers.UserCreationServiceHelper;
 import org.hni.user.om.User;
 import org.hni.user.service.UserService;
 import org.slf4j.Logger;
@@ -23,7 +23,7 @@ public class RegisterService extends AbstractRegistrationService<User> {
 
 	private static final String THANK_YOU_FOR_REGISTERING_WITH_HUNGER_NOT_IMPOSSIBLE = "Congrats! You've successfully enrolled in Hunger Not Impossible. When you'd like to pickup something to eat, text HUNGRY back to this number. Orders are placed 11-8 pm.";
 	@Inject
-	private UserCreationServiceHelper userCreationHelper;
+	private UserCreationServiceHandler userCreationHandler;
 
 	private static final String DEPENDANTS = "dependants";
 
@@ -230,7 +230,7 @@ public class RegisterService extends AbstractRegistrationService<User> {
 	
 	private String registerUserAndSetActivationCodes(User user) {
 		try {
-			boolean isCreated = userCreationHelper.createUserForSmsChannel(user);
+			boolean isCreated = userCreationHandler.createUserForSmsChannel(user);
 			if (isCreated) {
 				return null;
 			} else {

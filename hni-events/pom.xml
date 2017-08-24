@@ -28,11 +28,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.hni</groupId>
-			<artifactId>hni-service-helper</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.hni</groupId>
 			<artifactId>hni-common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
