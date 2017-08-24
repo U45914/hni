@@ -17,8 +17,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -173,6 +171,10 @@ public class Client implements Persistable, Serializable {
 	private Integer liveWith;
 	@Column(name = "ethinicity")
 	private Integer ethnicity;
+	@Column(name = "max_order_allowed")
+	private Integer maxOrderAllowed;
+	@Column(name = "max_meals_allowed_per_day")
+	private Integer maxMealsAllowedPerDay;
 	
 	transient private List<Integer> foodPreferenceList = new ArrayList<>();
 	
@@ -904,7 +906,22 @@ public class Client implements Persistable, Serializable {
 	public void setDependents(Set<Dependent> dependents) {
 		this.dependents = dependents;
 	}
-	
-	
 
+	public Integer getMaxOrderAllowed() {
+		return maxOrderAllowed;
+	}
+
+	public void setMaxOrderAllowed(Integer maxOrderAllowed) {
+		this.maxOrderAllowed = maxOrderAllowed;
+	}
+
+	public Integer getMaxMealsAllowedPerDay() {
+		return maxMealsAllowedPerDay;
+	}
+
+	public void setMaxMealsAllowedPerDay(Integer maxMealsAllowedPerDay) {
+		this.maxMealsAllowedPerDay = maxMealsAllowedPerDay;
+	}
+	
+	
 }

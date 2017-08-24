@@ -166,7 +166,7 @@ public class ConfigurationController extends AbstractBaseController {
 		try {
 			String json = mapper.writeValueAsString(JsonView.with(client)
 					.onClass(User.class, Match.match().exclude("*").include("id", "firstName", "lastName", "mobilePhone", "email", "createdBy", "addresses", "isActive"))
-					.onClass(Client.class, Match.match().exclude("*").include("id", "user", "sheltered", "dependents","ngo","createdBy"))
+					.onClass(Client.class, Match.match().exclude("*").include("id", "user", "sheltered", "dependents","ngo","createdBy","maxOrderAllowed", "maxMealsAllowedPerDay"))
 					.onClass(Dependent.class, Match.match().exclude("*").include("id","name", "age","createdBy"))
 					.onClass(Ngo.class, Match.match().exclude("*").include("id","contactName","userId")));
 				

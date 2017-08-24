@@ -10,6 +10,7 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.hni.admin.service.converter.HNIConverter;
 import org.hni.user.dao.ClientDAO;
 import org.hni.user.om.Client;
 import org.hni.user.om.Dependent;
@@ -40,8 +41,9 @@ public class DependentServiceHelper extends AbstractServiceHelper {
 		
 		existingClient.getUser().setFirstName(client.getUser().getFirstName());
 		existingClient.getUser().setLastName(client.getUser().getLastName());
-		existingClient.getUser().setMobilePhone(client.getUser().getMobilePhone());
+		existingClient.getUser().setMobilePhone(HNIConverter.convertPhoneNumberFromUiFormat(client.getUser().getMobilePhone()));
 		existingClient.getUser().setIsActive(client.getUser().getIsActive());
+		existingClient.setMaxOrderAllowed(client.getMaxOrderAllowed());
 		
 		Ngo ngo = ngoGenericService.get(client.getNgo().getId());
 		existingClient.setNgo(ngo);

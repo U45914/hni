@@ -49,6 +49,7 @@ public class HNIUtils {
 			headers.add(getFieldDefMap("orders", "No of Orders", true, canEdit));
 			headers.add(getFieldDefMap("active", "Status", true, canEdit));
 			headers.add(getFieldDefMap("sheltered", "Sheltered", true, canEdit));
+			headers.add(getFieldDefMap("contactName", "NGO Name", true, canEdit));
 
 		} else if(Constants.REPORT_ALL_VOLUNTEER.equals(reportId)){
 			headers.add(getFieldDefMap("firstName", "First Name", true, canEdit));

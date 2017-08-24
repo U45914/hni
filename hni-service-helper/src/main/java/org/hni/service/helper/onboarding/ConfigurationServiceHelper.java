@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.transaction.Transactional;
@@ -18,6 +19,7 @@ import org.hni.user.dao.ClientDAO;
 import org.hni.user.om.Client;
 import org.hni.user.om.Dependent;
 import org.hni.user.om.User;
+import org.hni.user.service.ClientService;
 import org.hni.user.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +38,7 @@ public class ConfigurationServiceHelper extends AbstractServiceHelper {
 	@Inject
 	private OrderService orderService;	
 	@Inject
-	private ClientDAO clientDao;
+	private ClientService clientService;
 	@Inject
 	private OrderServiceHelper orderServiceHelper;
 	
@@ -122,7 +124,7 @@ public class ConfigurationServiceHelper extends AbstractServiceHelper {
 	 */
 	public boolean isAllowed(User performer, User toUser) {
 		boolean isAllowed = false;
-		_LOGGER.info("Logged User {}, User to delete {} ", performer.getId(), toUser.getId());
+		_LOGGER.info("Logged User {}, User to modify {} ", performer.getId(), toUser.getId());
 		List<UserOrganizationRole> performerRoles = (List<UserOrganizationRole>) organizationUserService
 				.getUserOrganizationRoles(performer);
 
@@ -265,7 +267,7 @@ public class ConfigurationServiceHelper extends AbstractServiceHelper {
 		userIds.forEach(userId -> {
 			User toUser = userService.get(userId);
 			if (isAllowed(loggedInUser, toUser)) {
-				Client client = clientDao.getByUserId(userId);
+				Client client = clientService.getByUserId(userId);
 				if(client == null){
 					client = new Client();
 					client.setRace(0L);
@@ -276,7 +278,7 @@ public class ConfigurationServiceHelper extends AbstractServiceHelper {
 				client.setSheltered(isSheltered);
 				client.getUser().setUpdatedBy(parent);
 				
-				clientDao.update(client);
+				clientService.update(client);
 	
 				response.put(Constants.STATUS, Constants.SUCCESS);
 				response.put(Constants.MESSAGE, "User is been sheltered");
@@ -295,7 +297,7 @@ public class ConfigurationServiceHelper extends AbstractServiceHelper {
 		User toUser = userService.get(userId);
 
 		if (isAllowed(loggedInUser, toUser)) {
-			return clientDao.getByUserId(userId);
+			return clientService.getByUserId(userId);
 		}
 		return null;
 	}
@@ -307,7 +309,7 @@ public class ConfigurationServiceHelper extends AbstractServiceHelper {
 		User toUser = userService.get(userId);
 		Map<String, String> response = new HashMap<>();
 		if (isAllowed(loggedInUser, toUser)) {
-			Client existingClient = clientDao.getByUserId(userId);
+			Client existingClient = clientService.getByUserId(userId);
 			
 			dependentServiceHelper.modifyDependents(existingClient, client, loggedInUser);
 
