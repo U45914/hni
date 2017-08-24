@@ -1,6 +1,8 @@
 package org.hni.user.service;
 
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.hni.common.dao.BaseDAO;
@@ -26,6 +28,11 @@ public class DefaultDependentService extends AbstractService<Dependent> implemen
 	@Override
 	public Dependent getDependentById(Long id) {
 		return dependentDao.getDependentById(id).get(0);
+	}
+
+	@Override
+	public List<Dependent> getAllDependentsOf(Integer id) {
+		return dependentDao.getAllDependentsOf(id);
 	}
 
 }

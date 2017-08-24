@@ -22,10 +22,11 @@ public class CustomerDao extends DefaultGenericDAO {
 		Long role = HNIRoles.CLIENT.getRole();
 
 		List<Object[]> user = em
-				.createNativeQuery("SELECT u.id, u.active, u.first_name,u.last_name,u.gender_code,u.mobile_phone,u.email, a.address_line1, COUNT(o.id) AS ordCount, c.sheltered "
+				.createNativeQuery("SELECT u.id, u.active, u.first_name,u.last_name,u.gender_code,u.mobile_phone,u.email, a.address_line1, COUNT(o.id) AS ordCount, c.sheltered, ng.contact_name "
 						+ "FROM users u "
 						+ "LEFT JOIN user_organization_role uor ON uor.user_id = u.id "
 						+ "LEFT JOIN client c ON c.user_id = u.id "
+						+ "LEFT JOIN ngo ng ON c.ngo_id = ng.id "
 						+ "LEFT JOIN user_address ua ON ua.user_id = u.id "
 						+ "LEFT JOIN addresses a ON a.id = ua.address_id "
 						+ "LEFT JOIN orders o ON o.user_id=u.id "
@@ -42,6 +43,7 @@ public class CustomerDao extends DefaultGenericDAO {
 			map.put("address",getValue(u[7]));
 			map.put("orders", getValue(u[8]));
 			map.put("sheltered", getValueForSheltered(u[9]));
+			map.put("contactName", getValue(u[10]));
 			customers.add(map);
 		}
 		return customers;
