@@ -1,13 +1,9 @@
 package org.hni.service.helper.onboarding;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -43,11 +39,12 @@ public class ConfigurationServiceHelper extends AbstractServiceHelper {
 	@Inject
 	private OrderService orderService;	
 	@Inject
+	private ClientService clientService;
+	@Inject
 	private OrderServiceHelper orderServiceHelper;
 	
 	@Inject
-	@Named("defaultDependentService")
-	private DependentService dependentService;
+	private DependentServiceHelper dependentServiceHelper;
 
 	public Map<String, String> activateUser(Long userId, User loggedInUser) {
 		_LOGGER.debug("Starting process for activate user");
@@ -128,7 +125,7 @@ public class ConfigurationServiceHelper extends AbstractServiceHelper {
 	 */
 	public boolean isAllowed(User performer, User toUser) {
 		boolean isAllowed = false;
-		_LOGGER.info("Logged User {}, User to delete {} ", performer.getId(), toUser.getId());
+		_LOGGER.info("Logged User {}, User to modify {} ", performer.getId(), toUser.getId());
 		List<UserOrganizationRole> performerRoles = (List<UserOrganizationRole>) organizationUserService
 				.getUserOrganizationRoles(performer);
 
@@ -271,7 +268,7 @@ public class ConfigurationServiceHelper extends AbstractServiceHelper {
 		userIds.forEach(userId -> {
 			User toUser = userService.get(userId);
 			if (isAllowed(loggedInUser, toUser)) {
-				Client client = clientDao.getByUserId(userId);
+				Client client = clientService.getByUserId(userId);
 				if(client == null){
 					client = new Client();
 					client.setRace(0L);
@@ -282,7 +279,7 @@ public class ConfigurationServiceHelper extends AbstractServiceHelper {
 				client.setSheltered(isSheltered);
 				client.getUser().setUpdatedBy(parent);
 				
-				clientDao.update(client);
+				clientService.update(client);
 	
 				response.put(Constants.STATUS, Constants.SUCCESS);
 				response.put(Constants.MESSAGE, "User is been sheltered");
@@ -301,7 +298,7 @@ public class ConfigurationServiceHelper extends AbstractServiceHelper {
 		User toUser = userService.get(userId);
 
 		if (isAllowed(loggedInUser, toUser)) {
-			return clientDao.getByUserId(userId);
+			return clientService.getByUserId(userId);
 		}
 		return null;
 	}
@@ -313,38 +310,9 @@ public class ConfigurationServiceHelper extends AbstractServiceHelper {
 		User toUser = userService.get(userId);
 		Map<String, String> response = new HashMap<>();
 		if (isAllowed(loggedInUser, toUser)) {
-			Client existingClient = clientDao.getByUserId(userId);
-			existingClient.getUser().setFirstName(client.getUser().getFirstName());
-			existingClient.getUser().setLastName(client.getUser().getLastName());
-			existingClient.getUser().setMobilePhone(client.getUser().getMobilePhone());
+			Client existingClient = clientService.getByUserId(userId);
 			
-			Ngo ngo = ngoGenericService.get(client.getNgo().getId());
-			existingClient.setNgo(ngo);
-			
-			if(existingClient.getDependents() != null){
-				Iterator<Dependent> iterator  = client.getDependents().iterator();
-				Set<Dependent> newDependents = new HashSet<>();
-				while(iterator.hasNext()){
-					Dependent dependent = (Dependent) iterator.next();
-					if(dependent.getId() == null){
-						_LOGGER.debug("Saving new dependent");
-						dependent.setCreatedBy(loggedInUser);
-						dependent.setIsActive(true);
-						dependent.setCreatedDate(new Date());
-						dependent.setModifiedDate(new Date());
-						dependent.setClient(existingClient);
-						dependentService.save(dependent);
-					}
-					newDependents.add(dependent);
-				}
-				//existingClient.setDependants(newDependents);
-			}else{
-				existingClient.setDependants(null);
-			}
-			existingClient.getUser().setIsActive(client.getUser().getIsActive());
-			existingClient.getUser().setUpdatedBy(loggedInUser);
-			
-			clientDao.update(existingClient);
+			dependentServiceHelper.modifyDependents(existingClient, client, loggedInUser);
 			
 			response.put(Constants.STATUS, Constants.SUCCESS);
 			response.put(Constants.MESSAGE, "User profile updated");
