@@ -30,7 +30,7 @@ import org.hni.provider.om.MenuItem;
 import org.hni.provider.om.Provider;
 import org.hni.provider.om.ProviderLocation;
 import org.hni.provider.om.ProviderLocationHour;
-import org.hni.service.helper.onboarding.OrderServiceHelper;
+import org.hni.service.helpers.OrderServiceHelper;
 import org.hni.user.dao.UserDAO;
 import org.hni.user.om.User;
 import org.slf4j.Logger;

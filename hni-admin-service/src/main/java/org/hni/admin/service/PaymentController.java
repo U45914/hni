@@ -30,7 +30,7 @@ import org.hni.provider.om.Provider;
 import org.hni.provider.om.ProviderLocation;
 import org.hni.provider.om.ProviderLocationHour;
 import org.hni.provider.service.ProviderService;
-import org.hni.service.helper.onboarding.PaymentServiceHelper;
+import org.hni.service.helpers.PaymentServiceHelper;
 import org.hni.user.om.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,4 +1,4 @@
-package org.hni.service.helper.onboarding;
+package org.hni.service.helpers;
 
 import java.util.Collection;
 import java.util.HashMap;

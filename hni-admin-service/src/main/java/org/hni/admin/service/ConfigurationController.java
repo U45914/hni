@@ -15,7 +15,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.hni.service.helper.onboarding.ConfigurationServiceHelper;
+import org.hni.service.helpers.ConfigurationServiceHelper;
 import org.hni.user.om.Client;
 import org.hni.user.om.Dependent;
 import org.hni.user.om.Ngo;

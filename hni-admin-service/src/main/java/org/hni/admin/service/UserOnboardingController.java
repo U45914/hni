@@ -18,7 +18,7 @@ import javax.ws.rs.core.Response;
 
 import org.hni.common.Constants;
 import org.hni.organization.om.Organization;
-import org.hni.service.helper.onboarding.UserOnboardingServiceHelper;
+import org.hni.service.helpers.UserOnboardingServiceHelper;
 import org.hni.user.dao.UserDAO;
 import org.hni.user.om.Invitation;
 import org.hni.user.om.User;

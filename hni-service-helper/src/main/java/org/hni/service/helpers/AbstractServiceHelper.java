@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.hni.service.helper.onboarding;
+package org.hni.service.helpers;
 
 import javax.inject.Inject;
 

@@ -9,7 +9,7 @@ import org.hni.events.service.dao.RegistrationStateDAO;
 import org.hni.events.service.om.Event;
 import org.hni.events.service.om.RegistrationState;
 import org.hni.events.service.om.RegistrationStep;
-import org.hni.service.helper.onboarding.UserCreationServiceHelper;
+import org.hni.service.helpers.UserCreationServiceHelper;
 import org.hni.user.om.User;
 import org.hni.user.service.UserService;
 import org.slf4j.Logger;
