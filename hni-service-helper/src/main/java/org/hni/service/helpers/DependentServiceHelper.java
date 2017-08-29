@@ -44,6 +44,7 @@ public class DependentServiceHelper extends AbstractServiceHelper {
 		existingClient.getUser().setMobilePhone(HNIConverter.convertPhoneNumberFromUiFormat(client.getUser().getMobilePhone()));
 		existingClient.getUser().setIsActive(client.getUser().getIsActive());
 		existingClient.setMaxOrderAllowed(client.getMaxOrderAllowed());
+		existingClient.setMaxMealsAllowedPerDay(client.getMaxMealsAllowedPerDay());
 		
 		Ngo ngo = ngoGenericService.get(client.getNgo().getId());
 		existingClient.setNgo(ngo);
