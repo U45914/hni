@@ -314,17 +314,18 @@ public class DefaultOrderProcessor implements OrderProcessor {
             num = 0;
         }
 
-        List<ActivationCode> activationCodes = activationCodeService.getByUser(user);
-        LOGGER.debug("# activationCodes=" + activationCodes.size());
+        //List<ActivationCode> activationCodes = activationCodeService.getByUser(user);
+        Integer maxAllowedOrderForTheDay = orderServiceHelper.maxAllowedOrderForTheDay(user);
+        LOGGER.debug("# Orders remaning for the day =" + maxAllowedOrderForTheDay);
         if (num <= 0) {
             LOGGER.info("Reset order choices for PartialOrder {} by user request", order.getId());
             //clear out previous choices
             output = findNearbyMeals(order.getAddress(), order);
         } else {
-            if (num > activationCodes.size()) {
+            if (num > maxAllowedOrderForTheDay) {
                 // Too many - order them the maximum and move on
-                LOGGER.debug("User requested more meals than they have. Req=" + num + " actual=" + activationCodes.size());
-                num = activationCodes.size();
+                LOGGER.debug("User requested more meals than they have. Req=" + num + " actual=" + maxAllowedOrderForTheDay);
+                num = maxAllowedOrderForTheDay;
             }
             Collection<MenuItem> menuItems = order.getMenuItemsSelected();
             MenuItem menuItem = menuItems.iterator().next();
