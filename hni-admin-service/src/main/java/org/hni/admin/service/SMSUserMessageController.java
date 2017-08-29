@@ -44,7 +44,8 @@ public class SMSUserMessageController extends AbstractBaseController {
     	String body = getQueryParamValue(params, Constants.MSG_BODY);
     	String fromNum = getQueryParamValue(params, Constants.MSG_FROM);
     	String fromState = getQueryParamValue(params, Constants.MSG_FROM_STATE);
-        
+    	setUserRequestState(fromState);
+    	logger.info("In First Method");
     	logger.info("HTML/Received a message, body={}, fromNum={}, fromState={}", body, fromNum, fromState);
         final Event event = Event.createEvent("text/html", parsePhoneNumber(fromNum), body);
         
@@ -63,6 +64,8 @@ public class SMSUserMessageController extends AbstractBaseController {
     	String fromNum	 = getQueryParamValue(params, Constants.MSG_FROM);
     	String fromState = getQueryParamValue(params, Constants.MSG_FROM_STATE);
     	
+    	setUserRequestState(fromState);
+    	logger.info("In 2nd Method");
     	logger.info("HTML/Received a message, body={}, fromNum={}, fromState={}", body, fromNum, fromState);
         
         final Event event = Event.createEvent("text/plain", parsePhoneNumber(fromNum), body);
@@ -84,8 +87,13 @@ public class SMSUserMessageController extends AbstractBaseController {
     public Map<String, Object> respondToMessageJson(MultivaluedMap<String, String> params) {
     	String body = getQueryParamValue(params, "Body");
     	String fromNum	 = getQueryParamValue(params, "fromNum");
-        logger.info("JSON/Received a message, body={}, fromNum={}",body,fromNum);
+    	String fromState = getQueryParamValue(params, Constants.MSG_FROM_STATE);
+    	
+    	setUserRequestState(fromState);
+    	logger.info("In 3rd Method");
+    	logger.info("JSON/Received a message, body={}, fromNum={}",body,fromNum);
         final Event event = Event.createEvent("text/plain", parsePhoneNumber(fromNum), body);
+        
         Map<String, Object> res = new HashMap<>();
         try {
             final String returnMessage = eventRouter.handleEvent(event);
@@ -106,8 +114,8 @@ public class SMSUserMessageController extends AbstractBaseController {
         }
         return res;
     }
-    
-    private String getQueryParamValue(MultivaluedMap<String, String> params, String key){
+
+	private String getQueryParamValue(MultivaluedMap<String, String> params, String key){
     	return params.get(key).get(0);
     }
     

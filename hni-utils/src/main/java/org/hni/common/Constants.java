@@ -54,6 +54,7 @@ public class Constants {
 	public static final Integer REPORT_ALL_NGO = 40;
 	public static final Integer REPORT_ALL_VOLUNTEER = 50;
 	public static final Integer REPORT_ALL_CUSTOMER = 60;
+	public static final Integer REPORT_ALL_CUSTOMER_NGO = 70;
 	
 	// Constants for HNI Templates
 	public static final String PARTICIPANT_ORDER_CONFIRMATION_NOTIFICATION = "POCN";
@@ -175,4 +176,5 @@ public class Constants {
 	public static final String PHONE = "phone";
 	public static final String STATUS = "status";
 	public static final String EMPTY_STR = "";
+	public static final String STATE = "state";
 }

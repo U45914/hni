@@ -208,4 +208,9 @@ public class AbstractBaseController {
 			"<br /><br />For questions email hunger@notimpossiblelabs.com";
 		return message;
 	}
+	
+    
+    public void setUserRequestState(String fromState) {
+    	ThreadContext.put(Constants.STATE, fromState);
+	}
 }

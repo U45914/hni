@@ -157,7 +157,7 @@ public class UserReportsController extends AbstractBaseController {
 		Map<String, Object> response = new HashMap<>();
 		try {
 			List<Map> customers = userReportService.getAllCustomersEnrolledByNgo(user);
-			response.put("headers", HNIUtils.getReportHeaders(60, canEditField()));
+			response.put("headers", HNIUtils.getReportHeaders(Constants.REPORT_ALL_CUSTOMER_NGO, canEditField()));
 			response.put("data", customers);
 			response.put(Constants.RESPONSE, Constants.SUCCESS);
 		} catch (Exception e) {

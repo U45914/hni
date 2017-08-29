@@ -108,6 +108,9 @@ public class DefaultOrderProcessor implements OrderProcessor {
     @Inject
     private PushMessageService pushMessageService;
     
+    @Inject 
+    OrderServiceHandler orderServiceHelper;
+    
     @PostConstruct
     void init() {
         if (eventRouter.getRegistered(EventName.MEAL) != this) {
@@ -284,10 +287,11 @@ public class DefaultOrderProcessor implements OrderProcessor {
             order.getMenuItemsSelected().add(chosenItem);
 
             // If this user has multiple auth codes we'll want to ask them how many of this item 
-            List<ActivationCode> activationCodes = activationCodeService.getByUser(user);
-            if (activationCodes.size() > 1) {
+            Integer maxAllowedOrderForTheDay = orderServiceHelper.maxAllowedOrderForTheDay(user);
+            
+            if (maxAllowedOrderForTheDay > 1) {
                 order.setTransactionPhase(TransactionPhase.MULTIPLE_ORDER);
-                output = String.format(REPLY_MULTIPLE_ORDERS, activationCodes.size());
+                output = String.format(REPLY_MULTIPLE_ORDERS, maxAllowedOrderForTheDay);
             } else {
                 order.setTransactionPhase(TransactionPhase.CONFIRM_OR_REDO);
                 output = String.format(REPLY_CONFIRM_ORDER, chosenItem.getName(), order.getChosenProvider().getProvider().getName());

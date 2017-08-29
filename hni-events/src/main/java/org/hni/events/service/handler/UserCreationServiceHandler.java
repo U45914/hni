@@ -20,11 +20,13 @@ import org.hni.user.service.NGOGenericService;
 import org.hni.user.service.UserOnboardingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Rahul K
  *
  */
+@Component
 public class UserCreationServiceHandler {
 
 	private static final Logger _LOGGER = LoggerFactory.getLogger(UserCreationServiceHandler.class);
@@ -67,6 +69,9 @@ public class UserCreationServiceHandler {
 	@Transactional
 	private void createUser(User user, HNIRoles role, Invitation invitation) {
 		_LOGGER.info("Saving User account details to database");
+		
+		user.setOrganizationId(invitation.getOrganizationId() != null ? Long.valueOf(invitation.getOrganizationId()) : 1L);
+		
 		orgUserService.register(user, role.getRole());
 		_LOGGER.info("Completed saving User account details to database");
 		if (isParticipant(role)) {
