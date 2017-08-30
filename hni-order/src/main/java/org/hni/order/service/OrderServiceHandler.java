@@ -4,6 +4,7 @@
 package org.hni.order.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -57,7 +58,7 @@ public class OrderServiceHandler {
 	}
 
 	private Integer getTotalMealsCompletedToday(User user) {
-		Collection<Order> orders = orderService.get(user, getStartTimeOfTheDay());
+		Collection<Order> orders = getOrdersForToday(user);
 		Integer totalMealCount = 0;
 		if (!orders.isEmpty()) {
 			for(Order order : orders) {
@@ -67,7 +68,7 @@ public class OrderServiceHandler {
 		return totalMealCount;
 	}
 	
-	private LocalDate getStartTimeOfTheDay() {
+	private Collection<Order> getOrdersForToday(User user) {
 		String userState = (String) ThreadContext.get(Constants.STATE);
 		if (userState == null) {
 			userState = "MO";
@@ -82,8 +83,11 @@ public class OrderServiceHandler {
 		}
 		
 		*/
-		return LocalDate.now().atTime(0, 0).toLocalDate();
-		
+		LocalDateTime startDate = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0); //.minus(Duration.ofHours(mealOffset));
+		LocalDateTime endDate = LocalDateTime.now().withHour(23).withMinute(59).withSecond(59);  // set duration to be all all day
+ 		
+    	
+    	return orderService.get(user, startDate, endDate);		
 	}
 
 }
