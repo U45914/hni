@@ -57,6 +57,8 @@ public class UserCreationServiceHandler {
 		Optional<Invitation> invitation = Optional.ofNullable(getInvitationByMobile(user.getMobilePhone()));
 		if (invitation.isPresent()) {
 			createUser(user, HNIRoles.CLIENT, invitation.get());
+			invitation.get().setActivated(1);
+			userOnBoardingService.update(invitation.get());
 			// Send welcome notification to users mobile
 			return true;
 		} else {
