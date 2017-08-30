@@ -1,7 +1,9 @@
 package org.hni.order.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
+
 import org.hni.common.service.BaseService;
 import org.hni.order.om.Order;
 import org.hni.provider.om.Provider;
@@ -92,4 +94,6 @@ public interface OrderService extends BaseService<Order> {
 	 * @return a collection of open orders
 	 */
 	public Collection<Order> getOpenOrdersFor(User user);
+
+	Collection<Order> get(User user, LocalDateTime startDate, LocalDateTime endDate);
 }

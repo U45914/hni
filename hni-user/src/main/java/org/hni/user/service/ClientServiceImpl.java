@@ -54,7 +54,7 @@ public class ClientServiceImpl implements ClientService {
 	@Override
 	public Client getByUserId(Long id) {
 		Client client = clientDAO.getByUserId(id);
-		client.getUser().setMobilePhone(HNIConverter.convertPhoneNumberToUiFormat(client.getUser().getMobilePhone()));
+		//client.getUser().setMobilePhone(HNIConverter.convertPhoneNumberToUiFormat(client.getUser().getMobilePhone()));
 		return client;
 	}
 

@@ -32,9 +32,12 @@ public class DefaultOrderService extends AbstractService<Order> implements Order
 	private OrderDAO orderDao;
 	private LockingService lockingService;
 	private ActivationCodeService activationCodeService;
+	@Inject
+	private OrderServiceHandler orderServiceHandler;
 	
 	@Inject
-	public DefaultOrderService(OrderDAO orderDao, LockingService lockingService, ActivationCodeService activationCodeService) {
+	public DefaultOrderService(OrderDAO orderDao, LockingService lockingService, 
+			ActivationCodeService activationCodeService) {
 		super(orderDao);
 		this.orderDao = orderDao;
 		this.lockingService = lockingService;
@@ -67,6 +70,11 @@ public class DefaultOrderService extends AbstractService<Order> implements Order
 		return this.orderDao.get(user,  startDate, endDate);
 	}
 
+	@Override
+	public Collection<Order> get(User user, LocalDateTime startDate, LocalDateTime endDate) {
+		return this.orderDao.get(user,  startDate, endDate);
+	}
+	
 	@Override
 	public Order next(String stateCode) {
 		// Returns an uncompleted order placed within the last 24 hours. Null if none found.
@@ -177,23 +185,9 @@ public class DefaultOrderService extends AbstractService<Order> implements Order
 	 */
 	@Override
 	public boolean maxDailyOrdersReached(User user) {
-		List<ActivationCode> activeActivationCodes = activationCodeService.getByUser(user);
-		LocalDateTime startDate = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0); //.minus(Duration.ofHours(mealOffset));
-		LocalDateTime endDate = LocalDateTime.now().withHour(23).withMinute(59).withSecond(59);  // set duration to be all all day
- 		
-		logger.debug("#codes=" + activeActivationCodes.size());
-    	for(ActivationCode ac : activeActivationCodes) {
-    		logger.debug(String.format("code=%s, mealsRemaining=%d", ac.getActivationCode(), ac.getMealsRemaining()));
-    	}
-    	
-    	logger.debug("Getting orders for userId={} using startDate={} endDate={}", user.getId(), startDate, endDate);
-    	Collection<Order> todaysOrders = orderDao.get(user, startDate, endDate);
-    	logger.debug("#orders=" + todaysOrders.size());
-    	for(Order o : todaysOrders) {
-    		logger.debug(o.toString());
-    	}
-    	
-    	return (todaysOrders.size() >= activeActivationCodes.size());
+		
+    	Integer maxOrderRemaning = orderServiceHandler.maxAllowedOrderForTheDay(user);
+    	return !(maxOrderRemaning > 0);
 	}
 
 	/**
