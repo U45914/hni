@@ -98,6 +98,7 @@ public class DependentServiceHelper extends AbstractServiceHelper {
 			dependent.setCreatedDate(new Date());
 			dependent.setModifiedDate(new Date());
 			dependent.setClient(existingClient);
+			dependent.setGender(dependent.getGender());
 			dependentService.save(dependent);
 		}
 		

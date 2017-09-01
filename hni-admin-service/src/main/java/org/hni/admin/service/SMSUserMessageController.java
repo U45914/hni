@@ -3,14 +3,8 @@ package org.hni.admin.service;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
-import org.hni.common.Constants;
-import org.hni.common.exception.HNIException;
-import org.hni.events.service.EventRouter;
-import org.hni.events.service.om.Event;
-import org.hni.provider.om.Provider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -21,8 +15,15 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.hni.common.Constants;
+import org.hni.common.exception.HNIException;
+import org.hni.events.service.EventRouter;
+import org.hni.events.service.om.Event;
+import org.hni.provider.om.Provider;
+import org.hni.sms.service.provider.PushMessageService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 @Api(value = "/usermessage", description = "endpoint to accept SMS messages")
 @Component
@@ -32,6 +33,9 @@ public class SMSUserMessageController extends AbstractBaseController {
 
     @Inject
     private EventRouter eventRouter;
+    
+    @Inject
+    private PushMessageService pushMessageService;
 
     @POST
     @Produces(MediaType.TEXT_HTML)
@@ -113,6 +117,19 @@ public class SMSUserMessageController extends AbstractBaseController {
             throw new HNIException(Response.serverError().entity(res).build());
         }
         return res;
+    }
+    
+    @POST
+    @Path("/participant/all")
+    @Consumes(MediaType.TEXT_PLAIN)
+    @ApiOperation(value = "sends SMS message to all participants."
+            , notes = ""
+            , response = String.class
+            , responseContainer = "")
+    public Map<String, Object> sendMessageToAllParticipants(String messageContent) {
+    	pushMessageService.sendMessageToAllActiveParticipants(messageContent);
+		return null;
+    	
     }
 
 	private String getQueryParamValue(MultivaluedMap<String, String> params, String key){

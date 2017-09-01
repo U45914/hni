@@ -107,4 +107,24 @@ public class PushMessageService {
 			return smsProvider.getLongCode();
 		}
 	}
+	
+	public void sendMessageToAllActiveParticipants(String messageContent){
+		List<String> participantsFromMO = userDAO.getParticiapntsFromState("MO");
+		List<String> participantsFromOR = userDAO.getParticiapntsFromState("OR");
+		
+		SmsProvider providerForMO = SmsServiceLoader.getProviders().get("MO");
+		if( participantsFromMO != null && !participantsFromMO.isEmpty()){
+			for(String participant : participantsFromMO){
+				provider.get(providerForMO.getProviderName()).sendMessage(createMessageObject(messageContent, providerForMO.getLongCode(), participant));
+			}
+		}
+		
+		SmsProvider providerForOR = SmsServiceLoader.getProviders().get("OR");
+		if( participantsFromOR != null && !participantsFromOR.isEmpty()){
+			for(String participant : participantsFromOR){
+				provider.get(providerForOR.getProviderName()).sendMessage(createMessageObject(messageContent, providerForOR.getLongCode(), participant));
+			}
+		}
+	}
+	
 }

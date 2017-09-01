@@ -9,6 +9,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.hni.common.dao.AbstractDAO;
+import org.hni.type.HNIRoles;
 import org.hni.user.om.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,10 +79,28 @@ public class DefaultUserDAO extends AbstractDAO<User> implements UserDAO {
 	@Override
 	public String findUserState(Long userId) {
 		try {
-			Query q = em.createNativeQuery("SELECT address.state from user_address userAddress INNER JOIN addresses address ON userAddress.address_id = address.id where userAddress.user_id = :userId").setParameter("userId", userId);
+			Query q = em.createNativeQuery("SELECT DISTINCT address.state from user_address userAddress INNER JOIN addresses address ON userAddress.address_id = address.id where userAddress.user_id = :userId").setParameter("userId", userId);
 			return (String) q.getSingleResult();
 		} catch (NoResultException e) {
 			return null;
+		}
+	}
+
+	@Override
+	public List<String> getParticiapntsFromState(String stateCode) {
+		try {
+			Long roleId = HNIRoles.CLIENT.getRole();
+			Query q = em.createNativeQuery("SELECT u.mobile_phone "
+					+ "FROM users u "
+					+ "LEFT JOIN user_address ua ON ua.user_id = u.id "
+					+ "LEFT JOIN addresses a ON a.id = ua.address_id "
+					+ "LEFT JOIN user_organization_role uor ON uor.role_id = :roleId "
+					+ "WHERE a.state = :stateCode AND u.active = 1")
+					.setParameter("stateCode", stateCode)
+					.setParameter("roleId", roleId);
+			return q.getResultList();
+		} catch (NoResultException e) {
+			return Collections.emptyList();
 		}
 	}
 }

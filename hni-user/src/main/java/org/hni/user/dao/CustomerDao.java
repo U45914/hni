@@ -23,10 +23,11 @@ public class CustomerDao extends DefaultGenericDAO {
 
 		List<Object[]> user = em
 				.createNativeQuery("SELECT u.id, u.active, u.first_name,u.last_name,u.gender_code,u.mobile_phone,"
-						+ "u.email, a.address_line1, c.max_meals_allowed_per_day, COUNT(o.id) AS ordCount, c.sheltered, ng.contact_name "
+						+ "u.email, a.address_line1, c.max_meals_allowed_per_day, COUNT(o.id) AS ordCount, c.sheltered, ng.contact_name, COUNT(d.id) AS noOfDependents "
 						+ "FROM users u "
 						+ "LEFT JOIN user_organization_role uor ON uor.user_id = u.id "
 						+ "LEFT JOIN client c ON c.user_id = u.id "
+						+ "LEFT JOIN dependents d ON d.client_id = c.id "
 						+ "LEFT JOIN ngo ng ON c.ngo_id = ng.id "
 						+ "LEFT JOIN user_address ua ON ua.user_id = u.id "
 						+ "LEFT JOIN addresses a ON a.id = ua.address_id "
@@ -47,6 +48,7 @@ public class CustomerDao extends DefaultGenericDAO {
 			map.put("orders", getValue(u[9]));
 			map.put("sheltered", getValueForSheltered(u[10]));
 			map.put("contactName", getValue(u[11]));
+			map.put("noOfDependents", getValue(u[12]));
 			customers.add(map);
 		}
 		return customers;
