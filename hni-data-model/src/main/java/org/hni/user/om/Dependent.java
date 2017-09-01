@@ -11,7 +11,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hni.common.om.Persistable;
@@ -41,6 +40,9 @@ public class Dependent implements Persistable, Serializable {
 	
 	@Column(name = "eligible_for_meal")
 	private Boolean isEligibleForMeal;
+	
+	@Column(name = "gender")
+	private String gender;
 	
 	@ManyToOne
 	@JoinColumn(name = "created_by", referencedColumnName = "id")
@@ -147,6 +149,16 @@ public class Dependent implements Persistable, Serializable {
 
 	public void setClient(Client client) {
 		this.client = client;
+	}
+
+
+	public String getGender() {
+		return gender;
+	}
+
+
+	public void setGender(String gender) {
+		this.gender = gender;
 	}
 	
 	

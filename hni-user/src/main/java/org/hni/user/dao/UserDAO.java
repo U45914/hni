@@ -16,4 +16,6 @@ public interface UserDAO extends BaseDAO<User> {
 	Long findTypeIdByUser(Long userId,String type);
 	
 	String findUserState(Long userId);
+	
+	List<String> getParticiapntsFromState(String stateCode);
 }

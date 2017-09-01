@@ -51,6 +51,7 @@ public class HNIUtils {
 			headers.add(getFieldDefMap("active", "Status", true, canEdit));
 			headers.add(getFieldDefMap("sheltered", "Sheltered", true, canEdit));
 			headers.add(getFieldDefMap("contactName", "NGO Name", true, canEdit));
+			headers.add(getFieldDefMap("noOfDependents", "No of Dependents", true, canEdit));
 
 		}else if (Constants.REPORT_ALL_CUSTOMER_NGO.equals(reportId)) {
 
