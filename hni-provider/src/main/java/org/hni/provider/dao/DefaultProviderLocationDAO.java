@@ -71,5 +71,20 @@ public class DefaultProviderLocationDAO extends AbstractDAO<ProviderLocation> im
 			return Collections.emptyList();
 		}
 	}
+	protected String getValue(Object field) {
+		if (field != null) {
+			return String.valueOf(field);
+		} else {
+			return "-";
+		}
+	}
+	
+	private Boolean getBooleanValue(Object value){
+		if (value != null) {
+			return Boolean.valueOf(value.toString());
+		} else {
+			return false;
+		}
+	}
 
 }

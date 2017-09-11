@@ -5,6 +5,7 @@ package org.hni.admin.service;
 
 import io.swagger.annotations.Api;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +16,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.hni.common.Constants;
+import org.hni.common.HNIUtils;
 import org.hni.provider.om.Provider;
 import org.hni.provider.om.ProviderLocation;
 import org.hni.service.helpers.ConfigurationServiceHelper;
@@ -212,25 +215,22 @@ public class ConfigurationController extends AbstractBaseController {
 	}
 	
 	@POST
-	@Path("/provider/locations/")
+	@Path("/provider/locations")
 	@Produces("application/json")
-	public String getProviderLocations(Long providerId) {
+	public Response getProviderLocations(Long providerId) {
 		_LOGGER.debug("Request reached to retrieve provider locations " + providerId);
 		User loggedInUser = getLoggedInUser();
-		return  serializeProviderLocationToJson(configurationServiceHelper.getProviderLocations(providerId, loggedInUser));
+		Map<String, Object> response = new HashMap<>();
+		try {
+			List<ProviderLocation> providerLocations = configurationServiceHelper.getProviderLocations(providerId, loggedInUser);
+			response.put("headers", HNIUtils.getReportHeaders(80, true));
+			response.put("data", providerLocations);
+			response.put(Constants.RESPONSE, Constants.SUCCESS);
+		} catch (Exception e) {
+			_LOGGER.error("Error in get ProviderLocation Service:" + e.getMessage(), e);
+			response.put(Constants.RESPONSE, Constants.ERROR);
+		}
+		return Response.ok(response).build();
 	}
 	
-	private String serializeProviderLocationToJson(List<ProviderLocation> providerLocations) {
-		try {
-			String json = mapper.writeValueAsString(JsonView.with(providerLocations)
-					.onClass(ProviderLocation.class, Match.match().exclude("*").include("id", "name", "provider", "address"))
-					.onClass(Address.class, Match.match().exclude("*").include("address1","address2","city","state"))
-					.onClass(Provider.class, Match.match().include("*")));
-				
-			return json;
-		} catch (Exception e) {
-			_LOGGER.error("Serializing Client object:"+e.getMessage(), e);
-		}
-		return "{}";
-	}
 }
