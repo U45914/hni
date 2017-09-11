@@ -14,6 +14,10 @@ import org.hni.order.om.Order;
 import org.hni.order.service.OrderService;
 import org.hni.organization.om.UserOrganizationRole;
 import org.hni.organization.service.OrganizationUserService;
+import org.hni.provider.om.Provider;
+import org.hni.provider.om.ProviderLocation;
+import org.hni.provider.service.ProviderLocationService;
+import org.hni.provider.service.ProviderService;
 import org.hni.type.HNIRoles;
 import org.hni.user.om.Client;
 import org.hni.user.om.User;
@@ -41,6 +45,10 @@ public class ConfigurationServiceHelper extends AbstractServiceHelper {
 	private OrderServiceHelper orderServiceHelper;
 	@Inject
 	private DependentServiceHelper dependentServiceHelper;
+	@Inject
+	private ProviderService providerService;
+	@Inject
+	private ProviderLocationService providerLocationService;
 
 	public Map<String, String> activateUser(Long userId, User loggedInUser) {
 		_LOGGER.debug("Starting process for activate user");
@@ -318,5 +326,25 @@ public class ConfigurationServiceHelper extends AbstractServiceHelper {
 		}
 
 		return response;
+	}
+	
+	public Provider getProviderDetails(Long providerId, User loggedInUser) {
+		_LOGGER.debug("Starting process for retrieve provider");
+		User toUser = userService.get(providerId);
+
+		if (isAllowed(loggedInUser, toUser)) {
+			return providerService.get(providerId);
+		}
+		return null;
+	}
+	
+	public List<ProviderLocation> getProviderLocations(Long providerId, User loggedInUser) {
+		_LOGGER.debug("Starting process for retrieve provider locations");
+		User toUser = userService.get(providerId);
+
+		if (isAllowed(loggedInUser, toUser)) {
+			return providerLocationService.locationsOf(providerId);
+		}
+		return null;
 	}
 }

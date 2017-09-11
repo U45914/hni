@@ -15,7 +15,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.hni.provider.om.Provider;
+import org.hni.provider.om.ProviderLocation;
 import org.hni.service.helpers.ConfigurationServiceHelper;
+import org.hni.user.om.Address;
 import org.hni.user.om.Client;
 import org.hni.user.om.Dependent;
 import org.hni.user.om.Ngo;
@@ -184,5 +187,50 @@ public class ConfigurationController extends AbstractBaseController {
 		_LOGGER.debug("Request reached to save participant details " + client);
 		User loggedInUser = getLoggedInUser();
 		return configurationServiceHelper.saveParticipantDetails(client, loggedInUser);
+	}
+	
+	@POST
+	@Path("/provider/details")
+	@Produces("application/json")
+	public String getProviderDetails(Long providerId) {
+		_LOGGER.debug("Request reached to retrieve provider details " + providerId);
+		User loggedInUser = getLoggedInUser();
+		return  serializeProviderToJson(configurationServiceHelper.getProviderDetails(providerId, loggedInUser));
+	}
+	
+	private String serializeProviderToJson(Provider provider) {
+		try {
+			String json = mapper.writeValueAsString(JsonView.with(provider)
+					.onClass(Provider.class, Match.match().exclude("*").include("id", "name", "websiteUrl", "address"))
+					.onClass(Address.class, Match.match().exclude("*").include("address1","address2","city","state")));
+				
+			return json;
+		} catch (Exception e) {
+			_LOGGER.error("Serializing Client object:"+e.getMessage(), e);
+		}
+		return "{}";
+	}
+	
+	@POST
+	@Path("/provider/locations/")
+	@Produces("application/json")
+	public String getProviderLocations(Long providerId) {
+		_LOGGER.debug("Request reached to retrieve provider locations " + providerId);
+		User loggedInUser = getLoggedInUser();
+		return  serializeProviderLocationToJson(configurationServiceHelper.getProviderLocations(providerId, loggedInUser));
+	}
+	
+	private String serializeProviderLocationToJson(List<ProviderLocation> providerLocations) {
+		try {
+			String json = mapper.writeValueAsString(JsonView.with(providerLocations)
+					.onClass(ProviderLocation.class, Match.match().exclude("*").include("id", "name", "provider", "address"))
+					.onClass(Address.class, Match.match().exclude("*").include("address1","address2","city","state"))
+					.onClass(Provider.class, Match.match().include("*")));
+				
+			return json;
+		} catch (Exception e) {
+			_LOGGER.error("Serializing Client object:"+e.getMessage(), e);
+		}
+		return "{}";
 	}
 }

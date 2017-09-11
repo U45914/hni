@@ -2,6 +2,7 @@ package org.hni.provider.dao;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -54,6 +55,17 @@ public class DefaultProviderLocationDAO extends AbstractDAO<ProviderLocation> im
 					.setParameter("latLkp", addr.getLatitude())
 					.setParameter("items", itemsPerPage);
 
+			return q.getResultList();
+		} catch(NoResultException e) {
+			return Collections.emptyList();
+		}
+	}
+
+	@Override
+	public List<ProviderLocation> locationsOf(Long providerId) {
+		try {
+			Query q = em.createQuery("SELECT x FROM ProviderLocation x WHERE x.provider.id = :providerId")
+				.setParameter("providerId", providerId);
 			return q.getResultList();
 		} catch(NoResultException e) {
 			return Collections.emptyList();

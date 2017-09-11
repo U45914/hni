@@ -11,7 +11,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
+
 import java.util.Collection;
+import java.util.List;
 
 @Service
 @Transactional(propagation = Propagation.REQUIRED)
@@ -42,5 +44,10 @@ public class DefaultProviderLocationService extends AbstractService<ProviderLoca
     public Collection<ProviderLocation> providersNearCustomer(Address customerAddress, int itemsPerPage, double distance, double radius) {
         return providerLocationDao.providersNearCustomer(customerAddress, itemsPerPage);
     }
+
+	@Override
+	public List<ProviderLocation> locationsOf(Long providerId) {
+		return providerLocationDao.locationsOf(providerId);
+	}
 
 }
