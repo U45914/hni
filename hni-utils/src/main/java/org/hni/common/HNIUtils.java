@@ -90,8 +90,16 @@ public class HNIUtils {
 		else if (Constants.REPORT_ALL_PROVIDER_LOCATIONS.equals(reportId)) {
 
 			headers.add(getFieldDefMap("name", "Name", true, canEdit));
+			headers.add(getFieldDefMap("menu.name", "Menu Name", true, canEdit));
+			headers.add(getFieldDefMap("providerLocationHours[0].openHour", "Open Hour", true, canEdit));
+			headers.add(getFieldDefMap("providerLocationHours[0].closeHour", "Close Hour", true, canEdit));
 			headers.add(getFieldDefMap("isActive", "Active", true, canEdit));
-			headers.add(getFieldDefMap("address", "Address", true, canEdit));
+			headers.add(getFieldDefMap("address.address1", "Address Line 1", true, canEdit));
+			headers.add(getFieldDefMap("address.address1", "Address Line 2", true, canEdit));
+			headers.add(getFieldDefMap("address.city", "City", true, canEdit));
+			headers.add(getFieldDefMap("address.state", "State", true, canEdit));
+			headers.add(getFieldDefMap("address.latitude", "Latitude", true, canEdit));
+			headers.add(getFieldDefMap("address.longitude", "Longitude", true, canEdit));
 			}
 		return headers;
 	}
