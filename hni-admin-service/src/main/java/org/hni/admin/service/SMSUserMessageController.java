@@ -122,13 +122,20 @@ public class SMSUserMessageController extends AbstractBaseController {
     @POST
     @Path("/participant/all")
     @Consumes(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "sends SMS message to all participants."
             , notes = ""
             , response = String.class
             , responseContainer = "")
     public Map<String, Object> sendMessageToAllParticipants(String messageContent) {
-    	pushMessageService.sendMessageToAllActiveParticipants(messageContent);
-		return null;
+    	
+    	Map<String, Object> response = new HashMap<>();
+    	try {
+    		response = pushMessageService.sendMessageToAllActiveParticipants(messageContent);
+		} catch (InterruptedException e) {
+			logger.error("Exception while sending messages to user ", e);
+		}
+		return response;
     	
     }
 

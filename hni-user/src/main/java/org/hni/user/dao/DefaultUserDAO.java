@@ -92,12 +92,12 @@ public class DefaultUserDAO extends AbstractDAO<User> implements UserDAO {
 			Long roleId = HNIRoles.CLIENT.getRole();
 			Query q = em.createNativeQuery("SELECT u.mobile_phone "
 					+ "FROM users u "
+					+ "LEFT JOIN user_organization_role uor ON uor.user_id = u.id "
 					+ "LEFT JOIN user_address ua ON ua.user_id = u.id "
 					+ "LEFT JOIN addresses a ON a.id = ua.address_id "
-					+ "LEFT JOIN user_organization_role uor ON uor.role_id = :roleId "
-					+ "WHERE a.state = :stateCode AND u.active = 1")
-					.setParameter("stateCode", stateCode)
-					.setParameter("roleId", roleId);
+					+ "WHERE a.state = :stateCode AND u.active = 1 AND uor.role_id = 4 ;")
+					.setParameter("stateCode", stateCode);
+
 			return q.getResultList();
 		} catch (NoResultException e) {
 			return Collections.emptyList();
