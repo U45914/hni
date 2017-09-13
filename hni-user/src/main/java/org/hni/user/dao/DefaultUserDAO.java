@@ -94,8 +94,8 @@ public class DefaultUserDAO extends AbstractDAO<User> implements UserDAO {
 					+ "FROM users u "
 					+ "LEFT JOIN user_address ua ON ua.user_id = u.id "
 					+ "LEFT JOIN addresses a ON a.id = ua.address_id "
-					+ "LEFT JOIN user_organization_role uor ON uor.role_id = :roleId "
-					+ "WHERE a.state = :stateCode AND u.active = 1")
+					+ "LEFT JOIN user_organization_role uor ON uor.user_id = u.id "
+					+ "WHERE a.state = :stateCode AND u.active = 1 AND uor.role_id = :roleId")
 					.setParameter("stateCode", stateCode)
 					.setParameter("roleId", roleId);
 			return q.getResultList();

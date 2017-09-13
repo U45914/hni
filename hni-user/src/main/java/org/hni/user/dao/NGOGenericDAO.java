@@ -134,7 +134,7 @@ public class NGOGenericDAO extends DefaultGenericDAO {
 		Long userId = user.getId();
 		List<Object[]> result = em
 				.createNativeQuery(
-						"select p.name as provider_name,p.website_url,p.created,u.first_name,a.name "
+						"select p.name as provider_name,p.website_url,p.created,u.first_name,a.name,p.id "
 						+ "from providers p "
 						+ "INNER JOIN users u  ON p.created_by =u.id "
 						+ "INNER JOIN addresses a ON p.address_id=a.id "
@@ -147,6 +147,7 @@ public class NGOGenericDAO extends DefaultGenericDAO {
 			provider.put("createdOn", getValue(prov[2]));
 			provider.put("createdBy", getValue(prov[3]));
 			provider.put("address", getValue(prov[4]));
+			provider.put("providerId",getValue(prov[5]));
 			providers.add(provider);
 
 		}
