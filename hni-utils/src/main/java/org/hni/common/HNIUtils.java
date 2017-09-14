@@ -95,7 +95,7 @@ public class HNIUtils {
 			headers.add(getFieldDefMap("providerLocationHours[0].closeHour", "Close Hour", true, canEdit));
 			headers.add(getFieldDefMap("isActive", "Active", true, canEdit));
 			headers.add(getFieldDefMap("address.address1", "Address Line 1", true, canEdit));
-			headers.add(getFieldDefMap("address.address1", "Address Line 2", true, canEdit));
+			headers.add(getFieldDefMap("address.address2", "Address Line 2", true, canEdit));
 			headers.add(getFieldDefMap("address.city", "City", true, canEdit));
 			headers.add(getFieldDefMap("address.state", "State", true, canEdit));
 			headers.add(getFieldDefMap("address.latitude", "Latitude", true, canEdit));
