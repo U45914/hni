@@ -136,7 +136,7 @@ public class ProviderLocation implements Persistable, Serializable {
 		this.isActive = isActive;
 	}
 
-	@JsonIgnore
+	
 	public Provider getProvider() {
 		return provider;
 	}

@@ -5,7 +5,6 @@ package org.hni.admin.service;
 
 import io.swagger.annotations.Api;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,12 +15,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.hni.common.Constants;
-import org.hni.common.HNIUtils;
-import org.hni.provider.om.Provider;
-import org.hni.provider.om.ProviderLocation;
 import org.hni.service.helpers.ConfigurationServiceHelper;
-import org.hni.user.om.Address;
 import org.hni.user.om.Client;
 import org.hni.user.om.Dependent;
 import org.hni.user.om.Ngo;
@@ -192,45 +186,6 @@ public class ConfigurationController extends AbstractBaseController {
 		return configurationServiceHelper.saveParticipantDetails(client, loggedInUser);
 	}
 	
-	@POST
-	@Path("/provider/details")
-	@Produces("application/json")
-	public String getProviderDetails(Long providerId) {
-		_LOGGER.debug("Request reached to retrieve provider details " + providerId);
-		User loggedInUser = getLoggedInUser();
-		return  serializeProviderToJson(configurationServiceHelper.getProviderDetails(providerId, loggedInUser));
-	}
 	
-	private String serializeProviderToJson(Provider provider) {
-		try {
-			String json = mapper.writeValueAsString(JsonView.with(provider)
-					.onClass(Provider.class, Match.match().exclude("*").include("id", "name", "websiteUrl", "address"))
-					.onClass(Address.class, Match.match().exclude("*").include("address1","address2","city","state")));
-				
-			return json;
-		} catch (Exception e) {
-			_LOGGER.error("Serializing Client object:"+e.getMessage(), e);
-		}
-		return "{}";
-	}
-	
-	@POST
-	@Path("/provider/locations")
-	@Produces("application/json")
-	public Response getProviderLocations(Long providerId) {
-		_LOGGER.debug("Request reached to retrieve provider locations " + providerId);
-		User loggedInUser = getLoggedInUser();
-		Map<String, Object> response = new HashMap<>();
-		try {
-			List<ProviderLocation> providerLocations = configurationServiceHelper.getProviderLocations(providerId, loggedInUser);
-			response.put("headers", HNIUtils.getReportHeaders(80, true));
-			response.put("data", providerLocations);
-			response.put(Constants.RESPONSE, Constants.SUCCESS);
-		} catch (Exception e) {
-			_LOGGER.error("Error in get ProviderLocation Service:" + e.getMessage(), e);
-			response.put(Constants.RESPONSE, Constants.ERROR);
-		}
-		return Response.ok(response).build();
-	}
 	
 }

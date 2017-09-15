@@ -327,24 +327,4 @@ public class ConfigurationServiceHelper extends AbstractServiceHelper {
 
 		return response;
 	}
-	
-	public Provider getProviderDetails(Long providerId, User loggedInUser) {
-		_LOGGER.debug("Starting process for retrieve provider");
-		User toUser = userService.get(providerId);
-
-		if (isAllowed(loggedInUser, toUser)) {
-			return providerService.get(providerId);
-		}
-		return null;
-	}
-	
-	public List<ProviderLocation> getProviderLocations(Long providerId, User loggedInUser) {
-		_LOGGER.debug("Starting process for retrieve provider locations");
-		User toUser = userService.get(providerId);
-
-		if (isAllowed(loggedInUser, toUser)) {
-			return providerLocationService.locationsOf(providerId);
-		}
-		return null;
-	}
 }

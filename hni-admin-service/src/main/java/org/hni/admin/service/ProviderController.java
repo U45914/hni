@@ -2,18 +2,25 @@ package org.hni.admin.service;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+
 import org.apache.commons.lang3.StringUtils;
 import org.hni.common.Constants;
+import org.hni.common.HNIUtils;
 import org.hni.common.exception.HNIException;
 import org.hni.provider.om.Provider;
 import org.hni.provider.om.ProviderLocation;
 import org.hni.provider.service.ProviderLocationService;
 import org.hni.provider.service.ProviderService;
+import org.hni.service.helpers.ConfigurationServiceHelper;
 import org.hni.user.dao.AddressDAO;
 import org.hni.user.om.Address;
+import org.hni.user.om.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import com.monitorjbl.json.JsonView;
+import com.monitorjbl.json.Match;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
@@ -26,7 +33,12 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Api(value = "/providers", description = "Operations on Providers and ProviderLocations")
 @Component
@@ -40,6 +52,8 @@ public class ProviderController extends AbstractBaseController {
     private ProviderLocationService providerLocationService;
     @Inject
     private AddressDAO addressDao;
+    @Inject
+	private ConfigurationServiceHelper configurationServiceHelper;
 
     @GET
     @Path("/{id}")
@@ -235,4 +249,62 @@ public class ProviderController extends AbstractBaseController {
         }
         throw new HNIException("You must have elevated permissions to do this.");
     }
+    
+    @POST
+	@Path("/details")
+	@Produces("application/json")
+	public String getProviderDetails(Long providerId) {
+    	logger.debug("Request reached to retrieve provider details " + providerId);
+		User loggedInUser = getLoggedInUser();
+		return  serializeProviderToJson(providerService.getProviderDetails(providerId, loggedInUser));
+	}
+	
+	private String serializeProviderToJson(Provider provider) {
+		try {
+			String json = mapper.writeValueAsString(JsonView.with(provider)
+					.onClass(Provider.class, Match.match().exclude("*").include("id", "name", "websiteUrl", "address"))
+					.onClass(Address.class, Match.match().exclude("*").include("address1","address2","city","state")));
+				
+			return json;
+		} catch (Exception e) {
+			logger.error("Serializing Client object:"+e.getMessage(), e);
+		}
+		return "{}";
+	}
+	
+	@POST
+	@Path("/locations")
+	@Produces("application/json")
+	public Response getProviderLocation(Long providerId) {
+		logger.debug("Request reached to retrieve provider locations " + providerId);
+		User loggedInUser = getLoggedInUser();
+		Map<String, Object> response = new HashMap<>();
+		try {
+			List<ProviderLocation> providerLocations = providerService.getProviderLocations(providerId, loggedInUser);
+			response.put("headers", HNIUtils.getReportHeaders(80, true));
+			response.put("data", providerLocations);
+			response.put(Constants.RESPONSE, Constants.SUCCESS);
+		} catch (Exception e) {
+			logger.error("Error in get ProviderLocation Service:" + e.getMessage(), e);
+			response.put(Constants.RESPONSE, Constants.ERROR);
+		}
+		return Response.ok(response).build();
+	}
+	
+	@POST
+	@Path("/update/locations")
+	@Produces("application/json")
+	public Response updateProviderLocation(List<ProviderLocation> providerLocations) {
+		logger.debug("Request reached to update provider locations " + providerLocations);
+		User loggedInUser = getLoggedInUser();
+		Map<String, Object> response = new HashMap<>();
+		try {
+			providerLocationService.updateProviderLocations(providerLocations, loggedInUser);
+			response.put(Constants.RESPONSE, Constants.SUCCESS);
+		} catch (Exception e) {
+			logger.error("Error in update ProviderLocations :" + e.getMessage(), e);
+			response.put(Constants.RESPONSE, Constants.ERROR);
+		}
+		return Response.ok(response).build();
+	}
 }
