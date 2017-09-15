@@ -28,7 +28,6 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class OrderServiceHandler {
-	@Inject
 
 	private static Logger LOGGER = LoggerFactory.getLogger(OrderServiceHandler.class);
 	@Inject

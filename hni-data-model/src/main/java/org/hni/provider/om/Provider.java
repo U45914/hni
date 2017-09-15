@@ -21,13 +21,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * A Provider is an entity that provides meals to clients.  There will be
- * one or more ProviderLocations associated with a Provider.  Each provier also
- * has one or more Menus associated with them that can be fulfilled at a location.
+ * A Provider is an entity that provides meals to clients. There will be one or
+ * more ProviderLocations associated with a Provider. Each provier also has one
+ * or more Menus associated with them that can be fulfilled at a location.
  *
  */
 @Entity
-@Table(name="providers")
+@Table(name = "providers")
 public class Provider implements Serializable, Persistable {
 
 	private static final long serialVersionUID = -6983145009930349810L;
@@ -36,25 +36,32 @@ public class Provider implements Serializable, Persistable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id")
 	private Long id;
-	
-	@Column(name="name") private String name;
-	@Column(name="website_url") private String websiteUrl;
-	@Column(name="created") private Date created;
-	@Column(name="created_by") private Long createdById;
 
-	@ManyToOne
-	@JoinColumn(name="address_id", referencedColumnName = "id")
+	@Column(name = "name")
+	private String name;
+	@Column(name = "website_url")
+	private String websiteUrl;
+	@Column(name = "created")
+	private Date created;
+	@Column(name = "created_by")
+	private Long createdById;
+
+	@ManyToOne(cascade=CascadeType.ALL)
+	@JoinColumn(name = "address_id", referencedColumnName = "id", insertable = true, updatable = true)
 	private Address address;
 
-	@OneToMany(fetch= FetchType.EAGER, mappedBy="provider", cascade = {CascadeType.ALL})
-	//@OneToMany(fetch= FetchType.EAGER, mappedBy="provider", cascade = {CascadeType.ALL}, orphanRemoval=true)
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "provider", cascade = { CascadeType.ALL })
+	// @OneToMany(fetch= FetchType.EAGER, mappedBy="provider", cascade =
+	// {CascadeType.ALL}, orphanRemoval=true)
 	private Set<Menu> menus = new HashSet<>();
 
-	public Provider() {}
+	public Provider() {
+	}
+
 	public Provider(Long id) {
 		this.id = id;
 	}
-	
+
 	@Override
 	public Long getId() {
 		return this.id;
@@ -95,9 +102,11 @@ public class Provider implements Serializable, Persistable {
 	public void setId(Long id) {
 		this.id = id;
 	}
+
 	public String getWebsiteUrl() {
 		return websiteUrl;
 	}
+
 	public void setWebsiteUrl(String websiteUrl) {
 		this.websiteUrl = websiteUrl;
 	}
@@ -110,5 +119,25 @@ public class Provider implements Serializable, Persistable {
 		this.menus = menu;
 	}
 
-	
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Provider [id=");
+		builder.append(id);
+		builder.append(", name=");
+		builder.append(name);
+		builder.append(", websiteUrl=");
+		builder.append(websiteUrl);
+		builder.append(", created=");
+		builder.append(created);
+		builder.append(", createdById=");
+		builder.append(createdById);
+		builder.append(", address=");
+		builder.append(address);
+		builder.append(", menus=");
+		builder.append(menus);
+		builder.append("]");
+		return builder.toString();
+	}
+
 }

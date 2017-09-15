@@ -12,6 +12,7 @@ import org.hni.provider.om.ProviderLocation;
 import org.hni.provider.service.ProviderLocationService;
 import org.hni.provider.service.ProviderService;
 import org.hni.service.helpers.ConfigurationServiceHelper;
+import org.hni.service.helpers.ProviderResourceHelper;
 import org.hni.user.dao.AddressDAO;
 import org.hni.user.om.Address;
 import org.hni.user.om.User;
@@ -53,8 +54,10 @@ public class ProviderController extends AbstractBaseController {
     @Inject
     private AddressDAO addressDao;
     @Inject
-	private ConfigurationServiceHelper configurationServiceHelper;
+    private ProviderResourceHelper providerResourceHelper;
+    
 
+    
     @GET
     @Path("/{id}")
     @Produces({MediaType.APPLICATION_JSON})
@@ -67,31 +70,19 @@ public class ProviderController extends AbstractBaseController {
     }
 
     @POST
+    @Path("/provider/create")
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
     @ApiOperation(value = "Creates a new Provider or saves the Provider with the given id"
             , notes = "An Provider without an ID field will be created"
             , response = Provider.class
             , responseContainer = "")
-    public Provider saveProvider(Provider provider) {
-        if (isPermitted(Constants.PROVIDER, Constants.CREATE, 0L)) {
-            return providerService.save(provider);
-        }
-        throw new HNIException("You must have elevated permissions to do this.");
-    }
-
-    @DELETE
-    @Path("/{id}")
-    @Produces({MediaType.APPLICATION_JSON})
-    @ApiOperation(value = "Deletes the Provider with the given id"
-            , notes = ""
-            , response = Provider.class
-            , responseContainer = "")
-    public Provider getDelete(@PathParam("id") Long id) {
-        if (isPermitted(Constants.PROVIDER, Constants.DELETE, id)) {
-            return providerService.delete(new Provider(id));
-        }
-        throw new HNIException("You must have elevated permissions to do this.");
+    public String saveProvider(Provider provider) {
+    	if (getLoggedInUser() != null) {
+    		return providerResourceHelper.createProvider(provider, getLoggedInUser());
+    	}
+    	
+    	throw new HNIException("You must have elevated permissions to do this.");
     }
 
     @POST
@@ -173,7 +164,7 @@ public class ProviderController extends AbstractBaseController {
     }
 
     @POST
-    @Path("/{id}/providerLocations")
+    @Path("/provider/{id}/location/add")
     @Produces({MediaType.APPLICATION_JSON})
     @Consumes({MediaType.APPLICATION_JSON})
     @ApiOperation(value = "Adds a ProviderLocation for the given Provider"
@@ -181,9 +172,8 @@ public class ProviderController extends AbstractBaseController {
             , response = ProviderLocation.class
             , responseContainer = "")
     public ProviderLocation addProviderLocation(@PathParam("id") Long id, ProviderLocation providerLocation) {
-        if (isPermitted(Constants.PROVIDER, Constants.UPDATE, id)) {
-            providerLocation.setProvider(new Provider(id));
-            return providerLocationService.save(providerLocation);
+        if (getLoggedInUser() != null) {
+        	return providerResourceHelper.addProviderLocation(id, getLoggedInUser(), providerLocation);
         }
         throw new HNIException("You must have elevated permissions to do this.");
     }

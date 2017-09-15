@@ -41,6 +41,8 @@ public class ProviderLocation implements Persistable, Serializable {
 
 	@Column(name = "name")
 	private String name;
+	@Column(name = "website")
+	private String website;
 	@Column(name = "created")
 	private Date created;
 	@Column(name = "created_by")
@@ -54,8 +56,8 @@ public class ProviderLocation implements Persistable, Serializable {
 	@JoinColumn(name = "last_updated_by", referencedColumnName = "id")
 	private User lastUpdatedBy;
 
-	@ManyToOne
-	@JoinColumn(name = "address_id", referencedColumnName = "id")
+	@ManyToOne(cascade=CascadeType.ALL)
+	@JoinColumn(name = "address_id", referencedColumnName = "id", insertable = true, updatable = true)
 	private Address address;
 
 	@ManyToOne
@@ -89,6 +91,14 @@ public class ProviderLocation implements Persistable, Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getWebsite() {
+		return website;
+	}
+
+	public void setWebsite(String website) {
+		this.website = website;
 	}
 
 	public Date getCreated() {

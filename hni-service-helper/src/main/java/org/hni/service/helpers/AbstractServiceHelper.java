@@ -3,6 +3,7 @@
  */
 package org.hni.service.helpers;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.hni.common.service.HniTemplateService;
@@ -14,6 +15,11 @@ import org.hni.user.om.Invitation;
 import org.hni.user.om.User;
 import org.hni.user.service.NGOGenericService;
 import org.hni.user.service.UserOnboardingService;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.monitorjbl.json.JsonView;
+import com.monitorjbl.json.JsonViewSerializer;
 
 /**
  * @author Rahul
@@ -33,6 +39,15 @@ public abstract class AbstractServiceHelper {
 	protected ClientDAO clientDao;
 	@Inject
 	protected NGOGenericService ngoGenericService;
+	
+	protected ObjectMapper mapper = new ObjectMapper();
+	protected SimpleModule module = new SimpleModule();
+	
+	@PostConstruct
+	public void configureJackson() {
+		module.addSerializer(JsonView.class, new JsonViewSerializer());
+		mapper.registerModule(module);
+	}
 	
 	protected boolean isUserExists(String email) {
 		return getUserByEmail(email) != null;
