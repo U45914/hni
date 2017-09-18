@@ -256,10 +256,10 @@ public class ProviderController extends AbstractBaseController {
         throw new HNIException("You must have elevated permissions to do this.");
     }
     
-    @POST
-	@Path("/details")
+    @GET
+	@Path("/{id}/details")
 	@Produces("application/json")
-	public String getProviderDetails(Long providerId) {
+	public String getProviderDetails(@PathParam("id") Long providerId) {
     	logger.debug("Request reached to retrieve provider details " + providerId);
 		User loggedInUser = getLoggedInUser();
 		return  serializeProviderToJson(providerService.getProviderDetails(providerId, loggedInUser));
@@ -269,7 +269,7 @@ public class ProviderController extends AbstractBaseController {
 		try {
 			String json = mapper.writeValueAsString(JsonView.with(provider)
 					.onClass(Provider.class, Match.match().exclude("*").include("id", "name", "websiteUrl", "address"))
-					.onClass(Address.class, Match.match().exclude("*").include("address1","address2","city","state")));
+					.onClass(Address.class, Match.match().exclude("*").include("address1", "address2", "city", "state", "zip", "latitude", "longitude")));
 				
 			return json;
 		} catch (Exception e) {
@@ -278,10 +278,10 @@ public class ProviderController extends AbstractBaseController {
 		return "{}";
 	}
 	
-	@POST
-	@Path("/locations")
+	@GET
+	@Path("/{id}/locations")
 	@Produces("application/json")
-	public Response getProviderLocation(Long providerId) {
+	public Response getProviderLocation(@PathParam("id") Long providerId) {
 		logger.debug("Request reached to retrieve provider locations " + providerId);
 		User loggedInUser = getLoggedInUser();
 		Map<String, Object> response = new HashMap<>();
@@ -307,9 +307,11 @@ public class ProviderController extends AbstractBaseController {
 		try {
 			providerLocationService.updateProviderLocations(providerLocations, loggedInUser);
 			response.put(Constants.RESPONSE, Constants.SUCCESS);
+			response.put(Constants.MESSAGE, "Details saved successfully.");
 		} catch (Exception e) {
 			logger.error("Error in update ProviderLocations :" + e.getMessage(), e);
 			response.put(Constants.RESPONSE, Constants.ERROR);
+			response.put(Constants.MESSAGE, "Save Failed. Please try again.");
 		}
 		return Response.ok(response).build();
 	}

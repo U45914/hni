@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -78,7 +79,7 @@ public class DefaultProviderLocationService extends AbstractService<ProviderLoca
 			provLocHourExt.setOpenHour(provLocHourNew.getOpenHour());
 			provLocHourExt.setCloseHour(provLocHourNew.getCloseHour());
 			existingProviderLocation.setLastUpdatedBy(loggedInUser);
-			//existingProviderLocation.setLastUpdated(new Date());
+			existingProviderLocation.setLastUpdated(Calendar.getInstance().getTime());
 			existingProviderLocation.setMenu(providerLocation.getMenu());
 			providerLocationDao.update(existingProviderLocation);
 		}
