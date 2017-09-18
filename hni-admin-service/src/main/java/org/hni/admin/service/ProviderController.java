@@ -1,27 +1,9 @@
 package org.hni.admin.service;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
-import org.apache.commons.lang3.StringUtils;
-import org.hni.common.Constants;
-import org.hni.common.HNIUtils;
-import org.hni.common.exception.HNIException;
-import org.hni.provider.om.Provider;
-import org.hni.provider.om.ProviderLocation;
-import org.hni.provider.service.ProviderLocationService;
-import org.hni.provider.service.ProviderService;
-import org.hni.service.helpers.ConfigurationServiceHelper;
-import org.hni.service.helpers.ProviderResourceHelper;
-import org.hni.user.dao.AddressDAO;
-import org.hni.user.om.Address;
-import org.hni.user.om.User;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-
-import com.monitorjbl.json.JsonView;
-import com.monitorjbl.json.Match;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
@@ -36,10 +18,27 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
+import org.hni.common.Constants;
+import org.hni.common.HNIUtils;
+import org.hni.common.exception.HNIException;
+import org.hni.provider.om.Provider;
+import org.hni.provider.om.ProviderLocation;
+import org.hni.provider.service.ProviderLocationService;
+import org.hni.provider.service.ProviderService;
+import org.hni.service.helpers.ProviderResourceHelper;
+import org.hni.user.dao.AddressDAO;
+import org.hni.user.om.Address;
+import org.hni.user.om.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
+import com.monitorjbl.json.JsonView;
+import com.monitorjbl.json.Match;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 @Api(value = "/providers", description = "Operations on Providers and ProviderLocations")
 @Component
@@ -85,6 +84,23 @@ public class ProviderController extends AbstractBaseController {
     	throw new HNIException("You must have elevated permissions to do this.");
     }
 
+    @POST
+    @Path("/provider/update")
+    @Produces({MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
+    @ApiOperation(value = "Creates a new Provider or saves the Provider with the given id"
+            , notes = "An Provider without an ID field will be created"
+            , response = Provider.class
+            , responseContainer = "")
+    public String updateProvider(Provider provider) {
+    	if (getLoggedInUser() != null) {
+    		return providerResourceHelper.updateProvider(provider, getLoggedInUser());
+    	}
+    	
+    	throw new HNIException("You must have elevated permissions to do this.");
+    }
+
+    
     @POST
     @Path("/{id}/addresses")
     @Produces({MediaType.APPLICATION_JSON})

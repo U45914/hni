@@ -93,4 +93,27 @@ public class ProviderResourceHelper extends AbstractServiceHelper {
 	private ProviderLocation saveProviderLocation(ProviderLocation pLocation) {
 		return providerLocationService.save(pLocation);
 	}
+
+	@Transactional
+	public String updateProvider(Provider provider, User loggedInUser) {
+		_LOGGER.info("Request reached to update provider : " + provider.getId());
+
+		if (_LOGGER.isTraceEnabled()) {
+			_LOGGER.trace("Request reached to update provider : ", provider.toString());
+		}
+		Provider extProvider = providerService.get(provider.getId());
+		
+		extProvider.setName(provider.getName());
+		extProvider.setWebsiteUrl(provider.getWebsiteUrl());
+		extProvider.setCreatedById(loggedInUser.getId());
+		extProvider.getAddress().setAddress1(provider.getAddress().getAddress1());
+		extProvider.getAddress().setAddress2(provider.getAddress().getAddress2());
+		extProvider.getAddress().setCity(provider.getAddress().getCity());
+		extProvider.getAddress().setState(provider.getAddress().getState());
+		extProvider.getAddress().setZip(provider.getAddress().getZip());
+		
+		providerService.update(extProvider);
+		
+		return serializeProviderToJson(extProvider);
+	}
 }
