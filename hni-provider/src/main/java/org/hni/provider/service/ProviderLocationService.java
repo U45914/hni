@@ -16,4 +16,5 @@ public interface ProviderLocationService extends BaseService<ProviderLocation> {
 	Collection<ProviderLocation> providersNearCustomer(Address customerAddress, int itemsPerPage, double distance, double radius);
 	List<ProviderLocation> locationsOf(Long providerId);
 	void updateProviderLocations(List<ProviderLocation> providerLocations, User loggedInUser);
+	void updateProviderLocationStatus(List<ProviderLocation> providerLocations, Boolean status);
 }

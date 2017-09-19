@@ -86,4 +86,14 @@ public class DefaultProviderLocationService extends AbstractService<ProviderLoca
 		
 	}
 
+	@Override
+	public void updateProviderLocationStatus(List<ProviderLocation> providerLocations, Boolean status) {
+		_LOGGER.debug("Updating provider location status");
+		for(ProviderLocation providerLocation : providerLocations){
+			ProviderLocation existingLocation = get(providerLocation.getId());
+			existingLocation.setIsActive(status);
+			providerLocationDao.update(existingLocation);	
+		}
+	}
+
 }

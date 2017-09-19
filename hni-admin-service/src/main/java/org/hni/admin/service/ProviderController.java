@@ -92,11 +92,22 @@ public class ProviderController extends AbstractBaseController {
             , notes = "An Provider without an ID field will be created"
             , response = Provider.class
             , responseContainer = "")
-    public String updateProvider(Provider provider) {
-    	if (getLoggedInUser() != null) {
-    		return providerResourceHelper.updateProvider(provider, getLoggedInUser());
-    	}
-    	
+    public Response updateProvider(Provider provider) {
+    	logger.debug("Request reached to update provider " + provider);
+		User loggedInUser = getLoggedInUser();
+		if(getLoggedInUser() != null){
+			Map<String, Object> response = new HashMap<>();
+			try {
+				providerResourceHelper.updateProvider(provider, getLoggedInUser());
+				response.put(Constants.RESPONSE, Constants.SUCCESS);
+				response.put(Constants.MESSAGE, "Details saved successfully.");
+			} catch (Exception e) {
+				logger.error("Error in update provider  :" + e.getMessage(), e);
+				response.put(Constants.RESPONSE, Constants.ERROR);
+				response.put(Constants.MESSAGE, "Save Failed. Please try again.");
+			}
+			return Response.ok(response).build();
+		}
     	throw new HNIException("You must have elevated permissions to do this.");
     }
 
@@ -308,6 +319,44 @@ public class ProviderController extends AbstractBaseController {
 			providerLocationService.updateProviderLocations(providerLocations, loggedInUser);
 			response.put(Constants.RESPONSE, Constants.SUCCESS);
 			response.put(Constants.MESSAGE, "Details saved successfully.");
+		} catch (Exception e) {
+			logger.error("Error in update ProviderLocations :" + e.getMessage(), e);
+			response.put(Constants.RESPONSE, Constants.ERROR);
+			response.put(Constants.MESSAGE, "Save Failed. Please try again.");
+		}
+		return Response.ok(response).build();
+	}
+	
+	@POST
+	@Path("/providerLocation/activate")
+	@Produces("application/json")
+	public Response activateProviderLocationStatus(List<ProviderLocation> providerLocations) {
+		logger.debug("Request reached to update provider location status ");
+		User loggedInUser = getLoggedInUser();
+		Map<String, Object> response = new HashMap<>();
+		try {
+			providerLocationService.updateProviderLocationStatus(providerLocations, true);
+			response.put(Constants.RESPONSE, Constants.SUCCESS);
+			response.put(Constants.MESSAGE, "Provider location(s) activated.");
+		} catch (Exception e) {
+			logger.error("Error in update ProviderLocations :" + e.getMessage(), e);
+			response.put(Constants.RESPONSE, Constants.ERROR);
+			response.put(Constants.MESSAGE, "Save Failed. Please try again.");
+		}
+		return Response.ok(response).build();
+	}
+	
+	@POST
+	@Path("/providerLocation/de-activate")
+	@Produces("application/json")
+	public Response deactivateProviderLocationStatus(List<ProviderLocation> providerLocations) {
+		logger.debug("Request reached to update provider location status ");
+		User loggedInUser = getLoggedInUser();
+		Map<String, Object> response = new HashMap<>();
+		try {
+			providerLocationService.updateProviderLocationStatus(providerLocations, false);
+			response.put(Constants.RESPONSE, Constants.SUCCESS);
+			response.put(Constants.MESSAGE, "Provider location(s) de-activated.");
 		} catch (Exception e) {
 			logger.error("Error in update ProviderLocations :" + e.getMessage(), e);
 			response.put(Constants.RESPONSE, Constants.ERROR);
