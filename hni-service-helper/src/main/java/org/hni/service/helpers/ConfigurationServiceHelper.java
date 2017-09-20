@@ -315,7 +315,8 @@ public class ConfigurationServiceHelper extends AbstractServiceHelper {
 		Map<String, String> response = new HashMap<>();
 		if (isAllowed(loggedInUser, toUser)) {
 			Client existingClient = clientService.getByUserId(userId);
-			existingClient.getUser().setEmail(client.getUser().getEmail());
+			existingClient.getUser().setGenderCode(client.getUser().getGenderCode());
+			existingClient.setAge(client.getAge());
 			dependentServiceHelper.modifyDependents(existingClient, client, loggedInUser);
 			
 			response.put(Constants.STATUS, Constants.SUCCESS);
