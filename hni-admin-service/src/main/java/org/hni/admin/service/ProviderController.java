@@ -364,4 +364,29 @@ public class ProviderController extends AbstractBaseController {
 		}
 		return Response.ok(response).build();
 	}
+	
+	@DELETE
+    @Path("/{id}/{plid}/delete")
+    @Produces({MediaType.APPLICATION_JSON})
+    @ApiOperation(value = "Deletes given ProviderLocation for the given Provider"
+            , notes = ""
+            , response = Response.class
+            , responseContainer = "")
+    public Response deleteProviderLocation(@PathParam("id") Long id, @PathParam("plid") Long plid) {
+		logger.debug("Request reached to delete provider location status ");
+		Map<String, Object> response = new HashMap<>();
+        if (isPermitted(Constants.PROVIDER, Constants.DELETE, id)) {
+            try {
+            	providerResourceHelper.deleteProviderLocation(id, plid);
+    			response.put(Constants.RESPONSE, Constants.SUCCESS);
+    			response.put(Constants.MESSAGE, "Provider location deleted.");
+    		} catch (Exception e) {
+    			logger.error("Error in delete ProviderLocations :" + e.getMessage(), e);
+    			response.put(Constants.RESPONSE, Constants.ERROR);
+    			response.put(Constants.MESSAGE, "Deletion Failed. Please try again.");
+    		}
+    		return Response.ok(response).build();
+        }
+        throw new HNIException("You must have elevated permissions to do this.");
+    }
 }

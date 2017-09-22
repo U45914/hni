@@ -17,4 +17,5 @@ public interface ProviderLocationService extends BaseService<ProviderLocation> {
 	List<ProviderLocation> locationsOf(Long providerId);
 	void updateProviderLocations(List<ProviderLocation> providerLocations, User loggedInUser);
 	void updateProviderLocationStatus(List<ProviderLocation> providerLocations, Boolean status);
+	void deleteProviderLocation(Long providerLocationId);
 }

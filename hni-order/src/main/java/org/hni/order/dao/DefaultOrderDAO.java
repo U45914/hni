@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -13,6 +14,7 @@ import org.hni.common.dao.AbstractDAO;
 import org.hni.order.om.Order;
 import org.hni.order.om.type.OrderStatus;
 import org.hni.provider.om.Provider;
+import org.hni.provider.om.ProviderLocation;
 import org.hni.user.om.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -108,6 +110,18 @@ public class DefaultOrderDAO extends AbstractDAO<Order> implements OrderDAO {
 			Query q = em.createQuery("SELECT x FROM Order x WHERE x.user.id = :userId AND x.statusId = :statusId")
 					.setParameter("userId", user.getId())
 					.setParameter("statusId", OrderStatus.OPEN.getId());
+			return q.getResultList();
+		} catch(NoResultException e) {
+			return Collections.emptyList();
+		}
+	}
+
+	@Override
+	public List<Order> getOpenOrdersForLocation(
+			ProviderLocation providerLocation) {
+		try {
+			Query q = em.createQuery("SELECT x FROM Order x WHERE x.providerLocation.id = :providerLocationId")
+					.setParameter("providerLocationId", providerLocation.getId());
 			return q.getResultList();
 		} catch(NoResultException e) {
 			return Collections.emptyList();

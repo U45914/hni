@@ -15,6 +15,7 @@ import org.hni.order.dao.OrderDAO;
 import org.hni.order.om.Order;
 import org.hni.order.om.type.OrderStatus;
 import org.hni.provider.om.Provider;
+import org.hni.provider.om.ProviderLocation;
 import org.hni.security.om.ActivationCode;
 import org.hni.security.service.ActivationCodeService;
 import org.hni.user.om.User;
@@ -216,5 +217,11 @@ public class DefaultOrderService extends AbstractService<Order> implements Order
 	@Override
 	public Collection<Order> getOpenOrdersFor(User user) {
 		return orderDao.getOpenOrdersFor(user);
+	}
+
+	@Override
+	public List<Order> getOpenOrdersForLocation(
+			ProviderLocation providerLocation) {
+		return orderDao.getOpenOrdersForLocation(providerLocation);
 	}
 }
