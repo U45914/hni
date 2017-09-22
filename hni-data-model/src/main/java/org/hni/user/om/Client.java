@@ -51,6 +51,8 @@ public class Client implements Persistable, Serializable {
 	transient private Address address;
 	@Column(name = "bday")
 	private Date bday;
+	@Column(name = "age")
+	private Integer age;
 	@Column(name = "been_arrested", length = 1)
 	private boolean beenArrested;
 	@Column(name = "been_convicted", length = 1)
@@ -191,7 +193,7 @@ public class Client implements Persistable, Serializable {
 	}
 
 	public Client(Long userId, Long createdBy, Long race,
-			Date bday, boolean beenArrested, boolean beenConvicted,
+			Date bday, Integer age, boolean beenArrested, boolean beenConvicted,
 			boolean hasSmartPhone, String serviceProvider, String model,
 			boolean haveMonthlyPlan, String monthlyPlanMinute,
 			String monthlyPlanData, String monthlyPlanCost,
@@ -220,6 +222,7 @@ public class Client implements Persistable, Serializable {
 		this.createdBy = createdBy;
 		this.race = race;
 		this.bday = bday;
+		this.age = age;
 		this.beenArrested = beenArrested;
 		this.beenConvicted = beenConvicted;
 		this.hasSmartPhone = hasSmartPhone;
@@ -336,6 +339,14 @@ public class Client implements Persistable, Serializable {
 	}
 
 	
+	public Integer getAge() {
+		return age;
+	}
+
+	public void setAge(Integer age) {
+		this.age = age;
+	}
+
 	public boolean getBeenArrested() {
 		return this.beenArrested;
 	}
