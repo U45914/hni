@@ -18,18 +18,17 @@ public class HNIUtils {
 		return UUID.randomUUID().toString().replaceAll("-", "").trim();
 	}
 
-	private static Map<String, Object> getFieldDefMap(String fieldName, String displayName,
-			Boolean resizable, Boolean enableCellEdit) {
+	private static Map<String, Object> getFieldDefMap(String fieldName, String displayName, Boolean resizable,
+			Boolean enableCellEdit) {
 		Map<String, Object> fieldDef = new HashMap<>();
 		fieldDef.put("field", fieldName);
 		fieldDef.put("displayName", displayName);
 		fieldDef.put("resizable", resizable);
 		fieldDef.put("enableCellEdit", enableCellEdit);
-		//fieldDef.put("field", fieldName);
-		
+		// fieldDef.put("field", fieldName);
+
 		return fieldDef;
 	}
-	
 
 	public static List<Map<String, Object>> getReportHeaders(Integer reportId, Boolean canEdit) {
 
@@ -53,7 +52,7 @@ public class HNIUtils {
 			headers.add(getFieldDefMap("contactName", "NGO Name", true, canEdit));
 			headers.add(getFieldDefMap("noOfDependents", "No of Dependents", true, canEdit));
 
-		}else if (Constants.REPORT_ALL_CUSTOMER_NGO.equals(reportId)) {
+		} else if (Constants.REPORT_ALL_CUSTOMER_NGO.equals(reportId)) {
 
 			headers.add(getFieldDefMap("firstName", "First Name", true, canEdit));
 			headers.add(getFieldDefMap("lastName", "Last Name", true, canEdit));
@@ -64,30 +63,27 @@ public class HNIUtils {
 			headers.add(getFieldDefMap("active", "Status", true, canEdit));
 			headers.add(getFieldDefMap("sheltered", "Sheltered", true, canEdit));
 
-		} else if(Constants.REPORT_ALL_VOLUNTEER.equals(reportId)){
+		} else if (Constants.REPORT_ALL_VOLUNTEER.equals(reportId)) {
 			headers.add(getFieldDefMap("firstName", "First Name", true, canEdit));
 			headers.add(getFieldDefMap("lastName", "Last Name", true, canEdit));
 			headers.add(getFieldDefMap("address", "Address", true, canEdit));
 			headers.add(getFieldDefMap("phone", "Phone Number", true, canEdit));
 			headers.add(getFieldDefMap("email", "Email", true, canEdit));
-		}
-		else if(Constants.REPORT_ALL_ORDER.equals(reportId)){
+		} else if (Constants.REPORT_ALL_ORDER.equals(reportId)) {
 			headers.add(getFieldDefMap("orderDate", "Order date", true, canEdit));
 			headers.add(getFieldDefMap("readyDate", "Ready date", true, canEdit));
 			headers.add(getFieldDefMap("name", "Orderd By", true, canEdit));
 			headers.add(getFieldDefMap("orderstatus", "Order status", true, canEdit));
 			headers.add(getFieldDefMap("total", "Total", true, canEdit));
-			//headers.add(addField("orderItems", "Ordered Items"));
-		}
-		else if (Constants.REPORT_ALL_PROVIDER.equals(reportId)) {
+			// headers.add(addField("orderItems", "Ordered Items"));
+		} else if (Constants.REPORT_ALL_PROVIDER.equals(reportId)) {
 
 			headers.add(getFieldDefMap("name", "Provider Name", true, canEdit));
 			headers.add(getFieldDefMap("address", "Address", true, canEdit));
 			headers.add(getFieldDefMap("website", "Website", true, canEdit));
 			headers.add(getFieldDefMap("createdOn", "Created On", true, canEdit));
-			headers.add(getFieldDefMap("createdBy", "Created By", true, canEdit));	
-			}
-		else if (Constants.REPORT_ALL_PROVIDER_LOCATIONS.equals(reportId)) {
+			headers.add(getFieldDefMap("createdBy", "Created By", true, canEdit));
+		} else if (Constants.REPORT_ALL_PROVIDER_LOCATIONS.equals(reportId)) {
 
 			headers.add(getFieldDefMap("name", "Name", true, canEdit));
 			headers.add(getFieldDefMap("menu.name", "Menu Name", true, canEdit));
@@ -100,7 +96,17 @@ public class HNIUtils {
 			headers.add(getFieldDefMap("address.state", "State", true, canEdit));
 			headers.add(getFieldDefMap("address.latitude", "Latitude", true, canEdit));
 			headers.add(getFieldDefMap("address.longitude", "Longitude", true, canEdit));
-			}
+		} else if (Constants.MENU_ITEM_BY_MENU.equals(reportId)) {
+
+			headers.add(getFieldDefMap("name", "Name", true, canEdit));
+			headers.add(getFieldDefMap("description", "Description", true, canEdit));
+			headers.add(getFieldDefMap("price", "Price", true, canEdit));
+			headers.add(getFieldDefMap("expires", "Expires", true, canEdit));
+			headers.add(getFieldDefMap("calories", "Calories", true, canEdit));
+			headers.add(getFieldDefMap("protien", "Protien", true, canEdit));
+			headers.add(getFieldDefMap("fat", "Fat", true, canEdit));
+			headers.add(getFieldDefMap("carbs", "Carbs", true, canEdit));
+		}
 		return headers;
 	}
 
@@ -110,7 +116,7 @@ public class HNIUtils {
 		header.put("label", label);
 		return header;
 	}
-	
+
 	public static String getHash(String authCode, Object salt) {
 		ByteSource slt = new SimpleByteSource(org.apache.commons.codec.binary.Base64.decodeBase64((String) salt));
 		Hash h = new SimpleHash("SHA-256", authCode, slt, 1024);
@@ -125,25 +131,25 @@ public class HNIUtils {
 		Base64.Encoder enc = Base64.getEncoder();
 		return enc.encodeToString(salt);
 	}
-	
+
 	public static boolean isPositiveNumeric(String text) {
 		boolean isValid = false;
 		try {
 			Integer val = Integer.parseInt(text);
 			if (Integer.signum(val.intValue()) != -1) {
 				isValid = true;
-			} 
+			}
 		} catch (Exception e) {
 			// Nothing to do with exception
 		}
-		
+
 		return isValid;
 	}
-	
+
 	public static boolean isPositiveNumeric(Integer num) {
 		return Integer.signum(num) != -1;
 	}
-	
+
 	public static Integer getNumber(String text) {
 		try {
 			return Integer.parseInt(text);
@@ -152,5 +158,5 @@ public class HNIUtils {
 			return null;
 		}
 	}
-	
+
 }

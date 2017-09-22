@@ -9,4 +9,6 @@ import org.hni.provider.om.Provider;
 public interface MenuDAO extends BaseDAO<Menu> {
 
 	Collection<Menu> get(Provider provider);
+
+	Collection<Menu> getMenusByProviderId(Long providerId);
 }

@@ -56,6 +56,7 @@ public class Constants {
 	public static final Integer REPORT_ALL_CUSTOMER = 60;
 	public static final Integer REPORT_ALL_CUSTOMER_NGO = 70;
 	public static final Integer REPORT_ALL_PROVIDER_LOCATIONS = 80;
+	public static final Integer MENU_ITEM_BY_MENU = 90;
 	
 	// Constants for HNI Templates
 	public static final String PARTICIPANT_ORDER_CONFIRMATION_NOTIFICATION = "POCN";

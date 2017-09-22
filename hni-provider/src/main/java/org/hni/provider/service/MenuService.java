@@ -14,4 +14,6 @@ public interface MenuService extends BaseService<Menu> {
 	 * @return
 	 */
 	Collection<Menu> with(Provider provider);
+	
+	Collection<Menu> getAllByProviderId(Long providerId);
 }

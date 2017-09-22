@@ -29,6 +29,12 @@ public class DefaultMenuService extends AbstractService<Menu> implements MenuSer
 		return menuDao.get(provider);
 	}
 
+	@Override
+	public Collection<Menu> getAllByProviderId(Long providerId) {
+		// TODO Auto-generated method stub
+		return menuDao.getMenusByProviderId(providerId);
+	}
+
 
 
 }

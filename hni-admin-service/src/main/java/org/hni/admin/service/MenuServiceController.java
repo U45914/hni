@@ -10,14 +10,14 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
-import org.apache.shiro.SecurityUtils;
 import org.hni.common.Constants;
 import org.hni.common.exception.HNIException;
 import org.hni.provider.om.Menu;
 import org.hni.provider.om.MenuItem;
-import org.hni.provider.om.Provider;
 import org.hni.provider.service.MenuService;
+import org.hni.service.helpers.ProviderResourceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -33,6 +33,7 @@ public class MenuServiceController extends AbstractBaseController {
 	
 	@Inject private MenuService menuService;
 	
+	@Inject private ProviderResourceHelper providerResHelper;
 	@GET
 	@Path("/{id}")
 	@Produces({MediaType.APPLICATION_JSON})
@@ -45,16 +46,15 @@ public class MenuServiceController extends AbstractBaseController {
 	}
 
 	@POST
-	@Path("/providers/{id}")
+	@Path("/menu/create")
 	@Produces({MediaType.APPLICATION_JSON})
 	@ApiOperation(value = "Creates a new Menu or saves the Menu with the given id associated with the given Provider"
 		, notes = "An Menu without an ID field will be created"
 		, response = Menu.class
 		, responseContainer = "")
-	public Menu saveOrder(@PathParam("id") Long id, Menu menu) {
-		if (isPermitted(Constants.MENU, Constants.CREATE, id)) {
-			menu.setProvider(new Provider(id));
-			return menuService.save(menu);
+	public String saveOrder(Menu menu) {
+		if (getLoggedInUser() != null) {
+			return providerResHelper.createMenu(menu, getLoggedInUser());
 		}
 		throw new HNIException("You must have elevated permissions to do this.");
 	}
@@ -81,23 +81,21 @@ public class MenuServiceController extends AbstractBaseController {
 	, response = Menu.class
 	, responseContainer = "")
 	public Collection<Menu> getMenus(@PathParam("id") Long id) {		
-		return menuService.with(new Provider(id));
+		return menuService.getAllByProviderId(id);
 	}
 
 	@POST
-	@Path("/{id}/menuitems")
+	@Path("/{id}/menuitems/add")
 	@Produces({MediaType.APPLICATION_JSON})
 	@ApiOperation(value = "Creates a new MenuItem or saves the MenuItem"
 		, notes = "An MenuItem without an ID field will be created"
 		, response = Menu.class
 		, responseContainer = "")
-	public Menu saveMenuItem(@PathParam("id") Long id, MenuItem menuItem) {
-		if (isPermitted(Constants.MENU, Constants.CREATE, id)) {
-			Menu menu = menuService.get(id);
-			if ( null != menu ) {
-				menu.getMenuItems().add(menuItem);
-			}
-			return menuService.save(menu);
+	public String saveMenuItem(@PathParam("id") Long menuId, MenuItem menuItem) {
+		if (getLoggedInUser() != null) {
+			menuItem.setMenu(new Menu(menuId));
+			return providerResHelper.addMenuItemToMenu(menuId, menuItem);
+			
 		}
 		throw new HNIException("You must have elevated permissions to do this.");
 	}
@@ -119,5 +117,19 @@ public class MenuServiceController extends AbstractBaseController {
 			return menuService.save(menu);
 		}
 		throw new HNIException("You must have elevated permissions to do this.");
+	}
+	
+	@GET
+	@Path("/{menuId}/menuItems/info")
+	@Produces({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = "Return menu items for the given menu id with column headers"
+		, notes = "Return menuitems with headers"
+		, response = MenuItem.class
+		, responseContainer = "")
+	public Response getMenuItemsWithHeader(@PathParam("menuId") Long menuId) {
+		if (getLoggedInUser() == null) {
+			throw new HNIException("You must have elevated permissions to do this.");
+		}
+		return Response.ok(providerResHelper.getMenuItemsWithHeaders(menuId)).build();
 	}
 }
