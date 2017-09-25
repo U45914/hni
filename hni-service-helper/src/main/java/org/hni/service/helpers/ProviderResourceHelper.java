@@ -6,6 +6,7 @@ package org.hni.service.helpers;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -14,6 +15,8 @@ import org.hni.common.Constants;
 import org.hni.common.HNIUtils;
 import org.hni.provider.om.Menu;
 import org.hni.provider.om.MenuItem;
+import org.hni.order.om.Order;
+import org.hni.order.service.OrderService;
 import org.hni.provider.om.Provider;
 import org.hni.provider.om.ProviderLocation;
 import org.hni.provider.service.MenuService;
@@ -41,6 +44,8 @@ public class ProviderResourceHelper extends AbstractServiceHelper {
 	private ProviderService providerService;
 	@Inject
 	private ProviderLocationService providerLocationService;
+	@Inject
+	private OrderService orderService;
 	@Inject private MenuService menuService;
 	
 	public String createProvider(Provider provider, User user) {
@@ -170,5 +175,21 @@ public class ProviderResourceHelper extends AbstractServiceHelper {
 		
 		
 		return menuItems;
+	}
+	
+	@Transactional
+	public void deleteProviderLocation(Long id, Long plid){
+		ProviderLocation providerLocation = providerLocationService.get(plid);
+        if (providerLocation.getProvider().getId().equals(id)) {
+           _LOGGER.info("Request reached to delete providerLocation "+plid);
+           List<Order> existingOrders = (List<Order>) orderService.getOpenOrdersForLocation(providerLocation);
+           if(existingOrders.isEmpty() && existingOrders.size() == 0){
+        	   _LOGGER.info("No exisiting order(s) found for location "+plid);
+        	   providerLocationService.delete(new ProviderLocation(plid));
+           } else {
+        	   _LOGGER.info("Exisiting order(s) found for location "+plid);
+        	   providerLocation.setIsActive(false); 
+           }
+        }
 	}
 }

@@ -3,10 +3,12 @@ package org.hni.order.service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 
 import org.hni.common.service.BaseService;
 import org.hni.order.om.Order;
 import org.hni.provider.om.Provider;
+import org.hni.provider.om.ProviderLocation;
 import org.hni.user.om.User;
 
 public interface OrderService extends BaseService<Order> {
@@ -94,6 +96,8 @@ public interface OrderService extends BaseService<Order> {
 	 * @return a collection of open orders
 	 */
 	public Collection<Order> getOpenOrdersFor(User user);
+	
+	public List<Order> getOpenOrdersForLocation(ProviderLocation providerLocation);
 
 	Collection<Order> get(User user, LocalDateTime startDate, LocalDateTime endDate);
 }
