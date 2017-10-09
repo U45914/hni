@@ -19,15 +19,24 @@ public class HNIUtils {
 	}
 
 	private static Map<String, Object> getFieldDefMap(String fieldName, String displayName, Boolean resizable,
-			Boolean enableCellEdit) {
+			Boolean enableCellEdit, Boolean hasWidth) {
 		Map<String, Object> fieldDef = new HashMap<>();
 		fieldDef.put("field", fieldName);
 		fieldDef.put("displayName", displayName);
 		fieldDef.put("resizable", resizable);
 		fieldDef.put("enableCellEdit", enableCellEdit);
+		if(hasWidth)
+		fieldDef.put("width", getColumnWidth(displayName, fieldDef));
 		// fieldDef.put("field", fieldName);
 
 		return fieldDef;
+	}
+	
+	private static int getColumnWidth(String displayName, Map<String, Object> fieldDef){
+		if(displayName.toLowerCase().contains("name") || displayName.toLowerCase().contains("address") || displayName.toLowerCase().contains("email") || displayName.toLowerCase().contains("website")){
+			return 200;
+		}
+		return (displayName.length()*12);
 	}
 
 	public static List<Map<String, Object>> getReportHeaders(Integer reportId, Boolean canEdit) {
@@ -35,77 +44,77 @@ public class HNIUtils {
 		List<Map<String, Object>> headers = new ArrayList<>();
 		if (Constants.REPORT_ALL_NGO.equals(reportId)) {
 
-			headers.add(getFieldDefMap("name", "NGO Name", true, canEdit));
-			headers.add(getFieldDefMap("phone", "NGO Phone", true, canEdit));
-			headers.add(getFieldDefMap("address", "NGO Address", true, canEdit));
-			headers.add(getFieldDefMap("createdUsers", "Total number of Clients", true, canEdit));
+			headers.add(getFieldDefMap("name", "NGO Name", true, canEdit, false));
+			headers.add(getFieldDefMap("phone", "NGO Phone", true, canEdit, false));
+			headers.add(getFieldDefMap("address", "NGO Address", true, canEdit, false));
+			headers.add(getFieldDefMap("createdUsers", "Total number of Clients", true, canEdit, false));
 		} else if (Constants.REPORT_ALL_CUSTOMER.equals(reportId)) {
 
-			headers.add(getFieldDefMap("firstName", "First Name", true, canEdit));
-			headers.add(getFieldDefMap("lastName", "Last Name", true, canEdit));
-			headers.add(getFieldDefMap("mobilePhone", "Phone Number", true, canEdit));
-			headers.add(getFieldDefMap("address", "Address", true, canEdit));
-			headers.add(getFieldDefMap("mealsPerDay", "Meals Allowed (Daily)", true, canEdit));
-			headers.add(getFieldDefMap("orders", "No of Orders", true, canEdit));
-			headers.add(getFieldDefMap("active", "Status", true, canEdit));
-			headers.add(getFieldDefMap("sheltered", "Sheltered", true, canEdit));
-			headers.add(getFieldDefMap("contactName", "NGO Name", true, canEdit));
-			headers.add(getFieldDefMap("noOfDependents", "No of Dependents", true, canEdit));
+			headers.add(getFieldDefMap("firstName", "First Name", true, canEdit,true));
+			headers.add(getFieldDefMap("lastName", "Last Name", true, canEdit,true));
+			headers.add(getFieldDefMap("mobilePhone", "Phone Number", true, canEdit,true));
+			headers.add(getFieldDefMap("address", "Address", true, canEdit,true));
+			headers.add(getFieldDefMap("mealsPerDay", "Meals Allowed (Daily)", true, canEdit,true));
+			headers.add(getFieldDefMap("orders", "No of Orders", true, canEdit,true));
+			headers.add(getFieldDefMap("active", "Status", true, canEdit,true));
+			headers.add(getFieldDefMap("sheltered", "Sheltered", true, canEdit,true));
+			headers.add(getFieldDefMap("contactName", "NGO Name", true, canEdit,true));
+			headers.add(getFieldDefMap("noOfDependents", "No of Dependents", true, canEdit,true));
 
 		} else if (Constants.REPORT_ALL_CUSTOMER_NGO.equals(reportId)) {
 
-			headers.add(getFieldDefMap("firstName", "First Name", true, canEdit));
-			headers.add(getFieldDefMap("lastName", "Last Name", true, canEdit));
-			headers.add(getFieldDefMap("mobilePhone", "Phone Number", true, canEdit));
-			headers.add(getFieldDefMap("address", "Address", true, canEdit));
-			headers.add(getFieldDefMap("mealsPerDay", "Meals Allowed (Daily)", true, canEdit));
-			headers.add(getFieldDefMap("orders", "No of Orders", true, canEdit));
-			headers.add(getFieldDefMap("active", "Status", true, canEdit));
-			headers.add(getFieldDefMap("sheltered", "Sheltered", true, canEdit));
+			headers.add(getFieldDefMap("firstName", "First Name", true, canEdit, false));
+			headers.add(getFieldDefMap("lastName", "Last Name", true, canEdit, false));
+			headers.add(getFieldDefMap("mobilePhone", "Phone Number", true, canEdit, false));
+			headers.add(getFieldDefMap("address", "Address", true, canEdit, false));
+			headers.add(getFieldDefMap("mealsPerDay", "Meals Allowed (Daily)", true, canEdit, false));
+			headers.add(getFieldDefMap("orders", "No of Orders", true, canEdit, false));
+			headers.add(getFieldDefMap("active", "Status", true, canEdit, false));
+			headers.add(getFieldDefMap("sheltered", "Sheltered", true, canEdit, false));
 
 		} else if (Constants.REPORT_ALL_VOLUNTEER.equals(reportId)) {
-			headers.add(getFieldDefMap("firstName", "First Name", true, canEdit));
-			headers.add(getFieldDefMap("lastName", "Last Name", true, canEdit));
-			headers.add(getFieldDefMap("address", "Address", true, canEdit));
-			headers.add(getFieldDefMap("phone", "Phone Number", true, canEdit));
-			headers.add(getFieldDefMap("email", "Email", true, canEdit));
+			headers.add(getFieldDefMap("firstName", "First Name", true, canEdit, false));
+			headers.add(getFieldDefMap("lastName", "Last Name", true, canEdit, false));
+			headers.add(getFieldDefMap("address", "Address", true, canEdit, false));
+			headers.add(getFieldDefMap("phone", "Phone Number", true, canEdit, false));
+			headers.add(getFieldDefMap("email", "Email", true, canEdit, false));
 		} else if (Constants.REPORT_ALL_ORDER.equals(reportId)) {
-			headers.add(getFieldDefMap("orderDate", "Order date", true, canEdit));
-			headers.add(getFieldDefMap("readyDate", "Ready date", true, canEdit));
-			headers.add(getFieldDefMap("name", "Orderd By", true, canEdit));
-			headers.add(getFieldDefMap("orderstatus", "Order status", true, canEdit));
-			headers.add(getFieldDefMap("total", "Total", true, canEdit));
+			headers.add(getFieldDefMap("orderDate", "Order date", true, canEdit, false));
+			headers.add(getFieldDefMap("readyDate", "Ready date", true, canEdit, false));
+			headers.add(getFieldDefMap("name", "Orderd By", true, canEdit, false));
+			headers.add(getFieldDefMap("orderstatus", "Order status", true, canEdit, false));
+			headers.add(getFieldDefMap("total", "Total", true, canEdit, false));
 			// headers.add(addField("orderItems", "Ordered Items"));
 		} else if (Constants.REPORT_ALL_PROVIDER.equals(reportId)) {
 
-			headers.add(getFieldDefMap("name", "Provider Name", true, canEdit));
-			headers.add(getFieldDefMap("address", "Address", true, canEdit));
-			headers.add(getFieldDefMap("website", "Website", true, canEdit));
-			headers.add(getFieldDefMap("createdOn", "Created On", true, canEdit));
-			headers.add(getFieldDefMap("createdBy", "Created By", true, canEdit));
+			headers.add(getFieldDefMap("name", "Provider Name", true, canEdit, false));
+			headers.add(getFieldDefMap("address", "Address", true, canEdit, true));
+			headers.add(getFieldDefMap("website", "Website", true, canEdit, true));
+			headers.add(getFieldDefMap("createdOn", "Created On", true, canEdit, false));
+			headers.add(getFieldDefMap("createdBy", "Created By", true, canEdit, false));
 		} else if (Constants.REPORT_ALL_PROVIDER_LOCATIONS.equals(reportId)) {
 
-			headers.add(getFieldDefMap("name", "Name", true, canEdit));
-			headers.add(getFieldDefMap("menu.name", "Menu Name", true, canEdit));
-			headers.add(getFieldDefMap("providerLocationHours[0].openHour", "Open Hour", true, canEdit));
-			headers.add(getFieldDefMap("providerLocationHours[0].closeHour", "Close Hour", true, canEdit));
-			headers.add(getFieldDefMap("isActive", "Active", true, canEdit));
-			headers.add(getFieldDefMap("address.address1", "Address Line 1", true, canEdit));
-			headers.add(getFieldDefMap("address.address2", "Address Line 2", true, canEdit));
-			headers.add(getFieldDefMap("address.city", "City", true, canEdit));
-			headers.add(getFieldDefMap("address.state", "State", true, canEdit));
-			headers.add(getFieldDefMap("address.latitude", "Latitude", true, canEdit));
-			headers.add(getFieldDefMap("address.longitude", "Longitude", true, canEdit));
+			headers.add(getFieldDefMap("name", "Name", true, canEdit, true));
+			headers.add(getFieldDefMap("menu.name", "Menu Name", true, canEdit, true));
+			headers.add(getFieldDefMap("providerLocationHours[0].openHour", "Open Hour", true, canEdit, true));
+			headers.add(getFieldDefMap("providerLocationHours[0].closeHour", "Close Hour", true, canEdit, true));
+			headers.add(getFieldDefMap("isActive", "Active", true, canEdit, true));
+			headers.add(getFieldDefMap("address.address1", "Address Line 1", true, canEdit, true));
+			headers.add(getFieldDefMap("address.address2", "Address Line 2", true, canEdit, true));
+			headers.add(getFieldDefMap("address.city", "City", true, canEdit, true));
+			headers.add(getFieldDefMap("address.state", "State", true, canEdit, true));
+			headers.add(getFieldDefMap("address.latitude", "Latitude", true, canEdit, true));
+			headers.add(getFieldDefMap("address.longitude", "Longitude", true, canEdit, true));
 		} else if (Constants.MENU_ITEM_BY_MENU.equals(reportId)) {
 
-			headers.add(getFieldDefMap("name", "Name", true, canEdit));
-			headers.add(getFieldDefMap("description", "Description", true, canEdit));
-			headers.add(getFieldDefMap("price", "Price", true, canEdit));
-			headers.add(getFieldDefMap("expires", "Expires", true, canEdit));
-			headers.add(getFieldDefMap("calories", "Calories", true, canEdit));
-			headers.add(getFieldDefMap("protien", "Protien", true, canEdit));
-			headers.add(getFieldDefMap("fat", "Fat", true, canEdit));
-			headers.add(getFieldDefMap("carbs", "Carbs", true, canEdit));
+			headers.add(getFieldDefMap("name", "Name", true, canEdit, false));
+			headers.add(getFieldDefMap("description", "Description", true, canEdit, false));
+			headers.add(getFieldDefMap("price", "Price", true, canEdit, false));
+			headers.add(getFieldDefMap("expires", "Expires", true, canEdit, false));
+			headers.add(getFieldDefMap("calories", "Calories", true, canEdit, false));
+			headers.add(getFieldDefMap("protien", "Protien", true, canEdit, false));
+			headers.add(getFieldDefMap("fat", "Fat", true, canEdit, false));
+			headers.add(getFieldDefMap("carbs", "Carbs", true, canEdit, false));
 		}
 		return headers;
 	}
