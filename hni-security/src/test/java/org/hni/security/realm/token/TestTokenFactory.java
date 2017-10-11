@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+import java.util.Iterator;
+
 import javax.inject.Inject;
 
 import org.hni.organization.om.Organization;
@@ -44,19 +46,22 @@ public class TestTokenFactory {
 		Claims claims = JWTTokenFactory.decode(token, KEY, ISSUER);
 		
 		UserAccessControls acl2 = mapper.readValue(claims.get("permissions", String.class), UserAccessControls.class);
-		assertEquals(1, acl2.getPermissions().size());
-		assertEquals("organizations:read:3", acl2.getPermissions().iterator().next());
+		assertEquals(2, acl2.getPermissions().size());
+		Iterator it = acl2.getPermissions().iterator();
+		assertEquals("*:*:*", it.next());
+		assertEquals("organizations:read:3", it.next());
+		 
 		assertEquals(1, acl2.getRoles().size());
 		assertEquals("3", acl2.getRoles().iterator().next());
 		assertEquals(user.getId(), new Long(claims.get("userId", Integer.class).longValue()));
-		System.out.println(token);
+		//System.out.println(token);
 	}
 
 	@Test
 	public void testVolunteerTokenNonMappedOrg() throws Exception {
 		String subject = "testtoken";
 		User user = new User(8L);
-		Organization organization = new Organization(2L);
+		Organization organization = new Organization(43L);
 		UserAccessControls acl = accessControlService.getUserAccess(user, organization);
 		String token = JWTTokenFactory.encode(KEY, ISSUER, subject, TTL_MILLIS, user.getId(), mapper.writeValueAsString(acl));
 		Claims claims = JWTTokenFactory.decode(token, KEY, ISSUER);
@@ -65,7 +70,7 @@ public class TestTokenFactory {
 		
 		//TODO: these should be '0', but due to a change in the security logic for launch
 		// we're allowing any organization mapping to fall through.
-		assertEquals(1, acl2.getPermissions().size());
+		assertEquals(2, acl2.getPermissions().size());
 		assertEquals(1, acl2.getRoles().size());
 		System.out.println(token);
 	}

@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import org.hni.organization.service.OrganizationUserService;
 import org.hni.security.om.ActivationCode;
+import org.hni.user.om.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -41,17 +42,19 @@ public class TestActivationCodeService {
 	@Test
 	public void testActivate() {
 		ActivationCode code = activationCodeService.get(INSERTED_ID_1);
+		User user = new User(1L);
 		assertNotNull(code);
 		assertNull(code.getUser());
-		code.setUser(organizationUserService.get(3L));
-		code.setComments("mikey user");
+		user = organizationUserService.get(1L);
+		code.setUser(user);
+		code.setComments("super user");
 		activationCodeService.save(code);
 		
 		ActivationCode codeValidate = activationCodeService.get(INSERTED_ID_1);
 		assertNotNull(codeValidate);
 		assertNotNull(codeValidate.getUser());
-		assertEquals(3L, codeValidate.getUser().getId().intValue());
-		assertEquals("mikey user", code.getComments());
+		assertEquals(1L, codeValidate.getUser().getId().intValue());
+		assertEquals("super user", code.getComments());
 	}
 
 	@Test
@@ -89,7 +92,7 @@ public class TestActivationCodeService {
 		ActivationCode code = activationCodeService.getByActivationCode(SUPPLIED_AUTH_CODE_1);
 		assertTrue(activationCodeService.validate(SUPPLIED_AUTH_CODE_1));
 
-		code.setUser(organizationUserService.get(3L));
+		code.setUser(organizationUserService.get(1L));
 		activationCodeService.update(code);
 		assertFalse(activationCodeService.validate(SUPPLIED_AUTH_CODE_1));
 	}
