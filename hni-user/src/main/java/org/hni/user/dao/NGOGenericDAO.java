@@ -103,7 +103,7 @@ public class NGOGenericDAO extends DefaultGenericDAO {
 		for (Object[] user : userDetails) {
 			Volunteer volunteer = new Volunteer();
 			Address address = new Address();
-			volunteer.setId(Long.valueOf(getValue(user[0])));
+			volunteer.setUserId(Long.valueOf(getValue(user[0])));
 			volunteer.setFirstName(getValue(user[1]));
 			volunteer.setLastName(getValue(user[2]));
 			volunteer.setSex(getValue(user[3]));

@@ -37,7 +37,7 @@ public class CustomerDao extends DefaultGenericDAO {
 				.setParameter("roleId", role).getResultList();
 		for (Object[] u : user) {
 			Map<String,String> map=new HashMap<String,String>();
-			map.put("uid",getValue(u[0]));
+			map.put("userId",getValue(u[0]));
 			map.put("active", getValueForBoolean(u[1]));
 			map.put("firstName",getValue(u[2]));
 			map.put("lastName",getValue(u[3]));

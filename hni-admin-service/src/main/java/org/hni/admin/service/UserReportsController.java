@@ -132,6 +132,7 @@ public class UserReportsController extends AbstractBaseController {
 				json.put("address", volunteer.getAddress().getAddress1()+","+volunteer.getAddress().getCity()+","+volunteer.getAddress().getState());
 				json.put("phone", volunteer.getPhoneNumber());
 				json.put("email", volunteer.getEmail());
+				json.put("userId", volunteer.getUserId());
 				
 				dataList.add(json);
 			}

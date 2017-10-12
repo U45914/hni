@@ -15,6 +15,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
+import org.hni.admin.service.dto.CustomSMSMessageDto;
+import org.hni.admin.service.dto.CustomSMSMessageResponseDto;
 import org.hni.common.Constants;
 import org.hni.common.exception.HNIException;
 import org.hni.events.service.EventRouter;
@@ -120,16 +122,16 @@ public class SMSUserMessageController extends AbstractBaseController {
     }
     
     @POST
-    @Path("/participant/all")
-    @Consumes(MediaType.TEXT_PLAIN)
+    @Path("/custom/")
+    @Consumes(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "sends SMS message to all participants."
             , notes = ""
             , response = String.class
             , responseContainer = "")
-    public Map<String, Object> sendMessageToAllParticipants(String messageContent) {
-    	pushMessageService.sendMessageToAllActiveParticipants(messageContent);
-		return null;
-    	
+    public Response sendCustomMessage(CustomSMSMessageDto customSMSMessage) {
+    	Map<String, String> response = new HashMap<>();
+   		CustomSMSMessageResponseDto customResponse = pushMessageService.sendCustomMessage(customSMSMessage);
+   		return Response.ok(customResponse).build();
     }
 
 	private String getQueryParamValue(MultivaluedMap<String, String> params, String key){

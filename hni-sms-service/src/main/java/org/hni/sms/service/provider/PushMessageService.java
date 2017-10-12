@@ -3,17 +3,23 @@
  */
 package org.hni.sms.service.provider;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.hni.admin.service.dto.CustomSMSMessageDto;
+import org.hni.admin.service.dto.CustomSMSMessageResponseDto;
 import org.hni.admin.service.dto.VolunteerDto;
+import org.hni.common.Constants;
 import org.hni.order.om.Order;
 import org.hni.order.om.OrderItem;
 import org.hni.sms.service.model.SmsMessage;
 import org.hni.sms.service.provider.om.SmsProvider;
 import org.hni.user.dao.UserDAO;
+import org.hni.user.om.User;
 import org.hni.user.service.VolunteerService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -108,23 +114,42 @@ public class PushMessageService {
 		}
 	}
 	
-	public void sendMessageToAllActiveParticipants(String messageContent){
-		List<String> participantsFromMO = userDAO.getParticiapntsFromState("MO");
-		List<String> participantsFromOR = userDAO.getParticiapntsFromState("OR");
+	public CustomSMSMessageResponseDto sendCustomMessage(CustomSMSMessageDto customSMSMessage){
 		
-		SmsProvider providerForMO = SmsServiceLoader.getProviders().get("MO");
-		if( participantsFromMO != null && !participantsFromMO.isEmpty()){
-			for(String participant : participantsFromMO){
-				provider.get(providerForMO.getProviderName()).sendMessage(createMessageObject(messageContent, providerForMO.getLongCode(), participant));
+		List<Long> userIds = customSMSMessage.getUserId();
+		String messageContent = customSMSMessage.getMessage();
+		String toPhoneNumber = new String();
+		CustomSMSMessageResponseDto customResponse = new CustomSMSMessageResponseDto();
+		Long totalSuccess = 0L;
+		Long totalFailed = 0L;
+		
+		Map<String, String> messageStatus = new HashMap<>();
+		for(Long userId : userIds){
+			try{
+				User user = userDAO.get(userId);
+				toPhoneNumber = user.getMobilePhone();
+				if(user != null){
+					String state = user.getAddresses().iterator().next().getState();
+					SmsProvider smsProvider = SmsServiceLoader.getProviders().get(state);
+					
+					if(smsProvider != null){
+						provider.get(smsProvider.getProviderName()).sendMessage(createMessageObject(messageContent, smsProvider.getLongCode(), toPhoneNumber));
+						++totalSuccess;
+						messageStatus.put(toPhoneNumber, Constants.SUCCESS);
+					}else {
+						++totalFailed;
+						messageStatus.put(toPhoneNumber, Constants.ERROR);
+					}
+				}
+			}catch(Exception e){
+				++totalFailed;
+				messageStatus.put(toPhoneNumber, Constants.ERROR);
 			}
 		}
-		
-		SmsProvider providerForOR = SmsServiceLoader.getProviders().get("OR");
-		if( participantsFromOR != null && !participantsFromOR.isEmpty()){
-			for(String participant : participantsFromOR){
-				provider.get(providerForOR.getProviderName()).sendMessage(createMessageObject(messageContent, providerForOR.getLongCode(), participant));
-			}
-		}
+		customResponse.setTotalSuccess(totalSuccess);
+		customResponse.setTotalFailed(totalFailed);
+		customResponse.setDetails(messageStatus);
+		return customResponse;
 	}
 	
 }
