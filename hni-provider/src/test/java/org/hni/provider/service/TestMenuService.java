@@ -43,7 +43,7 @@ public class TestMenuService {
 	public void testGetMenusForProvider() {
 		Provider provider = providerService.get(1L);
 		Collection<Menu> menus = menuService.with(provider);
-		assertEquals(1, menus.size());
+		assertEquals(9, menus.size());
 	}
 	
 	@Test
@@ -58,7 +58,7 @@ public class TestMenuService {
 		menuService.save(menu);
 		
 		Collection<Menu> menus = menuService.with(provider);
-		assertEquals(2, menus.size());
+		assertEquals(10, menus.size());
 	}
 	
 	@Test
@@ -84,7 +84,7 @@ public class TestMenuService {
 	public void testRemoveItemFromMenu() {
 		Menu menu = menuService.get(1L);
 		assertNotNull(menu);
-		assertEquals(4, menu.getMenuItems().size());
+		assertEquals(3, menu.getMenuItems().size());
 		
 		MenuItem mi = new MenuItem(4L);		
 		menu.getMenuItems().remove(mi);

@@ -72,11 +72,11 @@ public class TestCustomerService {
      */
     @Test
     public void testRegisterSameCustomer() {
-        User user = customerService.get(3l);
+        User user = customerService.get(1l);
         String authCode = "123456";
         customerService.registerCustomer(user, authCode);
 
-        assertThat(customerService.byMobilePhone("479-555-4321").size(), is(1));
+        assertThat(customerService.byMobilePhone("mphone").size(), is(1));
         ActivationCode activationCode = activationCodeService.getByActivationCode(authCode);
         assertThat(user.getId(), is(activationCode.getUser().getId()));
         List<UserOrganizationRole> uors = organizationUserService.getUserOrganizationRoles(user).stream()
@@ -92,7 +92,7 @@ public class TestCustomerService {
      */
     @Test
     public void testRegisterCustomerWithMultipleAuthCode() {
-        User user = customerService.get(3l);
+        User user = customerService.get(1l);
         String authCode = "123456";
         customerService.registerCustomer(user, authCode);
         ActivationCode activationCode = activationCodeService.getByActivationCode(authCode);

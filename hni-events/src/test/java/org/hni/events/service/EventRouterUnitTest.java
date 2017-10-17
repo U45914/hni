@@ -4,6 +4,7 @@ import org.hni.events.service.dao.EventStateDao;
 import org.hni.events.service.om.Event;
 import org.hni.events.service.om.EventName;
 import org.hni.events.service.om.EventState;
+import org.hni.user.service.UserOnboardingService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,6 +30,9 @@ public class EventRouterUnitTest {
 
     @Mock
     private RegisterService registerService;
+    
+    @Mock
+    private UserOnboardingService userOnboardingService;
 
     private Event event;
 
@@ -41,6 +45,7 @@ public class EventRouterUnitTest {
         event = Event.createEvent("text/plain", PHONE_NUMBER, "message");
         when(eventStateDao.insert(any(EventState.class))).thenReturn(new EventState());
         when(registerService.handleEvent(eq(event))).thenReturn(RETURN_MESSAGE);
+       // when(eventRouter.handleEvent(eq(event))).thenReturn(RETURN_MESSAGE);
     }
 
     @Test
@@ -60,20 +65,23 @@ public class EventRouterUnitTest {
 
     @Test
     public void testStartRegisterWorkFlow() {
+    	 when(userOnboardingService.isValidInvitation(eq(PHONE_NUMBER))).thenReturn(RETURN_MESSAGE);
         when(eventStateDao.byPhoneNumber(eq(PHONE_NUMBER))).thenReturn(eventState);
         event.setTextMessage("SIGNUP");
         Assert.assertEquals(RETURN_MESSAGE, eventRouter.handleEvent(event));
+        
         verify(eventStateDao, never()).delete(eq(eventState));
-        verify(eventStateDao, times(1)).insert(any(EventState.class));
+        verify(eventStateDao, times(0)).insert(any(EventState.class));
     }
 
     @Test
     public void testInterruptExistingWorkFlow() {
         eventState = new EventState(EVENT_STATE_ID, EventName.MEAL, PHONE_NUMBER);
-        when(eventStateDao.byPhoneNumber(eq(PHONE_NUMBER))).thenReturn(eventState);
+       when(eventStateDao.byPhoneNumber(eq(PHONE_NUMBER))).thenReturn(eventState);
+       when(userOnboardingService.isValidInvitation(eq(PHONE_NUMBER))).thenReturn(RETURN_MESSAGE);
         event.setTextMessage("SIGNUP");
         Assert.assertEquals(RETURN_MESSAGE, eventRouter.handleEvent(event));
-        verify(eventStateDao, times(1)).update(eq(eventState));
+        verify(eventStateDao, times(0)).update(eq(eventState));
         verify(eventStateDao, times(0)).insert(any(EventState.class));
     }
 

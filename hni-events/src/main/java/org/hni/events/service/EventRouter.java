@@ -24,7 +24,7 @@ public class EventRouter {
     private RegisterService registerService;
     
     @Inject
-    private UserOnboardingService userOnboardService;
+    private UserOnboardingService userOnboardingService;
 
     private Map<EventName, EventService> eventServiceMap;
 
@@ -53,7 +53,7 @@ public class EventRouter {
         EventName eventName = parseKeyWordToEventName(event.getTextMessage());
         
         if(eventName == EventName.REGISTER){
-        	String message = userOnboardService.isValidInvitation(phoneNumber);
+        	String message = userOnboardingService.isValidInvitation(phoneNumber);
         	if(message != null)
         		return message;
         }

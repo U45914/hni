@@ -118,7 +118,7 @@ public class RegisterServiceUnitTest {
 
         when(registrationStateDAO.get(eq(PHONE_NUMBER))).thenReturn(state);
         String returnString = registerService.handleEvent(event);
-        Assert.assertEquals(RegisterService.REPLY_AUTHCODE_REQUEST, returnString);
+        Assert.assertEquals(RegisterService.REPLY_PASSWORD_REQUEST, returnString);
         verify(registrationStateDAO, times(1)).update(any(RegistrationState.class));
     }
 

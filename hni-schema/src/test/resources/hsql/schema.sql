@@ -74,7 +74,10 @@ CREATE TABLE IF NOT EXISTS `client` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL DEFAULT '0',
   `created_by` int(11) NOT NULL DEFAULT '0',
+  `max_meals_allowed_per_day` INT(11) DEFAULT '0',
   `race` int(11) NOT NULL DEFAULT '0',
+  `max_order_allowed` INT(11)  DEFAULT '0' ,
+  `age` INT(11)  DEFAULT '0' ,
   `ethinicity` int(11) DEFAULT '0',
   `bday` date DEFAULT NULL,
   `been_arrested` tinyint(4) DEFAULT '0',
@@ -157,7 +160,6 @@ CREATE TABLE IF NOT EXISTS `dependents` (
   `modified_date` datetime NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
-
 -- Data exporting was unselected.
 -- Dumping structure for table hni.education
 DROP TABLE IF EXISTS `education`;
@@ -555,6 +557,7 @@ CREATE TABLE IF NOT EXISTS `provider_locations` (
   `is_active` tinyint(4) DEFAULT NULL,
   `last_updated_by` int(11) DEFAULT NULL,
   `last_updated` int(11) DEFAULT NULL,
+  `website` VARCHAR(250) DEFAULT NULL,
   PRIMARY KEY (`id`)) ENGINE=InnoDB;
 
 -- Data exporting was unselected.
