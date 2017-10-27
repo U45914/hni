@@ -34,9 +34,9 @@ public class HNIUtils {
 	
 	private static int getColumnWidth(String displayName, Map<String, Object> fieldDef){
 		if(displayName.toLowerCase().contains("name") || displayName.toLowerCase().contains("address") || displayName.toLowerCase().contains("email") || displayName.toLowerCase().contains("website")){
-			return 200;
+			return 150;
 		}
-		return (displayName.length()*12);
+		return (displayName.length()*10);
 	}
 
 	public static List<Map<String, Object>> getReportHeaders(Integer reportId, Boolean canEdit) {
