@@ -25,6 +25,7 @@ public class HNIUtils {
 		fieldDef.put("displayName", displayName);
 		fieldDef.put("resizable", resizable);
 		fieldDef.put("enableCellEdit", enableCellEdit);
+		fieldDef.put("cellTooltip", true);
 		if(hasWidth)
 		fieldDef.put("width", getColumnWidth(displayName, fieldDef));
 		// fieldDef.put("field", fieldName);
