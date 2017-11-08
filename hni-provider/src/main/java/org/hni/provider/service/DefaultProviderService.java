@@ -51,7 +51,7 @@ public class DefaultProviderService extends AbstractService<Provider> implements
 	
 	private boolean isAllowed(User loggedInUser, Provider toProvider){
 		boolean isAllowed = false;
-		if(toProvider.getCreatedById() == loggedInUser.getId()){
+		if(toProvider.getCreatedById().equals(loggedInUser.getId())){
 			_LOGGER.debug("Access granted for created user {}", loggedInUser.getId());
 			isAllowed =  true;
 		}else if(isAdminRole(loggedInUser)){
