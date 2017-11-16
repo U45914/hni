@@ -116,6 +116,13 @@ public class HNIUtils {
 			headers.add(getFieldDefMap("protien", "Protien", true, canEdit, false));
 			headers.add(getFieldDefMap("fat", "Fat", true, canEdit, false));
 			headers.add(getFieldDefMap("carbs", "Carbs", true, canEdit, false));
+		} else if(Constants.GIFT_CARDS.equals(reportId)){
+			
+			headers.add(getFieldDefMap("cardSerialId", "Serial Number", true, canEdit, false));
+			headers.add(getFieldDefMap("cardNumber", "Card Number", true, canEdit, false));
+			headers.add(getFieldDefMap("status", "Active", true, canEdit, false));
+			headers.add(getFieldDefMap("originalBalance", "Original Balance", true, canEdit, false));
+			headers.add(getFieldDefMap("balance", "Balance", true, canEdit, false));
 		}
 		return headers;
 	}
