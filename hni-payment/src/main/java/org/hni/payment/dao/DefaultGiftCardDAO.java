@@ -37,7 +37,7 @@ public class DefaultGiftCardDAO extends AbstractDAO<PaymentInstrument>
 					paymentInstrumentDto.setBalance(Double.valueOf(u[0].toString()));
 					paymentInstrumentDto.setCardNumber(u[1].toString());
 					paymentInstrumentDto.setCardSerialId(u[2].toString());
-					paymentInstrumentDto.setStatus(u[3].toString());
+					paymentInstrumentDto.setStatus(convertStatus(u[3].toString()));
 					paymentInstrumentDto.setOriginalBalance(Double.valueOf(u[4].toString()));
 					paymentInstrumentDto.setStateCode(u[5].toString());
 					paymentInstrumentDto.setId(Long.valueOf(u[6].toString()));
@@ -49,6 +49,13 @@ public class DefaultGiftCardDAO extends AbstractDAO<PaymentInstrument>
 			return Collections.emptyList();
 		}
 
+	}
+	
+	private String convertStatus(String status){
+		if(status.equals("A")){
+			return "Active";
+		}
+		return "Not Active";
 	}
 
 }
