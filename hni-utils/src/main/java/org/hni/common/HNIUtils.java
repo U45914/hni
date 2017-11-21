@@ -120,7 +120,7 @@ public class HNIUtils {
 			
 			headers.add(getFieldDefMap("cardSerialId", "Serial Number", true, canEdit, false));
 			headers.add(getFieldDefMap("cardNumber", "Card Number", true, canEdit, false));
-			headers.add(getFieldDefMap("status", "Status", true, canEdit, false));
+			headers.add(getFieldDefMap("status", "Status", true, false, false));
 			headers.add(getFieldDefMap("originalBalance", "Original Balance", true, canEdit, false));
 			headers.add(getFieldDefMap("balance", "Balance", true, canEdit, false));
 		}

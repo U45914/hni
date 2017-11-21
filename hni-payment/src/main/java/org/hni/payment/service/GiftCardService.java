@@ -9,4 +9,5 @@ import org.hni.payment.om.PaymentInstrument;
 public interface GiftCardService extends BaseService<PaymentInstrument> {
 
 	List<PaymentInstrumentDto> getGitCardsFor(Long providerId);
+	List<String> getSerialCardNumbers(Long providerId);
 }

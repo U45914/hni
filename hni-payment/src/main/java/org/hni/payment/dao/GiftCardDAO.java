@@ -8,4 +8,5 @@ import org.hni.payment.om.PaymentInstrument;
 
 public interface GiftCardDAO extends BaseDAO<PaymentInstrument> {
  List<PaymentInstrumentDto> getGitCardsFor(Long providerId);
+ List<String> getSerialCardNumbers(Long providerId);
 }

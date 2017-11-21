@@ -28,4 +28,9 @@ public class DefaultGiftCardService extends AbstractService<PaymentInstrument>
 		return giftCardDao.getGitCardsFor(providerId);
 	}
 
+	@Override
+	public List<String> getSerialCardNumbers(Long providerId) {
+		return giftCardDao.getSerialCardNumbers(providerId);
+	}
+
 }
