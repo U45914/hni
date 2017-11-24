@@ -110,7 +110,8 @@ public class PaymentController extends AbstractBaseController {
 			@QueryParam("orderAmt") Double orderAmt) {
 		String response = null;
 		try {
-			response = paymentServiceHelper.completeOrder(id, orderConfirmationId, orderAmt);
+			User user = getLoggedInUser();
+			response = paymentServiceHelper.completeOrder(id, orderConfirmationId, orderAmt, user);
 		} catch(Exception e) {
 			logger.error(e.getMessage(), e);
 			response = e.getMessage();

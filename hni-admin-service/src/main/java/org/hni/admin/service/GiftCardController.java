@@ -91,4 +91,26 @@ public class GiftCardController extends AbstractBaseController {
 			throw new HNIException("You must have elevated permissions to do this.");
 		return Response.ok(giftCardServiceHelper.saveGiftCards(paymentInstrument, user), MediaType.APPLICATION_JSON).build();
 	}
+	
+	@GET
+	@Path("/getCard/{giftCardId}")
+	@Produces({ MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Returns the gift card with the gift card id", notes = "", response = PaymentInstrument.class, responseContainer = "")
+	public Response getGiftCard(@PathParam("giftCardId") Long giftCardId) {
+		User user = getLoggedInUser();
+		if(user == null)
+			throw new HNIException("You must have elevated permissions to do this.");
+		return Response.ok(giftCardServiceHelper.getGiftCards(giftCardId), MediaType.APPLICATION_JSON).build();
+	}
+	
+	@PUT
+	@Path("/{giftCardId}/recharge/{amount}")
+	@Produces({ MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Returns the gift card with the gift card id", notes = "", response = PaymentInstrument.class, responseContainer = "")
+	public Response rechargeGiftCard(@PathParam("giftCardId") Long id, @PathParam("amount") Long amount) {
+		User user = getLoggedInUser();
+		if(user == null)
+			throw new HNIException("You must have elevated permissions to do this.");
+		return Response.ok(giftCardServiceHelper.rechargeGiftCard(id, amount, user), MediaType.APPLICATION_JSON).build();
+	}
 }

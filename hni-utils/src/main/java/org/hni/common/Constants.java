@@ -69,6 +69,11 @@ public class Constants {
 	public final static Integer CANCEL_REASON_USER_IS_NOT_ACTIVE = 1;
 	public final static Integer CANCEL_REASON_USER_IS_DELETED = 2;
 	
+	//Constants for hni audit actions
+	public static final Long GIFTCARD_CREATE = 1L;
+	public static final Long GIFTCARD_USED = 2L;
+	public static final Long GIFTCARD_RECHARGE = 3L;
+	
 	public static final String HNI_CAP = "HNI";
 	
 	public static final Map<String, Integer> USER_TYPES = new HashMap<>();
