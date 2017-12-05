@@ -138,7 +138,7 @@ public class NGOGenericDAO extends DefaultGenericDAO {
 						+ "from providers p "
 						+ "INNER JOIN users u  ON p.created_by =u.id "
 						+ "INNER JOIN addresses a ON p.address_id=a.id "
-						+ "and p.created_by=:uId")
+						+ "and p.created_by=:uId WHERE p.deleted=0")
 				.setParameter("uId", userId).getResultList();
 		for (Object[] prov : result) {
 			ObjectNode provider = new ObjectMapper().createObjectNode();

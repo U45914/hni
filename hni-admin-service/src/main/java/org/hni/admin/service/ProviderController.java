@@ -389,4 +389,20 @@ public class ProviderController extends AbstractBaseController {
         }
         throw new HNIException("You must have elevated permissions to do this.");
     }
+	
+	@POST
+    @Path("/provider/delete")
+    @Produces({MediaType.APPLICATION_JSON})
+    @ApiOperation(value = "Removes the address from a providerLocation"
+            , notes = ""
+            , response = Provider.class
+            , responseContainer = "")
+    public Map<String, String> removeProvider(List<Long> providerIds) {
+		logger.debug("Request reached to delete provider");
+		User loggedInUser = getLoggedInUser();
+		if(loggedInUser != null)
+			return providerService.deleteProviders(providerIds, loggedInUser);
+		else
+			 throw new HNIException("You must have elevated permissions to do this.");	
+    }
 }

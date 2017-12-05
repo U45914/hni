@@ -1,6 +1,7 @@
 package org.hni.provider.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.hni.common.service.BaseService;
 import org.hni.provider.om.Provider;
@@ -11,5 +12,6 @@ public interface ProviderService extends BaseService<Provider> {
 
 	Provider getProviderDetails(Long providerId, User loggedInUser);
 	List<ProviderLocation> getProviderLocations(Long providerId, User loggedInUser);
+	Map<String, String> deleteProviders(List<Long> providerIds, User loggedInUser);
 	
 }

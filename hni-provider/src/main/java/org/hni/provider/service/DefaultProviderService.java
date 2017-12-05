@@ -1,10 +1,14 @@
 package org.hni.provider.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.hni.common.Constants;
 import org.hni.common.service.AbstractService;
 import org.hni.organization.om.UserOrganizationRole;
 import org.hni.organization.service.OrganizationUserService;
@@ -98,6 +102,32 @@ public class DefaultProviderService extends AbstractService<Provider> implements
 			return providerLocationService.locationsOf(providerId);
 		}
 		return null;
+	}
+
+	@Override
+	public Map<String, String> deleteProviders(List<Long> providerIds,
+			User loggedInUser) {
+		Map<String, String> response = new HashMap<>();
+		StringBuilder undeleted = new StringBuilder();
+		for(Long id:providerIds){
+			Provider provider = get(id);
+			_LOGGER.debug("Starting process for retrieve provider " +id);
+			if(isAllowed(loggedInUser,provider)){
+				provider.setDeleted(true);
+				save(provider);
+				_LOGGER.debug("Provider " +id+" deleted.");
+			} else {
+				undeleted.append(provider.getName()).append(",");
+			}
+		}
+		
+		if(undeleted.length() == 0){
+			response.put(Constants.MESSAGE, "Provider(s) Deleted");
+		} else {
+			undeleted.deleteCharAt(undeleted.length()-1);
+			response.put(Constants.MESSAGE, "Error deleting providers : "+undeleted);
+		}
+		return response;
 	}
 
 }

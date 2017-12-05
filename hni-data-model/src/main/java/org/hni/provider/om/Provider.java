@@ -45,7 +45,9 @@ public class Provider implements Serializable, Persistable {
 	private Date created;
 	@Column(name = "created_by")
 	private Long createdById;
-
+	@Column(name = "deleted")
+	private boolean isDeleted;
+	
 	@ManyToOne(cascade=CascadeType.ALL)
 	@JoinColumn(name = "address_id", referencedColumnName = "id", insertable = true, updatable = true)
 	private Address address;
@@ -117,6 +119,15 @@ public class Provider implements Serializable, Persistable {
 
 	public void setMenus(Set<Menu> menu) {
 		this.menus = menu;
+	}
+
+	
+	public boolean isDeleted() {
+		return isDeleted;
+	}
+
+	public void setDeleted(boolean isDeleted) {
+		this.isDeleted = isDeleted;
 	}
 
 	@Override
