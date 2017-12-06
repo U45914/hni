@@ -47,6 +47,8 @@ public class Provider implements Serializable, Persistable {
 	private Long createdById;
 	@Column(name = "deleted")
 	private boolean isDeleted;
+	@Column(name = "active")
+	private boolean isActive;
 	
 	@ManyToOne(cascade=CascadeType.ALL)
 	@JoinColumn(name = "address_id", referencedColumnName = "id", insertable = true, updatable = true)
@@ -128,6 +130,14 @@ public class Provider implements Serializable, Persistable {
 
 	public void setDeleted(boolean isDeleted) {
 		this.isDeleted = isDeleted;
+	}
+	
+	public boolean isActive() {
+		return isActive;
+	}
+
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
 	}
 
 	@Override

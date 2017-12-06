@@ -10,6 +10,7 @@ import javax.inject.Named;
 
 import org.hni.common.Constants;
 import org.hni.common.service.AbstractService;
+import org.hni.order.om.Order;
 import org.hni.organization.om.UserOrganizationRole;
 import org.hni.organization.service.OrganizationUserService;
 import org.hni.provider.dao.ProviderDAO;
@@ -113,11 +114,28 @@ public class DefaultProviderService extends AbstractService<Provider> implements
 			Provider provider = get(id);
 			_LOGGER.debug("Starting process for retrieve provider " +id);
 			if(isAllowed(loggedInUser,provider)){
-				provider.setDeleted(true);
-				save(provider);
-				_LOGGER.debug("Provider " +id+" deleted.");
+				List<Order> providerOrders = getProviderOrders(id);
+				if(providerOrders.isEmpty() && providerOrders.size() == 0){
+					provider.setDeleted(true);
+					provider.setActive(false);
+					save(provider);
+					List<ProviderLocation> providerLocations = providerLocationService.locationsOf(id);
+					if(!providerLocations.isEmpty()){
+						for(ProviderLocation providerLocation: providerLocations){
+							ProviderLocation pl = providerLocationService.get(providerLocation.getId());
+							pl.setIsActive(false);
+							providerLocationService.save(pl);
+							_LOGGER.debug("Deactivated providerLocation : " +providerLocation.getId());
+						}
+					}
+					_LOGGER.debug("Provider " +id+" deleted.");
+				}else {
+					undeleted.append(provider.getName()).append(",");
+					_LOGGER.debug("Exisiting order found for provider : "+provider.getId());
+				}
 			} else {
 				undeleted.append(provider.getName()).append(",");
+				_LOGGER.debug("No permissions to modify provider: "+provider.getId());
 			}
 		}
 		
@@ -125,9 +143,58 @@ public class DefaultProviderService extends AbstractService<Provider> implements
 			response.put(Constants.MESSAGE, "Provider(s) Deleted");
 		} else {
 			undeleted.deleteCharAt(undeleted.length()-1);
-			response.put(Constants.MESSAGE, "Error deleting providers : "+undeleted);
+			response.put(Constants.MESSAGE, "Error deleting provider(s) : "+undeleted);
 		}
 		return response;
+	}
+
+	@Override
+	public Map<String, String> activateProviders(List<Long> providerIds,
+			Boolean value, User loggedInUser) {
+		Map<String, String> response = new HashMap<>();
+		StringBuilder undeleted = new StringBuilder();
+		for(Long id:providerIds){
+			Provider provider = get(id);
+			_LOGGER.debug("Starting process for retrieve provider " +id);
+			if(isAllowed(loggedInUser,provider)){
+				List<Order> providerOrders = getProviderOrders(id);
+				if(providerOrders.isEmpty() && providerOrders.size() == 0){
+					provider.setActive(value);
+					save(provider);
+					_LOGGER.debug("Provider " +id+" status changed : "+value);
+					if(!value){
+						List<ProviderLocation> providerLocations = providerLocationService.locationsOf(id);
+						if(!providerLocations.isEmpty()){
+							for(ProviderLocation providerLocation: providerLocations){
+								ProviderLocation pl = providerLocationService.get(providerLocation.getId());
+								pl.setIsActive(false);
+								providerLocationService.save(pl);
+								_LOGGER.debug("Deactivated providerLocation : " +providerLocation.getId());
+							}
+						}
+					}
+				} else {
+					undeleted.append(provider.getName()).append(",");
+					_LOGGER.debug("Existing order found for provider : "+provider.getId());
+				}
+			} else {
+				undeleted.append(provider.getName()).append(",");
+				_LOGGER.debug("No permissions to modify provider: "+provider.getId());
+			}
+		}
+		
+		if(undeleted.length() == 0){
+			response.put(Constants.MESSAGE, "Your request was submitted.");
+		} else {
+			undeleted.deleteCharAt(undeleted.length()-1);
+			response.put(Constants.MESSAGE, "Error activate/de-activate provider(s) : "+undeleted);
+		}
+		return response;
+	}
+
+	@Override
+	public List<Order> getProviderOrders(Long providerId) {
+		return providerDao.getProviderOrders(providerId);
 	}
 
 }

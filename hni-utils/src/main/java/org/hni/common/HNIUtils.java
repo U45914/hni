@@ -91,6 +91,7 @@ public class HNIUtils {
 			headers.add(getFieldDefMap("name", "Provider Name", true, canEdit, false));
 			headers.add(getFieldDefMap("address", "Address", true, canEdit, true));
 			headers.add(getFieldDefMap("website", "Website", true, canEdit, true));
+			headers.add(getFieldDefMap("active", "Status", true, false, true));
 			headers.add(getFieldDefMap("createdOn", "Created On", true, canEdit, false));
 			headers.add(getFieldDefMap("createdBy", "Created By", true, canEdit, false));
 		} else if (Constants.REPORT_ALL_PROVIDER_LOCATIONS.equals(reportId)) {

@@ -134,7 +134,7 @@ public class NGOGenericDAO extends DefaultGenericDAO {
 		Long userId = user.getId();
 		List<Object[]> result = em
 				.createNativeQuery(
-						"select p.name as provider_name,p.website_url,p.created,u.first_name,a.name,p.id "
+						"select p.name as provider_name,p.website_url,p.created,u.first_name,a.name,p.id,p.active "
 						+ "from providers p "
 						+ "INNER JOIN users u  ON p.created_by =u.id "
 						+ "INNER JOIN addresses a ON p.address_id=a.id "
@@ -148,10 +148,19 @@ public class NGOGenericDAO extends DefaultGenericDAO {
 			provider.put("createdBy", getValue(prov[3]));
 			provider.put("address", getValue(prov[4]));
 			provider.put("providerId",getValue(prov[5]));
+			provider.put("active", convertStatus(prov[6]));
 			providers.add(provider);
 
 		}
 		return providers;
+	}
+	
+	private String convertStatus(Object field){
+		if (field != null) {
+			return String.valueOf(field).equalsIgnoreCase("1") ? "Active" : "Not Active";
+		} else {
+			return "Not Active";
+		}
 	}
 	
 	private void deleteByTable(String table, String criteriaField, Object value) {
