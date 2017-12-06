@@ -1,13 +1,10 @@
 package org.hni.provider.service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.hni.common.Constants;
 import org.hni.common.service.AbstractService;
 import org.hni.order.om.Order;
@@ -18,7 +15,6 @@ import org.hni.provider.om.Provider;
 import org.hni.provider.om.ProviderLocation;
 import org.hni.type.HNIRoles;
 import org.hni.user.om.User;
-import org.hni.user.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -157,7 +153,7 @@ public class DefaultProviderService extends AbstractService<Provider> implements
 			Provider provider = get(id);
 			_LOGGER.debug("Starting process for retrieve provider " +id);
 			if(isAllowed(loggedInUser,provider)){
-				List<Order> providerOrders = getProviderOrders(id);
+				List<Order> providerOrders = getOpenOrders(id);
 				if(providerOrders.isEmpty() && providerOrders.size() == 0){
 					provider.setActive(value);
 					save(provider);
@@ -171,6 +167,8 @@ public class DefaultProviderService extends AbstractService<Provider> implements
 								providerLocationService.save(pl);
 								_LOGGER.debug("Deactivated providerLocation : " +providerLocation.getId());
 							}
+						} else {
+							_LOGGER.debug("No providerLocations found for provider : "+provider.getId());
 						}
 					}
 				} else {
@@ -195,6 +193,10 @@ public class DefaultProviderService extends AbstractService<Provider> implements
 	@Override
 	public List<Order> getProviderOrders(Long providerId) {
 		return providerDao.getProviderOrders(providerId);
+	}
+	
+	private List<Order> getOpenOrders(Long providerId){
+		return providerDao.getOpenOrders(providerId);
 	}
 
 }

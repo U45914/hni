@@ -29,4 +29,17 @@ public class DefaultProviderDAO extends AbstractDAO<Provider> implements Provide
 		}
 	}
 
+	@Override
+	public List<Order> getOpenOrders(Long providerId) {
+		try {
+			Long statusId = 1L;
+			Query q = em.createQuery("SELECT x FROM Order x WHERE x.providerLocation.provider.id = :providerId AND x.statusId = :statusId")
+					.setParameter("providerId", providerId)
+					.setParameter("statusId", statusId);
+			return q.getResultList();
+		} catch(NoResultException e) {
+			return Collections.emptyList();
+		}
+	}
+
 }
