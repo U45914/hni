@@ -165,7 +165,7 @@ public class PaymentController extends AbstractBaseController {
 						.onClass(ProviderLocation.class, Match.match().exclude("*"))
 						.onClass(ProviderLocationHour.class, Match.match().exclude("*").include("dow", "openHour", "closeHour"))
 						.onClass(Provider.class, Match.match().exclude("*").include("id", "name"))
-						.onClass(PaymentInstrument.class, Match.match().exclude("*").include("id", "cardNumber", "pinNumber")));
+						.onClass(PaymentInstrument.class, Match.match().exclude("*").include("id", "cardNumber", "pinNumber", "balance")));
 				return json;
 			} catch (JsonProcessingException e) {
 				logger.error("Serializing User object:"+e.getMessage(), e);
