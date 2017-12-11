@@ -200,8 +200,10 @@ public class DefaultOrderProcessor implements OrderProcessor {
                     //TODO : check for same provider with multiple branches in same location.
                     for (ProviderLocation location : nearbyProviders) {
                         Optional<Menu> currentMenu = Optional.ofNullable(location.getMenu());
-                        if (currentMenu.isPresent() && isCurrent(currentMenu.get())) {
-                            nearbyWithMenu.add(location);
+                        if(!location.getProvider().isDeleted() && location.getProvider().isActive() && location.getIsActive()){
+                        	 if (currentMenu.isPresent() && isCurrent(currentMenu.get())) {
+                                 nearbyWithMenu.add(location);
+                             }
                         }
                     }
                     if (!nearbyWithMenu.isEmpty()) {

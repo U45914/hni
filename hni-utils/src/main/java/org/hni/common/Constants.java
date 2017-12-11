@@ -57,6 +57,7 @@ public class Constants {
 	public static final Integer REPORT_ALL_CUSTOMER_NGO = 70;
 	public static final Integer REPORT_ALL_PROVIDER_LOCATIONS = 80;
 	public static final Integer MENU_ITEM_BY_MENU = 90;
+	public static final Integer GIFT_CARDS = 100;
 	
 	// Constants for HNI Templates
 	public static final String PARTICIPANT_ORDER_CONFIRMATION_NOTIFICATION = "POCN";
@@ -67,6 +68,11 @@ public class Constants {
 	public final static Integer CANCEL_REASON_PROVIDER_NOT_AVAILABLE = 3;
 	public final static Integer CANCEL_REASON_USER_IS_NOT_ACTIVE = 1;
 	public final static Integer CANCEL_REASON_USER_IS_DELETED = 2;
+	
+	//Constants for hni audit actions
+	public static final Long GIFTCARD_CREATE = 1L;
+	public static final Long GIFTCARD_USED = 2L;
+	public static final Long GIFTCARD_RECHARGE = 3L;
 	
 	public static final String HNI_CAP = "HNI";
 	

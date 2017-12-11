@@ -25,6 +25,7 @@ public class HNIUtils {
 		fieldDef.put("displayName", displayName);
 		fieldDef.put("resizable", resizable);
 		fieldDef.put("enableCellEdit", enableCellEdit);
+		fieldDef.put("cellTooltip", true);
 		if(hasWidth)
 		fieldDef.put("width", getColumnWidth(displayName, fieldDef));
 		// fieldDef.put("field", fieldName);
@@ -90,6 +91,7 @@ public class HNIUtils {
 			headers.add(getFieldDefMap("name", "Provider Name", true, canEdit, false));
 			headers.add(getFieldDefMap("address", "Address", true, canEdit, true));
 			headers.add(getFieldDefMap("website", "Website", true, canEdit, true));
+			headers.add(getFieldDefMap("active", "Status", true, false, true));
 			headers.add(getFieldDefMap("createdOn", "Created On", true, canEdit, false));
 			headers.add(getFieldDefMap("createdBy", "Created By", true, canEdit, false));
 		} else if (Constants.REPORT_ALL_PROVIDER_LOCATIONS.equals(reportId)) {
@@ -115,6 +117,13 @@ public class HNIUtils {
 			headers.add(getFieldDefMap("protien", "Protien", true, canEdit, false));
 			headers.add(getFieldDefMap("fat", "Fat", true, canEdit, false));
 			headers.add(getFieldDefMap("carbs", "Carbs", true, canEdit, false));
+		} else if(Constants.GIFT_CARDS.equals(reportId)){
+			
+			headers.add(getFieldDefMap("cardSerialId", "Serial Number", true, canEdit, false));
+			headers.add(getFieldDefMap("cardNumber", "Card Number", true, canEdit, false));
+			headers.add(getFieldDefMap("status", "Status", true, false, false));
+			headers.add(getFieldDefMap("originalBalance", "Original Balance", true, canEdit, false));
+			headers.add(getFieldDefMap("balance", "Balance", true, canEdit, false));
 		}
 		return headers;
 	}

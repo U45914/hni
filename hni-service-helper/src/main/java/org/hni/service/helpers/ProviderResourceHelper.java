@@ -3,6 +3,7 @@
  */
 package org.hni.service.helpers;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +20,7 @@ import org.hni.order.om.Order;
 import org.hni.order.service.OrderService;
 import org.hni.provider.om.Provider;
 import org.hni.provider.om.ProviderLocation;
+import org.hni.provider.service.MenuItemService;
 import org.hni.provider.service.MenuService;
 import org.hni.provider.service.ProviderLocationService;
 import org.hni.provider.service.ProviderService;
@@ -46,7 +48,11 @@ public class ProviderResourceHelper extends AbstractServiceHelper {
 	private ProviderLocationService providerLocationService;
 	@Inject
 	private OrderService orderService;
-	@Inject private MenuService menuService;
+	@Inject 
+	private MenuService menuService;
+	@Inject
+	private MenuItemService menuItemService;
+	
 	
 	public String createProvider(Provider provider, User user) {
 		_LOGGER.info("Request reached to create new provider");
@@ -163,13 +169,26 @@ public class ProviderResourceHelper extends AbstractServiceHelper {
 		menu = menuService.save(menu);
 		return serializeMenuToJson(menu);
 	}
+	
+	public void updateMenuItemsToMenu(Long menuId, List<MenuItem> menuItems) {
+		
+		for(MenuItem menuItem : menuItems){
+			MenuItem existingMenuItem = menuItemService.get(menuItem.getId());
+			menuItem.setMenu(new Menu(menuId));
+			if(existingMenuItem != null){
+				existingMenuItem = menuItem;
+			}
+			menuItemService.save(existingMenuItem);
+		}
+		_LOGGER.info("Updated menuItems successully.");
+	}
 
 	public Map<String, Object> getMenuItemsWithHeaders(Long menuId) {
 		Map<String, Object> menuItems = new HashMap<>();
 		
 		Menu menu = menuService.get(menuId);
 		
-		menuItems.put("headers", HNIUtils.getReportHeaders(90, false));
+		menuItems.put("headers", HNIUtils.getReportHeaders(90, true));
 		menuItems.put("data", menu.getMenuItems());
 		menuItems.put(Constants.RESPONSE, Constants.SUCCESS);
 		
@@ -191,5 +210,87 @@ public class ProviderResourceHelper extends AbstractServiceHelper {
         	   providerLocation.setIsActive(false); 
            }
         }
+	}
+	
+	@Transactional
+	public Map<String, String> updateMenu(List<Menu> menuList){
+		_LOGGER.info("Request reached to update menu");
+		Map<String, String> response = new HashMap<>();
+		try{
+			for(int index = 0; index < menuList.size(); index++){
+				Menu menu = menuService.get(menuList.get(index).getId());
+				menu.setName(menuList.get(index).getName());
+				menu.setStartHourAvailable(menuList.get(index).getStartHourAvailable());
+				menu.setEndHourAvailable(menuList.get(index).getEndHourAvailable());
+				menuService.save(menu);
+				_LOGGER.info(menu.getId()+" updated");
+			}
+			response.put(Constants.MESSAGE, "Details updated successfully.");
+		} catch(Exception e){
+			_LOGGER.error("Update Failed: "+e);
+			response.put(Constants.MESSAGE, "Save Failed.");
+		}
+		
+		return response;
+		
+	}
+	
+	@Transactional
+	public Map<String, String> deleteMenuList(List<Long> menuIds){
+		_LOGGER.info("Request reached to delete menu");
+		Map<String, String> response = new HashMap<>();
+		try{
+			deleteMenuFromProviderLocations(menuIds);
+			for(int index = 0; index < menuIds.size(); index++){
+				Menu menu = menuService.get(menuIds.get(index));
+				menuService.delete(menu);
+				_LOGGER.info(menu.getId()+" deleted");
+			}
+			response.put(Constants.MESSAGE, "Menu(s) deleted successfully.");
+		} catch(Exception e){
+			_LOGGER.error("Update Failed: "+e);
+			response.put(Constants.MESSAGE, "Deletion Failed.");
+		}
+		
+		return response;
+		
+	}
+	
+	private void deleteMenuFromProviderLocations(List<Long> menuIds){
+		if(!menuIds.isEmpty() && menuIds != null){
+			List<ProviderLocation> lp = providerLocationService.getAll();
+			if(lp != null && ! lp.isEmpty()){
+				for(int index = 0; index< menuIds.size(); index++){
+					for(ProviderLocation pl : lp){
+						if(pl.getMenu().getId().equals(menuIds.get(index))){
+							System.out.println("ID found : "+pl.getMenu().getId());
+							ProviderLocation disable = providerLocationService.get(pl.getId());
+							disable.setMenu(null);
+							providerLocationService.update(disable);
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	@Transactional
+	public Map<String, String> deleteMenuItem(Long menuItemId){
+		_LOGGER.info("Request reached to delete menu item");
+		Map<String, String> response = new HashMap<>();
+		try{
+			if(menuItemService.deleteMenuItem(menuItemId) > 0){
+				response.put(Constants.MESSAGE, "Menu Item Deleted.");
+			} else {
+				response.put(Constants.MESSAGE, "Menu Item Not Found");
+			}
+				
+		} catch(Exception e){
+			_LOGGER.error("Update Failed: "+e);
+			response.put(Constants.MESSAGE, "Deletion Failed.");
+		}
+		
+		return response;
+		
 	}
 }

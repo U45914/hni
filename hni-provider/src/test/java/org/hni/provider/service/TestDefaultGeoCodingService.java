@@ -13,7 +13,7 @@ public class TestDefaultGeoCodingService {
 
     DefaultGeoCodingService geoCodingService = new DefaultGeoCodingService();
 
-    @Test
+   // @Test
     public void simpleAddress() {
         Optional<Address> address = geoCodingService.resolveAddress("10790+Parkridge+Boulevard%2C+Reston%2C+VA+20191");
         Assert.assertTrue(address.isPresent());

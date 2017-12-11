@@ -10,6 +10,7 @@ import javax.inject.Inject;
 
 import org.hni.common.service.AbstractService;
 import org.hni.provider.dao.ProviderLocationDAO;
+import org.hni.provider.om.Menu;
 import org.hni.provider.om.Provider;
 import org.hni.provider.om.ProviderLocation;
 import org.hni.provider.om.ProviderLocationHour;
@@ -30,6 +31,9 @@ public class DefaultProviderLocationService extends
 	private static final Logger _LOGGER = LoggerFactory
 			.getLogger(DefaultProviderLocationService.class);
 	private ProviderLocationDAO providerLocationDao;
+	
+	@Inject
+	private MenuService menuService;
 	
 	@Autowired
 	private GeoCodingService geoCodingService;
@@ -116,7 +120,8 @@ public class DefaultProviderLocationService extends
 			existingProviderLocation.setLastUpdatedBy(loggedInUser);
 			existingProviderLocation.setLastUpdated(Calendar.getInstance()
 					.getTime());
-			existingProviderLocation.setMenu(providerLocation.getMenu());
+			Menu menu = menuService.get(providerLocation.getMenu().getId());
+			existingProviderLocation.setMenu(menu);
 			providerLocationDao.update(existingProviderLocation);
 		}
 

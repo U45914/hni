@@ -65,7 +65,7 @@ public class CustomerDao extends DefaultGenericDAO {
 			List<Object[]> user = em
 					.createNativeQuery(
 							"select distinct u.first_name,u.last_name,u.gender_code,u.mobile_phone,u.email,c.race,ad.address_line1,"
-							+ " COUNT(o.id)  as ordCount from users u INNER JOIN user_organization_role x ON u.id=x.user_id "
+							+ " COUNT(o.id)  as ordCount,u.id from users u INNER JOIN user_organization_role x ON u.id=x.user_id "
 							+ "INNER JOIN `client` c ON c.user_id=u.id INNER JOIN user_address uad ON uad.user_id=u.id "
 							+ "INNER JOIN addresses ad ON ad.id=uad.address_id INNER JOIN orders o ON o.user_id=u.id"
 							+ " where x.role_id=:role")
@@ -77,7 +77,8 @@ public class CustomerDao extends DefaultGenericDAO {
 				map.put("mobilePhone",HNIConverter.convertPhoneNumberToUiFormat(getValue(usr[3])));
 				map.put("race",getValue(usr[5]));
 				map.put("address",getValue(usr[6]));
-				map.put("orders", getValue(usr[7]));	
+				map.put("orders", getValue(usr[7]));
+				map.put("userId",getValue(usr[8]));
 				customers.add(map);
 				
 			}
@@ -105,7 +106,7 @@ public class CustomerDao extends DefaultGenericDAO {
 				.getResultList();
 		for (Object[] u : users) {
 			Map<String,String> map=new HashMap<String,String>();
-			map.put("uid",getValue(u[0]));
+			map.put("userId",getValue(u[0]));
 			map.put("active", getValueForBoolean(u[1]));
 			map.put("firstName",getValue(u[2]));
 			map.put("lastName",getValue(u[3]));

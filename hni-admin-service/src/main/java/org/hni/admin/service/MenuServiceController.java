@@ -1,6 +1,11 @@
 package org.hni.admin.service;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.ws.rs.DELETE;
@@ -99,6 +104,28 @@ public class MenuServiceController extends AbstractBaseController {
 		}
 		throw new HNIException("You must have elevated permissions to do this.");
 	}
+	
+	@POST
+	@Path("/{id}/menuitems/list/add")
+	@ApiOperation(value = "Updates the existing MenuItem"
+		, notes = "An existing menu item will be updated."
+		, response = Menu.class
+		, responseContainer = "")
+	public Response saveMenuItem(@PathParam("id") Long menuId, List<MenuItem> menuItems) {
+		Map<String, String> response = new HashMap<>();
+		if (getLoggedInUser() != null) {
+			try{
+				providerResHelper.updateMenuItemsToMenu(menuId, menuItems);
+				response.put(Constants.MESSAGE,"Updated successfullly.");
+			}catch(Exception e){
+				response.put(Constants.MESSAGE,"Save Failed.");
+			}
+			
+		}else{
+			throw new HNIException("You must have elevated permissions to do this.");
+		}
+		return Response.ok(response).build();
+	}
 
 	@DELETE
 	@Path("/{id}/menuitems/{miid}")
@@ -132,4 +159,46 @@ public class MenuServiceController extends AbstractBaseController {
 		}
 		return Response.ok(providerResHelper.getMenuItemsWithHeaders(menuId)).build();
 	}
+	
+	@POST
+	@Path("/update")
+	@ApiOperation(value = "Update menu for given menu id"
+		, notes = "Returns menu"
+		, response = Menu.class
+		, responseContainer = "")
+	public Response updateMenu(List<Menu> menu) {
+		if (getLoggedInUser() == null) {
+			throw new HNIException("You must have elevated permissions to do this.");
+		}
+		return Response.ok(providerResHelper.updateMenu(menu)).build();
+	}
+	
+	@DELETE
+	@Path("/{menuId}/delete")
+	@ApiOperation(value = "Delete list of menus for given menu id"
+		, notes = "Returns menu"
+		, response = Menu.class
+		, responseContainer = "")
+	public Response deleteMenuList(@PathParam("menuId")List<Long> menuId) {
+		if (getLoggedInUser() == null) {
+			throw new HNIException("You must have elevated permissions to do this.");
+		}
+		
+		return Response.ok(providerResHelper.deleteMenuList(menuId)).build();
+	}
+	
+	@DELETE
+	@Path("/{menuItemId}/menuItem/delete")
+	@ApiOperation(value = "Delete list of menus for given menu id"
+		, notes = "Returns menu"
+		, response = Menu.class
+		, responseContainer = "")
+	public Response deleteMenuItem(@PathParam("menuItemId") Long menuItemId) {
+		if (getLoggedInUser() == null) {
+			throw new HNIException("You must have elevated permissions to do this.");
+		}
+		
+		return Response.ok(providerResHelper.deleteMenuItem(menuItemId)).build();
+	}
+
 }

@@ -38,7 +38,7 @@ public class TestActivationCodeService {
 		assertNull(code.getUser());
 	}
 	
-	@Test
+	//@Test
 	public void testActivate() {
 		ActivationCode code = activationCodeService.get(INSERTED_ID_1);
 		assertNotNull(code);
@@ -84,7 +84,7 @@ public class TestActivationCodeService {
 		assertFalse(activationCodeService.validate(SUPPLIED_AUTH_CODE_1));
 	}
 
-	@Test
+//	@Test
 	public void testValidateAlreadyUsedCode() {
 		ActivationCode code = activationCodeService.getByActivationCode(SUPPLIED_AUTH_CODE_1);
 		assertTrue(activationCodeService.validate(SUPPLIED_AUTH_CODE_1));

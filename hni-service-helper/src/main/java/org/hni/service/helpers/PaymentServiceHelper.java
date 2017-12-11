@@ -5,6 +5,7 @@ package org.hni.service.helpers;
 
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -13,10 +14,13 @@ import org.hni.common.Constants;
 import org.hni.common.exception.HNIException;
 import org.hni.order.om.Order;
 import org.hni.order.service.OrderService;
+import org.hni.payment.om.HniAudit;
 import org.hni.payment.om.OrderPayment;
 import org.hni.payment.om.PaymentInstrument;
+import org.hni.payment.service.HniAuditService;
 import org.hni.payment.service.OrderPaymentService;
 import org.hni.template.om.HniTemplate;
+import org.hni.user.om.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -40,9 +44,10 @@ public class PaymentServiceHelper extends AbstractServiceHelper {
 	private OrderService orderService;
 	@Inject
 	private OrderPaymentService orderPaymentService;
-	
+	@Inject
+	private HniAuditService hniAuditService;
 
-	public String completeOrder(Long orderId, String confirmationId, Double orderAmount) throws Exception {
+	public String completeOrder(Long orderId, String confirmationId, Double orderAmount, User user) throws Exception {
 		String uniqIdForOrderTrace = Constants.HNI_CAP + orderId + confirmationId;
 		_LOGGER.info("Starting the process of order completion : " + uniqIdForOrderTrace);
 		Optional<Order> order = Optional.ofNullable(orderService.get(orderId));
@@ -51,7 +56,7 @@ public class PaymentServiceHelper extends AbstractServiceHelper {
 			_LOGGER.info(String.format("Marking order %d complete", order.get().getId()));
 			Collection<OrderPayment> paymentsForOrder = orderPaymentService.paymentsFor(order.get());
 			
-			double subTotal = updateOrderPaymentStatusAndGetSubTotal(paymentsForOrder, uniqIdForOrderTrace).doubleValue();	
+			double subTotal = updateOrderPaymentStatusAndGetSubTotal(paymentsForOrder, uniqIdForOrderTrace, user).doubleValue();	
 			if (subTotal <= 0.0) {
 				subTotal = orderAmount;
 			}
@@ -79,7 +84,7 @@ public class PaymentServiceHelper extends AbstractServiceHelper {
 		}
 	}
 
-	private BigDecimal updateOrderPaymentStatusAndGetSubTotal(Collection<OrderPayment> paymentsForOrder, String traceKey) {
+	private BigDecimal updateOrderPaymentStatusAndGetSubTotal(Collection<OrderPayment> paymentsForOrder, String traceKey, User user) {
 		BigDecimal totalAmount = BigDecimal.ZERO;
 		try {
 			for(OrderPayment op : paymentsForOrder) { 
@@ -89,8 +94,20 @@ public class PaymentServiceHelper extends AbstractServiceHelper {
 				Optional<PaymentInstrument> paymentInstrument = Optional.ofNullable(op.getId().getPaymentInstrument());
 				if (paymentInstrument.isPresent()) {
 					double balance = paymentInstrument.get().getBalance() - op.getAmount();
+					Double previousBalance = paymentInstrument.get().getOriginalBalance();
+					
 					paymentInstrument.get().setBalance(balance);
 					orderPaymentService.updatePaymentInstrument(paymentInstrument.get());
+					
+					HniAudit hniAudit = new HniAudit();
+					hniAudit.setPaymentInstrument(paymentInstrument.get());
+					hniAudit.setAction(Constants.GIFTCARD_USED);
+					hniAudit.setActionAmount(Double.valueOf(totalAmount.toString()));
+					hniAudit.setModifiedBy(user);
+					hniAudit.setPreviousAmount(previousBalance);
+					hniAudit.setModifiedDate(new Date());
+					hniAudit.setNetBalance(balance);
+					hniAuditService.save(hniAudit);
 				}
 				orderPaymentService.update(op);
 			}
