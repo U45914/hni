@@ -1,4 +1,4 @@
-/*package org.hni.user.service;
+package org.hni.user.service;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.Assert.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+//@RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"classpath:test-applicationContext.xml"} )
 @Transactional
 public class TestUserService {
@@ -27,19 +27,19 @@ public class TestUserService {
 		BasicConfigurator.configure();
 	}
 	
-	@Test
+	//@Test
 	public void testLookupByPhone() {
 		List<User> list = userService.byMobilePhone("479-555-1212");
 		assertEquals(1, list.size());
 	}
 
-	@Test
+	//@Test
 	public void testLookupByLastName() {
 		List<User> list = userService.byLastName("Multiphone");
 		assertEquals(2, list.size());
 	}
 	
-	@Test
+	//@Test
 	public void testAddUser() {
 		User user = new User("Scott", "", "479-123-4567");
 		user.setGender(Gender.MALE);
@@ -51,7 +51,7 @@ public class TestUserService {
 		assertEquals("Scott", cust.getFirstName());
 	}
 
-	@Test
+	//@Test
 	public void testPhoneNumberValidation() {
 		User user = new User();
 		user.setEmail("johndoe@gmail.com");
@@ -68,7 +68,7 @@ public class TestUserService {
 		assertFalse(userService.validate(user));
 	}
 
-	@Test
+	//@Test
 	public void testEmailValidation() {
 		User user = new User();
 		user.setEmail("None");
@@ -78,4 +78,4 @@ public class TestUserService {
 		user.setEmail("johndoe@gmail.com");
 		assertTrue(userService.validate(user));
 	}
-}*/
+}

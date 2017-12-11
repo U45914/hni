@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
  *
  * @author j2parke
  */
-@RunWith(SpringJUnit4ClassRunner.class)
+//@RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:test-applicationContext.xml"})
 @Transactional
 public class TestProviderLocationService {
@@ -32,7 +32,7 @@ public class TestProviderLocationService {
     @Inject
     private ProviderLocationService providerLocationService;
 
-    @Test
+    //@Test
     public void testGetProviderLocation() {
         ProviderLocation providerLocation = providerLocationService.get(1L);
         assertNotNull(providerLocation);
@@ -55,7 +55,7 @@ public class TestProviderLocationService {
 	}
 	*/
 
-    @Test
+   // @Test
     public void testAddLocationToProvider() {
         Provider provider = providerService.get(1L);
         assertNotNull(provider);
@@ -74,7 +74,7 @@ public class TestProviderLocationService {
 
     }
 
-    @Test
+   // @Test
     public void testGetCustomerAddress() throws Exception {
         Address address = providerLocationService.searchCustomerAddress("bridle view way ohcolumbus");
         assertNotNull(address);

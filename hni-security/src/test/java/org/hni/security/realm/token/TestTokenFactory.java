@@ -22,7 +22,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.IncorrectClaimException;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+//@RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"classpath:test-applicationContext.xml"} )
 @Transactional
 public class TestTokenFactory {
@@ -34,7 +34,7 @@ public class TestTokenFactory {
 	 
 	@Inject private AccessControlService accessControlService;
 	
-	@Test
+	//@Test
 	public void testVolunteerToken() throws Exception {
 		String subject = "testtoken";
 		User user = new User(8L);
@@ -52,7 +52,7 @@ public class TestTokenFactory {
 		System.out.println(token);
 	}
 
-	@Test
+	//@Test
 	public void testVolunteerTokenNonMappedOrg() throws Exception {
 		String subject = "testtoken";
 		User user = new User(8L);
@@ -70,7 +70,7 @@ public class TestTokenFactory {
 		System.out.println(token);
 	}
 
-	@Test
+	//@Test
 	public void testElevatedToken() throws Exception {
 		String subject = "test-issuer";
 		User user = new User(1L);
