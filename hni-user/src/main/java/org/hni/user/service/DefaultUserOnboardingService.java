@@ -258,9 +258,9 @@ public class DefaultUserOnboardingService extends AbstractService<Invitation> im
 		Client extClient = clientDAO.getByUserId(user.getId());
 		client.setUserId(user.getId());
 		Map<String, String> error = new HashMap<>();
-		
+		client.getUser().setId(user.getId());
 		if (extClient == null) {
-			client.setUserId(user.getId());
+			
 			Invitation invitedBy = invitationDAO.getInvitedBy(user.getEmail());
 			if (invitedBy != null) {
 				client.setCreatedBy(invitedBy.getInvitedBy());

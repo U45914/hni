@@ -86,6 +86,7 @@ public class AbstractBaseController {
 	protected User setPassword(User user) {
 		if (user != null) {
 			user.setCreated(new Date());
+			user.setIsActive(Boolean.TRUE);
 			user.setSalt(HNISecurityUtils.getSalt());
 			user.setHashedSecret(HNISecurityUtils.getHash(user.getPassword(), user.getSalt()));
 		}
