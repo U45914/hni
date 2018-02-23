@@ -33,7 +33,8 @@ public class DefaultMenuDAO extends AbstractDAO<Menu> implements MenuDAO {
 	@Override
 	public Collection<Menu> getMenusByProviderId(Long providerId) {
 		try {
-			Query query = em.createQuery("SELECT p.menu FROM ProviderLocation p LEFT JOIN p.menu AS m WHERE p.provider.id =:providerId GROUP BY p.menu").setParameter("providerId", providerId);
+			//Query query = em.createQuery("SELECT p.menu FROM ProviderLocation p WHERE p.provider.id =:providerId GROUP BY p.menu").setParameter("providerId", providerId);
+			Query query = em.createQuery("SELECT p FROM Menu p WHERE p.provider.id =:providerId ").setParameter("providerId", providerId);
 			return query.getResultList();
 			
 		} catch (NoResultException e) {

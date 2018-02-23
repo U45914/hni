@@ -21,6 +21,7 @@ import org.hni.common.Constants;
 import org.hni.common.exception.HNIException;
 import org.hni.provider.om.Menu;
 import org.hni.provider.om.MenuItem;
+import org.hni.provider.om.Provider;
 import org.hni.provider.service.MenuService;
 import org.hni.service.helpers.ProviderResourceHelper;
 import org.slf4j.Logger;
@@ -51,14 +52,15 @@ public class MenuServiceController extends AbstractBaseController {
 	}
 
 	@POST
-	@Path("/menu/create")
+	@Path("/menu/create/{id}")
 	@Produces({MediaType.APPLICATION_JSON})
 	@ApiOperation(value = "Creates a new Menu or saves the Menu with the given id associated with the given Provider"
 		, notes = "An Menu without an ID field will be created"
 		, response = Menu.class
 		, responseContainer = "")
-	public String saveOrder(Menu menu) {
+	public String saveOrder(@PathParam("id") Long menuId,Menu menu) {
 		if (getLoggedInUser() != null) {
+			menu.setProvider(new Provider(menuId));
 			return providerResHelper.createMenu(menu, getLoggedInUser());
 		}
 		throw new HNIException("You must have elevated permissions to do this.");
