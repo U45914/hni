@@ -744,6 +744,51 @@ CREATE TABLE IF NOT EXISTS `volunteer_availability` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
 
+
+DROP TABLE IF EXISTS `participant_profile_config`;
+     CREATE TABLE `participant_profile_config` (
+	`id` INT(11) NOT NULL,
+	`address_Line1` VARCHAR(255) NOT NULL ,
+	`address_Line2` VARCHAR(255) NOT NULL ,
+	`city` VARCHAR(255) NOT NULL ,
+	`state` VARCHAR(255) NOT NULL ,
+	`zip_Code` VARCHAR(255) NOT NULL ,
+	`ethni_City` VARCHAR(255) NOT NULL ,
+	`phone_Number` VARCHAR(255) NOT NULL ,
+	`dob` VARCHAR(255) NOT NULL ,
+	`everBeen_Arrested` VARCHAR(255) NOT NULL ,
+	`convicted_Felony` VARCHAR(255) NOT NULL ,
+	`smart_Phone` VARCHAR(255) NOT NULL ,
+	`monthly_Plan` VARCHAR(255) NOT NULL ,
+	`no_Siblings` VARCHAR(255) NOT NULL ,
+	`no_Kids` VARCHAR(255) NOT NULL ,
+	`live_Home` VARCHAR(255) NOT NULL ,
+	`housing_Status` VARCHAR(255) NOT NULL ,
+	`education` VARCHAR(255) NOT NULL ,
+	`parental_Education` VARCHAR(255) NOT NULL ,
+	`enrolled` VARCHAR(255) NOT NULL ,
+	`resident_Status` VARCHAR(255) NOT NULL ,
+	`work_Status` VARCHAR(255) NOT NULL ,
+	`monthly_Spendings` VARCHAR(255) NOT NULL ,
+	`no_Meals` VARCHAR(255) NOT NULL ,
+	`food_Preferences` VARCHAR(255) NOT NULL ,
+	`purchase_Location` VARCHAR(255) NOT NULL ,
+	`cooking_Options` VARCHAR(255) NOT NULL ,
+	`distance_Travel` VARCHAR(255) NOT NULL ,
+	`time_Travel` VARCHAR(255) NOT NULL ,
+	`subsidised_Food_Programs` VARCHAR(255) NOT NULL ,
+	`allergies` VARCHAR(255) NOT NULL ,
+	`history_Addiction` VARCHAR(255) NOT NULL ,
+	`mental_Health` VARCHAR(255) NOT NULL ,
+	`height` VARCHAR(255) NOT NULL ,
+	`weight` VARCHAR(255) NOT NULL ,
+	`excercise_PerWeek` VARCHAR(255) NOT NULL ,
+	`doctor_Appointment` VARCHAR(255) NOT NULL ,
+	`dentist_Appointment` VARCHAR(255) NOT NULL ,
+	PRIMARY KEY (`id`)
+)
+ENGINE=InnoDB;
+
 -- Data exporting was unselected.
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;

@@ -23,6 +23,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.shiro.SecurityUtils;
@@ -42,10 +43,12 @@ import org.hni.security.service.ActivationCodeService;
 import org.hni.security.utils.HNISecurityUtils;
 import org.hni.user.om.Client;
 import org.hni.user.om.Ngo;
+import org.hni.user.om.ParticipantProfileConfig;
 import org.hni.user.om.Report;
 import org.hni.user.om.User;
 import org.hni.user.om.UserPartialData;
 import org.hni.user.om.Volunteer;
+import org.hni.user.service.ParticipantProfileConfigurationService;
 import org.hni.user.service.ReportServices;
 import org.hni.user.service.UserOnboardingService;
 import org.hni.user.service.UserPartialCreateService;
@@ -94,6 +97,10 @@ public class UserServiceController extends AbstractBaseController {
 	
 	@Inject
 	private ActivationCodeService activationCodeService;
+	
+	
+	@Inject
+	private ParticipantProfileConfigurationService participanrProfileConfigService;
 
 	@GET
 	@Path("/{id}")
@@ -128,6 +135,24 @@ public class UserServiceController extends AbstractBaseController {
 			return "OK";
 		}
 		throw new HNIException("You must have elevated permissions to do this.");
+	}
+	
+	@POST
+	@Path("/update/superuserprofile")
+	@Produces({ MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Update the super User profile", notes = "", response = User.class, responseContainer = "")
+	public Response updateSuperUserProfile(User user) {
+		
+		if (isPermitted(Constants.ORGANIZATION, Constants.CREATE, 0L)) {
+			 User users = getLoggedInUser();
+			 users.setFirstName(user.getFirstName());
+			 users.setLastName(user.getLastName());
+			 users.setMobilePhone(user.getMobilePhone());
+			 
+			 return Response.ok(userService.update(users)).build();
+		}
+		throw new HNIException("You must have elevated permissions to do this.");
+		
 	}
 
 	@PUT
@@ -317,6 +342,51 @@ public class UserServiceController extends AbstractBaseController {
 		}
 		return Response.ok(response).build();
 	}
+	
+	
+	@GET
+	@Path("/participant/getconfig")
+	@Produces({ MediaType.APPLICATION_JSON })
+	@ApiOperation(value = "Service to get participant configuration", notes = "", response = Map.class, responseContainer = "")
+	public Response getParticipantConfiguration() {
+		
+		Map<String,String> response = new HashMap<>();
+		try {
+			return Response.ok(participanrProfileConfigService.get(1L)).build();
+			
+		}catch(Exception ex) {
+			
+			_LOGGER.error("Fetching Participant Config Failed",ex);
+			ex.printStackTrace();
+			response.put(ERROR, "Fetching Participant Config Failed");
+			return Response.ok(response).build();
+		}
+		
+	}
+	
+	@POST
+	@Path("/participant/updateconfig")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Produces({MediaType.APPLICATION_JSON})
+	@ApiOperation(value = "Service to update participant configuration", notes = "", response = Map.class, responseContainer = "")
+	public Response updateParticpantConfig(ParticipantProfileConfig partcipantConfig) {
+		
+		Map<String,String> response = new HashMap<>();
+		
+		try {
+			partcipantConfig.setId(1l);
+			
+			 participanrProfileConfigService.save(partcipantConfig);
+			 response.put("SUCCESS", "Participant configuration updated successfully");
+			 
+		}catch(Exception e){
+			_LOGGER.error("Participant update failed!", e);
+			response.put(ERROR, "Save Participant Config Failed");
+			e.printStackTrace();
+		}
+		return Response.ok(response).build();
+	}
+	
 	
 	@POST
 	@Path("/volunteer/save")
